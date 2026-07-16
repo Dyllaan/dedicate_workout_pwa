@@ -1,4 +1,4 @@
-import { useServices, type HealthStatus } from "@/hooks/useServices";
+import { useServices, type HealthStatus } from "@/features/health/hooks/useServices";
 import { useQueryClient } from "@tanstack/react-query";
 import Page from "@/components/layout/section/Page.tsx";
 import {HeartPulse, RefreshCwIcon} from "lucide-react";

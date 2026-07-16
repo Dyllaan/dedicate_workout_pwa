@@ -1,7 +1,11 @@
 import { Component, useEffect, useRef, type ReactNode } from "react";
 import SplashScreen from "./SplashScreen";
 import { useRegisterSW } from "./pwaRegister";
-import { reloadWindow } from "./windowLocation";
+
+
+function reloadWindow() {
+  window.location.reload();
+}
 
 const CHUNK_RELOAD_FLAG = "dedicate-chunk-reload-attempted";
 

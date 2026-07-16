@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { enqueueSnackbar } from "notistack";
-import SplitSelector from "@/components/splits/creation/SplitSelector";
-import SplitOrder from "@/components/splits/creation/SplitOrder";
+import SplitSelector from "@/features/periodisation/splits/components/splits/creation/SplitSelector";
+import SplitOrder from "@/features/periodisation/splits/components/splits/creation/SplitOrder";
 import type { CreateSplitRequest, Split, WorkoutTemplate } from "@/types/Workout";
 import useWorkoutTemplates, { useAllWorkoutTemplates } from "@/hooks/workout/useWorkoutTemplates";
 import useSplits, { useSplit } from "@/hooks/periodisation/useSplits";

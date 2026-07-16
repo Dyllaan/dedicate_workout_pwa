@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient, keepPreviousData } from "@tansta
 import { unwrapApiResponse, workoutApi } from "@/api/api";
 import { buildPageParams, DEFAULT_PAGE_SIZE, fetchAllPagedItems } from "@/api/pagination";
 import { queryKeys } from "@/api/queryKeys";
-import { invalidateDashboardData } from "@/hooks/workout/useDashboardRefresh";
+import { invalidateDashboardData } from "@/features/dashboard/hooks/useDashboardRefresh";
 import type { PagedResponse } from "@/types/Pagination";
 import type { WorkoutEntry, WorkoutTemplate, CreateWorkoutEntryRequest, UpdateWorkoutEntryRequest } from "@/types/Workout";
 import { sortByCreatedAtDesc } from "@/utils/sort";

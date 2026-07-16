@@ -2,8 +2,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { unwrapApiResponse, workoutApi } from "@/api/api";
 import { buildPageParams, DEFAULT_PAGE_SIZE } from "@/api/pagination";
 import { queryKeys } from "@/api/queryKeys";
-import { invalidateDashboardData } from "./useDashboardRefresh";
-import { useDashboardSummary } from "./useDashboardSummary";
+import { invalidateDashboardData } from "../../features/dashboard/hooks/useDashboardRefresh";
+import { useDashboardSummary } from "../../features/dashboard/hooks/useDashboardSummary";
 import type {
   AutotuneOutcomeRequest,
   BlockSummary,

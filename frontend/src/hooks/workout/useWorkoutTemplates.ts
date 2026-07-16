@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tansta
 import { unwrapApiResponse, workoutApi } from "@/api/api";
 import { buildPageParams, DEFAULT_PAGE_SIZE, fetchAllPagedItems } from "@/api/pagination";
 import { queryKeys } from "@/api/queryKeys";
-import { invalidateDashboardData } from "@/hooks/workout/useDashboardRefresh";
+import { invalidateDashboardData } from "@/features/dashboard/hooks/useDashboardRefresh";
 import type { PagedResponse } from "@/types/Pagination";
 import type {
   WorkoutTemplate,
@@ -17,7 +17,7 @@ import type {
   UpdateExerciseConfigTargetRestSecondsRequest,
 } from "@/types/Workout";
 import { sortByCreatedAtDesc } from "@/utils/sort";
-import { useAuth } from "../useAuth";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 
 type UseWorkoutTemplatesOptions = {
   enabled?: boolean;

@@ -21,3 +21,4 @@ ops/seed/.env
 /node_modules
 /workout_service/docs
 /.idea
+/dev-db-dump

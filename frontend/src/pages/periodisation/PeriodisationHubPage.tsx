@@ -8,7 +8,7 @@ import { sortByCreatedAtDesc } from "@/utils/sort";
 import { useUrlPagination } from "@/hooks/useUrlPagination";
 import PaginatedContainer from "@/components/layout/PaginatedContainer.tsx";
 import {PrimaryAction} from "@/components/layout/card/PrimaryAction.tsx";
-import SplitDrawer from "@/components/splits/SplitDrawer.tsx";
+import SplitDrawer from "@/features/periodisation/splits/components/splits/SplitDrawer";
 import {useState} from "react";
 import type {Split} from "@/types/Workout.ts";
 

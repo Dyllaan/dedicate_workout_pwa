@@ -1,13 +1,13 @@
 import { Route, Routes } from "react-router-dom";
-import WorkoutLayout from "@/components/outlet/WorkoutLayout";
-import ProtectedRoute from "@/components/auth/routes/ProtectedRoute";
-import PublicRoute from "@/components/auth/routes/PublicRoute";
+import WorkoutLayout from "@/features/workout/components/WorkoutLayout";
+import ProtectedRoute from "@/features/auth/components/routes/ProtectedRoute";
+import PublicRoute from "@/features/auth/components/routes/PublicRoute";
 import { SnackbarProvider } from "notistack";
 import { WorkoutEntryProvider } from "@/hooks/forms/context/WorkoutEntryContext";
-import ProgrammeLayout from "@/components/outlet/ProgrammeLayout";
+import ProgrammeLayout from "@/features/periodisation/programme/components/ProgrammeLayout";
 import AppShell from "@/components/layout/shell/AppShell";
 import PublicShell from "@/components/layout/shell/PublicShell";
-import RootRoute from "./components/auth/routes/RootRoute";
+import RootRoute from "@/features/auth/components/routes/RootRoute";
 import AuthPage from "@/pages/user/AuthPage";
 import ToSPage from "@/pages/core/ToS";
 import PrivacyPage from "@/pages/core/Privacy";

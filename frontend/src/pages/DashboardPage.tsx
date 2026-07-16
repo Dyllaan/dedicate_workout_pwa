@@ -1,18 +1,18 @@
 import { useState } from "react";
 import { HelpCircle, RefreshCw} from "lucide-react";
-import { useAuth } from "@/hooks/useAuth";
-import { useDashboardSummary } from "@/hooks/workout/useDashboardSummary";
-import { useDashboardRefresh } from "@/hooks/workout/useDashboardRefresh";
+import { useAuth } from "@/features/auth/hooks/useAuth";
+import { useDashboardSummary } from "@/features/dashboard/hooks/useDashboardSummary";
+import { useDashboardRefresh } from "@/features/dashboard/hooks/useDashboardRefresh";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
-import TrainingStatusBanner from "@/components/dash/TrainingStatusBanner";
-import NextWorkoutCard from "@/components/dash/NextWorkoutCard";
-import OnboardingDialog from "@/components/onboarding/OnboardingDialog";
+import TrainingStatusBanner from "@/features/dashboard/components/TrainingStatusBanner";
+import NextWorkoutCard from "@/features/dashboard/components/NextWorkoutCard";
+import OnboardingDialog from "@/features/onboarding/components/OnboardingDialog";
 import Page from "@/components/layout/section/Page";
 import { cn } from "@/lib/utils";
 import { Tooltip } from "@/components/ui/tooltip";
-import TipCarousel from "@/components/dash/TipCarousel.tsx";
-import LiftSummaryCard from "@/components/dash/LiftSummaryCard.tsx";
-import CreateWorkoutButton from "@/components/workout/CreateWorkoutButton.tsx";
+import TipCarousel from "@/features/dashboard/components/TipCarousel.tsx";
+import LiftSummaryCard from "@/features/dashboard/components/LiftSummaryCard.tsx";
+import CreateWorkoutButton from "@/features/workout/components/CreateWorkoutButton.tsx";
 
 function getGreeting(): string {
   const hour = new Date().getHours();

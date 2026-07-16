@@ -1,0 +1,115 @@
+#
+# Production stateful services.
+# Copy `.env.example` to `.env`, then use `--env-file .env` with this file.
+# Bring this stack up before `../app/docker-compose.yml` when running bundled infra.
+#
+services:
+  dedicate-kafka:
+    image: apache/kafka:3.9.1
+    pull_policy: always
+    container_name: dedicate-kafka
+    hostname: dedicate-kafka
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://dedicate-kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@dedicate-kafka:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      CLUSTER_ID: ${KAFKA_CLUSTER_ID:-abcdefghijklmnopqrstuv}
+    volumes:
+      - dedicate-kafka-prod-data:/var/lib/kafka/data
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list >/dev/null 2>&1"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+    restart: unless-stopped
+    networks:
+      - dedicate_network
+
+  dedicate-auth-db:
+    image: postgres:17
+    pull_policy: always
+    container_name: dedicate-auth-db
+    environment:
+      POSTGRES_DB: auth
+      POSTGRES_USER: ${AUTH_DATABASE_USERNAME:-auth_user}
+      POSTGRES_PASSWORD: ${AUTH_DATABASE_PASSWORD:?Set AUTH_DATABASE_PASSWORD}
+    volumes:
+      - dedicate-auth-db-prod-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${AUTH_DATABASE_USERNAME:-auth_user} -d auth"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+    networks:
+      - dedicate_network
+
+  dedicate-auth-redis:
+    image: redis:7-alpine
+    pull_policy: always
+    container_name: dedicate-auth-redis
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - dedicate-auth-redis-prod-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+    networks:
+      - dedicate_network
+
+  dedicate-workout-db:
+    image: postgres:17
+    pull_policy: always
+    container_name: dedicate-workout-db
+    environment:
+      POSTGRES_DB: workout
+      POSTGRES_USER: ${WORKOUT_DATABASE_USERNAME:-workout_user}
+      POSTGRES_PASSWORD: ${WORKOUT_DATABASE_PASSWORD:?Set WORKOUT_DATABASE_PASSWORD}
+    volumes:
+      - dedicate-workout-db-prod-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${WORKOUT_DATABASE_USERNAME:-workout_user} -d workout"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+    networks:
+      - dedicate_network
+
+  dedicate-workout-redis:
+    image: redis:7-alpine
+    pull_policy: always
+    container_name: dedicate-workout-redis
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - dedicate-workout-redis-prod-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+    networks:
+      - dedicate_network
+
+volumes:
+  dedicate-kafka-prod-data:
+  dedicate-auth-db-prod-data:
+  dedicate-auth-redis-prod-data:
+  dedicate-workout-db-prod-data:
+  dedicate-workout-redis-prod-data:
+
+networks:
+  dedicate_network:
+    name: dedicate_network
+    driver: bridge

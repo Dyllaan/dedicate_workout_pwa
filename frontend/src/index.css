@@ -1,0 +1,327 @@
+@import "tailwindcss";
+
+@theme {
+  /* Define your custom xxs font size and its optional line-height */
+  --text-xxs: 0.75rem;
+  --text-xxs--line-height: 1rem;
+
+  --animate-gradient-shift: gradient-x 6s ease infinite;
+  --animate-gradient-shift-y: gradient-y 6s ease infinite;
+  @keyframes gradient-y {
+    0%, 100% {
+      background-size: 200% 200%;
+      background-position: center top;
+    }
+    50% {
+      background-size: 200% 200%;
+      background-position: center bottom;
+    }
+  }
+
+  /* 2. Define the keyframes right next to it */
+  @keyframes gradient-x {
+    0%, 100% {
+      background-size: 200% 200%;
+      background-position: left center;
+    }
+    50% {
+      background-size: 200% 200%;
+      background-position: right center;
+    }
+  }
+}
+
+@custom-variant dark (&:is(.dark *));
+
+body {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+:root {
+  --radius: 0.625rem;
+
+  --background: oklch(0.99 0.002 0);
+  --foreground: oklch(0.25 0.005 0);
+
+  --card: oklch(0.98 0.002 0);
+  --card-foreground: oklch(0.25 0.005 0);
+  --popover: oklch(0.99 0.002 0);
+--popover-foreground: oklch(0.25 0.005 0);
+
+  --primary: oklch(0.25 0.005 0);
+  --primary-foreground: oklch(0.98 0.002 0);
+
+  --secondary: oklch(0.94 0.002 0);
+  --secondary-foreground: oklch(0.25 0.005 0);
+  --muted: oklch(0.94 0.002 0);
+  --muted-foreground: oklch(0.45 0.005 0);
+
+  --accent: oklch(0.92 0.002 0);
+  --accent-foreground: oklch(0.25 0.005 0);
+
+  --destructive: oklch(0.60 0.15 25);
+
+  --border: oklch(0.88 0.002 0);
+  --input: oklch(0.88 0.002 0);
+  --ring: oklch(0.60 0.005 0);
+
+  --chart-1: oklch(0.55 0.05 0);
+  --chart-2: oklch(0.65 0.05 0);
+  --chart-3: oklch(0.45 0.05 0);
+  --chart-4: oklch(0.75 0.05 0);
+  --chart-5: oklch(0.35 0.05 0);
+
+  --sidebar: oklch(0.97 0.002 0);
+  --sidebar-foreground: oklch(0.30 0.005 0);
+  --sidebar-primary: oklch(0.25 0.005 0);
+  --sidebar-primary-foreground: oklch(0.98 0.002 0);
+  --sidebar-accent: oklch(0.90 0.002 0);
+  --sidebar-accent-foreground: oklch(0.25 0.005 0);
+  --sidebar-border: oklch(0.88 0.002 0);
+  --sidebar-ring: oklch(0.60 0.005 0);
+}
+
+.dark {
+  --background: oklch(0.14 0.005 0);
+  --foreground: oklch(0.92 0.005 0);
+
+  --card: oklch(0.18 0.005 0);
+  --card-foreground: oklch(0.92 0.005 0);
+  --popover: oklch(0.18 0.005 0);
+  --popover-foreground: oklch(0.92 0.005 0);
+
+  --primary: oklch(0.92 0.005 0);
+  --primary-foreground: oklch(0.14 0.005 0);
+
+  --secondary: oklch(0.24 0.005 0);
+  --secondary-foreground: oklch(0.92 0.005 0);
+  --muted: oklch(0.24 0.005 0);
+  --muted-foreground: oklch(0.65 0.005 0);
+
+  --accent: oklch(0.24 0.005 0);
+  --accent-foreground: oklch(0.92 0.005 0);
+
+  --destructive: oklch(0.60 0.15 25);
+
+  --border: oklch(0.26 0.005 0);
+  --input: oklch(0.26 0.005 0);
+  --ring: oklch(0.45 0.005 0);
+
+  --chart-1: oklch(0.70 0.08 0);
+  --chart-2: oklch(0.60 0.08 0);
+  --chart-3: oklch(0.50 0.08 0);
+  --chart-4: oklch(0.80 0.08 0);
+  --chart-5: oklch(0.40 0.08 0);
+
+  --sidebar: oklch(0.16 0.005 0);
+  --sidebar-foreground: oklch(0.92 0.005 0);
+  --sidebar-primary: oklch(0.92 0.005 0);
+  --sidebar-primary-foreground: oklch(0.14 0.005 0);
+  --sidebar-accent: oklch(0.24 0.005 0);
+  --sidebar-accent-foreground: oklch(0.92 0.005 0);
+  --sidebar-border: oklch(0.26 0.005 0);
+  --sidebar-ring: oklch(0.45 0.005 0);
+}
+
+input::placeholder {
+  opacity: 0.3;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+}
+
+@layer components {
+  .ui-shell {
+    @apply min-h-screen bg-background text-foreground;
+  }
+
+  .ui-shell-frame {
+    @apply flex min-h-screen w-full flex-col;
+  }
+
+  .ui-shell-scroll {
+    @apply flex-1 overflow-x-hidden px-4;
+  }
+
+  .ui-shell-scroll-app {
+    @apply pb-20;
+  }
+
+  .ui-shell-scroll-public {
+    @apply pb-10;
+  }
+
+  .ui-page-hero-icon {
+    @apply inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10;
+  }
+
+  .ui-section {
+    @apply flex flex-col gap-2 pt-2;
+  }
+
+  .ui-section-header {
+    @apply flex items-center justify-between gap-3;
+  }
+
+  .ui-section-icon {
+    @apply flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary;
+  }
+
+  .ui-feedback-panel {
+    @apply rounded-2xl border border-border bg-card/60 p-5;
+  }
+
+  .ui-feedback-icon {
+    @apply flex h-16 w-16 items-center justify-center rounded-full bg-muted/50;
+  }
+
+  .ui-card-row {
+    @apply border-b border-border;
+  }
+
+  .ui-card-row-content {
+    @apply mx-auto flex items-center justify-between gap-4 py-4;
+  }
+
+  .ui-panel {
+    @apply rounded-2xl border border-border p-4;
+  }
+
+  .ui-panel-soft {
+    @apply rounded-2xl border border-border bg-card/60 p-4;
+  }
+
+  .ui-stat-tile {
+    @apply rounded-xl border border-border p-3;
+  }
+
+  .ui-field-shell {
+    @apply rounded-xl border border-border bg-background px-3 py-2;
+  }
+
+  .ui-date-input-shell {
+    @apply rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground
+           focus:outline-none focus:ring-2 focus:ring-primary;
+  }
+
+  .ui-action-outline {
+    @apply rounded-lg border border-border px-3 py-2 text-sm font-medium;
+  }
+
+  .ui-action-outline-inline {
+    @apply inline-flex items-center gap-2 rounded-xl border border-border px-3 py-2 text-sm font-medium;
+  }
+
+  .ui-empty-message {
+    @apply text-center text-sm text-muted-foreground;
+  }
+
+  .ui-text-muted {
+    @apply text-sm text-muted-foreground;
+  }
+
+  .ui-text-caption {
+    @apply text-xs text-muted-foreground;
+  }
+
+  .ui-text-eyebrow {
+    @apply text-xs font-medium uppercase tracking-wide text-muted-foreground;
+  }
+
+  .ui-text-kicker {
+    @apply text-[11px] uppercase tracking-widest text-muted-foreground;
+  }
+
+  .ui-metric-meta {
+    @apply flex items-center gap-1 text-xs text-muted-foreground;
+  }
+
+  .ui-input-unit {
+    @apply pointer-events-none absolute right-3 text-sm text-muted-foreground;
+  }
+
+  .ui-muted-link-inline {
+    @apply flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground;
+  }
+
+  .ui-status-badge {
+    @apply inline-flex rounded-full border px-2.5 py-0.5 text-[11px] font-semibold;
+  }
+
+  .ui-status-plateau {
+    @apply border-amber-500/20 bg-amber-500/10 text-amber-700;
+  }
+
+  .ui-status-deload {
+    @apply border-sky-500/20 bg-sky-500/10 text-sky-700;
+  }
+
+  .ui-status-increase {
+    @apply border-emerald-500/20 bg-emerald-500/10 text-emerald-700;
+  }
+
+  .ui-status-insufficient {
+    @apply border-border bg-muted text-muted-foreground;
+  }
+
+  .ui-status-neutral {
+    @apply border-border bg-muted text-foreground;
+  }
+
+  .auth-dialog-md {
+    @apply max-w-md;
+  }
+
+  .auth-dialog-title-row {
+    @apply flex items-center gap-2;
+  }
+
+  .auth-dialog-title-icon {
+    @apply h-5 w-5 text-primary;
+  }
+}

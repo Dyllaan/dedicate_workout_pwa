@@ -1,0 +1,40 @@
+#
+# One-shot exercise catalog seeder. Run once per environment after the DB stack is healthy.
+# Copy `.env.example` to `.env`, then use `--env-file .env`.
+#
+# Usage:
+#   docker compose --env-file .env up exercise-info-seeder
+#
+# Prerequisites: download `gym_exercise_dataset.csv` from Kaggle and place it in
+# `ops/seed/data/gym_exercise_dataset.csv`.
+#
+services:
+  exercise-info-seeder:
+    image: postgres:17
+    restart: "no"
+    environment:
+      PGPASSWORD: ${WORKOUT_DATABASE_PASSWORD:?Set WORKOUT_DATABASE_PASSWORD}
+    volumes:
+      - ./data:/data:ro
+      - ../../workout_service/db/seed/seed_exercise_info.sql:/scripts/seed_exercise_info.sql:ro
+    command: >
+      sh -c '
+        if [ ! -f /data/gym_exercise_dataset.csv ]; then
+          echo "Missing /data/gym_exercise_dataset.csv. Download the Kaggle dataset and place it at ops/seed/data/gym_exercise_dataset.csv before running the seed job.";
+          exit 1;
+        fi;
+        COUNT=$$(psql -h dedicate-workout-db -U $${WORKOUT_DATABASE_USERNAME:-workout_user} -d workout -Atqc "SELECT COUNT(*) FROM exercise_info");
+        if [ "$$COUNT" -eq 0 ]; then
+          echo "Seeding exercise_info...";
+          psql -h dedicate-workout-db -U $${WORKOUT_DATABASE_USERNAME:-workout_user} -d workout -f /scripts/seed_exercise_info.sql &&
+          echo "Done.";
+        else
+          echo "exercise_info already has $$COUNT rows — skipping seed.";
+        fi
+      '
+    networks:
+      - dedicate_network
+
+networks:
+  dedicate_network:
+    external: true

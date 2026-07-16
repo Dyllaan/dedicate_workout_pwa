@@ -1,0 +1,211 @@
+services:
+  dedicate-kafka:
+    image: apache/kafka:3.9.1
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://dedicate-kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@dedicate-kafka:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      CLUSTER_ID: abcdefghijklmnopqrstuv
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list >/dev/null 2>&1"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
+  dedicate-auth-db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: auth
+      POSTGRES_USER: ${AUTH_DB_USERNAME:?Set AUTH_DB_USERNAME}
+      POSTGRES_PASSWORD: ${AUTH_DB_PASSWORD:?Set AUTH_DB_PASSWORD}
+    volumes:
+      - dedicate-local-auth-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${AUTH_DB_USERNAME:?Set AUTH_DB_USERNAME} -d auth"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  dedicate-auth-redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  dedicate-auth-service:
+    image: dedicate-auth-service:ci
+    build:
+      context: ../..
+      dockerfile: auth-service/Dockerfile
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://dedicate-auth-db:5432/auth?sslmode=disable
+      SPRING_DATASOURCE_USERNAME: ${AUTH_DB_USERNAME:?Set AUTH_DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${AUTH_DB_PASSWORD:?Set AUTH_DB_PASSWORD}
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+      DB_SSL_ENABLED: ${AUTH_DB_SSL_ENABLED:?Set AUTH_DB_SSL_ENABLED}
+      DB_SSL_MODE: ${AUTH_DB_SSL_MODE:?Set AUTH_DB_SSL_MODE}
+      SPRING_DATA_REDIS_HOST: dedicate-auth-redis
+      SPRING_DATA_REDIS_PORT: 6379
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: dedicate-kafka:9092
+      JWT_PRIVATE_KEY_B64: ${JWT_PRIVATE_KEY_B64:?Set JWT_PRIVATE_KEY_B64}
+      JWT_PUBLIC_KEY_B64: ${JWT_PUBLIC_KEY_B64:?Set JWT_PUBLIC_KEY_B64}
+      JWT_ISSUER: ${JWT_ISSUER:?Set JWT_ISSUER}
+      TEMP_MFA_SECRET_KEY: ${TEMP_MFA_SECRET_KEY:?Set TEMP_MFA_SECRET_KEY}
+    depends_on:
+      dedicate-auth-db:
+        condition: service_healthy
+      dedicate-auth-redis:
+        condition: service_healthy
+      dedicate-kafka:
+        condition: service_healthy
+    labels:
+      dedicate_logging_scrape: "true"
+      dedicate_logging_service: "auth-service"
+      dedicate_logging_environment: "local"
+      dedicate_logging_component: "spring"
+    networks:
+      - default
+      - dedicate_network
+
+  dedicate-workout-db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: workout
+      POSTGRES_USER: ${WORKOUT_DB_USERNAME:?Set WORKOUT_DB_USERNAME}
+      POSTGRES_PASSWORD: ${WORKOUT_DB_PASSWORD:?Set WORKOUT_DB_PASSWORD}
+    volumes:
+      - dedicate-local-workout-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${WORKOUT_DB_USERNAME:?Set WORKOUT_DB_USERNAME} -d workout"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  dedicate-workout-redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  dedicate-workout-service:
+    image: dedicate-workout-service:ci
+    build:
+      context: ../..
+      dockerfile: workout_service/Dockerfile
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://dedicate-workout-db:5432/workout?sslmode=disable
+      SPRING_DATASOURCE_USERNAME: ${WORKOUT_DB_USERNAME:?Set WORKOUT_DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${WORKOUT_DB_PASSWORD:?Set WORKOUT_DB_PASSWORD}
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+      DB_SSL_ENABLED: ${WORKOUT_DB_SSL_ENABLED:?Set WORKOUT_DB_SSL_ENABLED}
+      DB_SSL_MODE: ${WORKOUT_DB_SSL_MODE:?Set WORKOUT_DB_SSL_MODE}
+      WORKOUT_REDIS_HOST: dedicate-workout-redis
+      WORKOUT_REDIS_PORT: 6379
+      APP_ANALYTICS_CACHE_ENABLED: ${APP_ANALYTICS_CACHE_ENABLED:-true}
+      APP_ANALYTICS_CACHE_REDIS_ENABLED: ${APP_ANALYTICS_CACHE_REDIS_ENABLED:-true}
+      WORKOUT_AUTOTUNE_BARBELL_INCREMENT_KG: ${WORKOUT_AUTOTUNE_BARBELL_INCREMENT_KG:-1.25}
+      WORKOUT_AUTOTUNE_DUMBBELL_INCREMENT_KG: ${WORKOUT_AUTOTUNE_DUMBBELL_INCREMENT_KG:-2.5}
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: dedicate-kafka:9092
+      JWT_PUBLIC_KEY_B64: ${JWT_PUBLIC_KEY_B64:?Set JWT_PUBLIC_KEY_B64}
+      JWT_ISSUER: ${JWT_ISSUER:?Set JWT_ISSUER}
+      SPRING_JPA_PROPERTIES_HIBERNATE_GENERATE_STATISTICS: ${SPRING_JPA_PROPERTIES_HIBERNATE_GENERATE_STATISTICS:-false}
+      APP_PERF_REQUEST_METRICS_ENABLED: ${APP_PERF_REQUEST_METRICS_ENABLED:-false}
+    depends_on:
+      dedicate-workout-db:
+        condition: service_healthy
+      dedicate-workout-redis:
+        condition: service_healthy
+      dedicate-kafka:
+        condition: service_healthy
+    labels:
+      dedicate_logging_scrape: "true"
+      dedicate_logging_service: "workout-service"
+      dedicate_logging_environment: "local"
+      dedicate_logging_component: "spring"
+    networks:
+      - default
+      - dedicate_network
+
+  exercise-info-seeder:
+    profiles:
+      - seed
+    image: postgres:17
+    restart: "no"
+    depends_on:
+      dedicate-workout-db:
+        condition: service_healthy
+      dedicate-workout-service:
+        condition: service_started
+    environment:
+      PGPASSWORD: ${WORKOUT_DB_PASSWORD:?Set WORKOUT_DB_PASSWORD}
+    volumes:
+      - ../seed/data:/data:ro
+      - ../../workout_service/db/seed/seed_exercise_info.sql:/scripts/seed_exercise_info.sql:ro
+    command: >
+      sh -c '
+        echo "Waiting for V9 migration (composite index)...";
+        until [ "$$(psql -h dedicate-workout-db -U $${WORKOUT_DB_USERNAME:?Set WORKOUT_DB_USERNAME} -d workout -Atqc "SELECT 1 FROM pg_indexes WHERE indexname = '"'"'idx_exercise_info_name_variation_equipment'"'"'")" = "1" ]; do
+          sleep 2;
+        done;
+        if [ ! -f /data/gym_exercise_dataset.csv ]; then
+          echo "Missing /data/gym_exercise_dataset.csv. Download the Kaggle dataset and place it at ops/seed/data/gym_exercise_dataset.csv before running the seed profile.";
+          exit 1;
+        fi;
+        COUNT=$$(psql -h dedicate-workout-db -U $${WORKOUT_DB_USERNAME:?Set WORKOUT_DB_USERNAME} -d workout -Atqc "SELECT COUNT(*) FROM exercise_info");
+        if [ "$$COUNT" -eq 0 ]; then
+          echo "Seeding exercise_info...";
+          psql -h dedicate-workout-db -U $${WORKOUT_DB_USERNAME:?Set WORKOUT_DB_USERNAME} -d workout -f /scripts/seed_exercise_info.sql &&
+          echo "Seed complete.";
+        else
+          echo "exercise_info already has $$COUNT rows — skipping.";
+        fi
+      '
+
+  api-gateway:
+    image: dedicate-api-gateway:ci
+    build:
+      context: ../..
+      dockerfile: gateway/Dockerfile
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      JWT_PUBLIC_KEY_B64: ${JWT_PUBLIC_KEY_B64:?Set JWT_PUBLIC_KEY_B64}
+      JWT_ISSUER: ${JWT_ISSUER:?Set JWT_ISSUER}
+      URI_WORKOUT_SERVICE: http://dedicate-workout-service:8081/
+      URI_AUTH_SERVICE: http://dedicate-auth-service:8010/
+    ports:
+      - "8080:8080"
+    depends_on:
+      - dedicate-auth-service
+      - dedicate-workout-service
+    labels:
+      dedicate_logging_scrape: "true"
+      dedicate_logging_service: "api-gateway"
+      dedicate_logging_environment: "local"
+      dedicate_logging_component: "gateway"
+    networks:
+      - default
+      - dedicate_network
+
+volumes:
+  dedicate-local-auth-db-data:
+    name: dedicate-local-auth-db-data
+  dedicate-local-workout-db-data:
+    name: dedicate-local-workout-db-data
+
+networks:
+  dedicate_network:
+    name: dedicate_network
+    external: true

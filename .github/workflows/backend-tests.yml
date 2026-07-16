@@ -1,0 +1,120 @@
+name: Backend Tests
+on:
+  push:
+    branches: [ main, feature/**, Feature/**, bugfix/**, Bugfix/** ]
+  pull_request:
+    branches: [ main ]
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      auth: ${{ steps.filter.outputs.auth }}
+      gateway: ${{ steps.filter.outputs.gateway }}
+      workout: ${{ steps.filter.outputs.workout }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Detect changed services
+      uses: dorny/paths-filter@v3
+      id: filter
+      with:
+        filters: |
+          auth:
+            - 'auth-service/**'
+            - '.github/workflows/backend-tests.yml'
+          gateway:
+            - 'gateway/**'
+            - '.github/workflows/backend-tests.yml'
+          workout:
+            - 'workout_service/**'
+            - '.github/workflows/backend-tests.yml'
+
+  test-auth:
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.auth == 'true'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+
+    - name: Test Auth Service
+      working-directory: ./auth-service
+      run: |
+        chmod +x gradlew
+        ./gradlew test
+
+    - name: Upload test report
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: auth-service-test-report
+        path: auth-service/build/reports/tests/test/
+        retention-days: 7
+
+  test-gateway:
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.gateway == 'true'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+
+    - name: Test API Gateway
+      working-directory: ./gateway
+      run: |
+        chmod +x gradlew
+        ./gradlew test
+
+    - name: Upload test report
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: gateway-test-report
+        path: gateway/build/reports/tests/test/
+        retention-days: 7
+
+  test-workout:
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.workout == 'true'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+
+    - name: Test Workout Service
+      working-directory: ./workout_service
+      run: |
+        chmod +x gradlew
+        ./gradlew test
+
+    - name: Upload test report
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: workout-service-test-report
+        path: workout_service/build/reports/tests/test/
+        retention-days: 7

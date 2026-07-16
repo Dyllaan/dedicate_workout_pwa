@@ -1,0 +1,38 @@
+import {
+  AlertCircle,
+  Calendar,
+  CheckCircle2,
+  Cog,
+  Dumbbell,
+  Layers,
+  LineChart,
+  List,
+  Split,
+  XCircle,
+  User,
+  UserPlus,
+  LogOut,
+  BicepsFlexed,
+  Sparkles,
+  CircleCheck, Scale
+} from "lucide-react";
+
+export const ICONS = {
+  workout: Dumbbell,
+  split: Split,
+  programme: List,
+  week: Calendar,
+  block: Layers,
+  success: CheckCircle2,
+  error: XCircle,
+  notFound: AlertCircle,
+  settings: Cog,
+  progress: LineChart,
+  login: User,
+  register: UserPlus,
+  logout: LogOut,
+  exercise: BicepsFlexed,
+  insight: Sparkles,
+  average: Scale,
+  active: CircleCheck,
+} as const;

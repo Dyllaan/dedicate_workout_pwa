@@ -1,0 +1,13 @@
+ALTER TABLE workout_exercises
+    ADD COLUMN IF NOT EXISTS lift_role VARCHAR(50),
+    ADD COLUMN IF NOT EXISTS progression_mode VARCHAR(50),
+    ADD COLUMN IF NOT EXISTS microload_kg DOUBLE PRECISION,
+    ADD COLUMN IF NOT EXISTS include_in_competition_lift_trend BOOLEAN,
+    ADD COLUMN IF NOT EXISTS primary_benchmark VARCHAR(50);
+
+ALTER TABLE set_entries
+    ADD COLUMN IF NOT EXISTS set_role VARCHAR(50);
+
+ALTER TABLE programmes
+    ADD COLUMN IF NOT EXISTS goal_type VARCHAR(50) NOT NULL DEFAULT 'GENERAL_STRENGTH',
+    ADD COLUMN IF NOT EXISTS meet_date DATE;

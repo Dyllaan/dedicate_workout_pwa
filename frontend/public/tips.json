@@ -1,0 +1,102 @@
+[
+  {
+    "id": 1,
+    "tip": "Use RPE to auto-regulate daily training.",
+    "actionable_advice": "An RPE 8 means leaving 2 reps in reserve. Adjust weight based on daily fatigue."
+  },
+  {
+    "id": 2,
+    "tip": "Apply Daily Undulating Periodisation (DUP).",
+    "actionable_advice": "Rotate heavy/intensity, light/speed, and medium/hypertrophy days within the same week."
+  },
+  {
+    "id": 3,
+    "tip": "Create a rigid setup routine.",
+    "actionable_advice": "Cue your foot placement, grip, and bracing exactly the same way every set."
+  },
+  {
+    "id": 4,
+    "tip": "Schedule a deload every 4–8 weeks.",
+    "actionable_advice": "Drop total training volume by 30–50% to clear accumulated CNS fatigue."
+  },
+  {
+    "id": 5,
+    "tip": "Master the Valsalva maneuver.",
+    "actionable_advice": "Breathe deep into your belly, expand your obliques against your belt, and brace."
+  },
+  {
+    "id": 6,
+    "tip": "Isolate variables during progressive overload.",
+    "actionable_advice": "If you add weight to the bar, keep sets and reps identical to last week."
+  },
+  {
+    "id": 7,
+    "tip": "Target your specific sticking points.",
+    "actionable_advice": "Program paused benches for weakness off the chest, or board presses for lockout issues."
+  },
+  {
+    "id": 8,
+    "tip": "Prioritise sleep discipline.",
+    "actionable_advice": "Aim for 7–9 hours nightly to maximise growth hormone release and tissue repair."
+  },
+  {
+    "id": 9,
+    "tip": "Optimise bench press leg drive.",
+    "actionable_advice": "Drive heels down to push your torso up the bench without lifting your glutes."
+  },
+  {
+    "id": 10,
+    "tip": "Transition smoothly from hypertrophy to peaking.",
+    "actionable_advice": "Gradually drop reps (from 8–10 down to 1–3) while increasing intensity over 6–12 weeks."
+  },
+  {
+    "id": 11,
+    "tip": "Treat warm-ups like work sets.",
+    "actionable_advice": "Move the empty barbell with the same speed and intent as a 90% 1RM attempt."
+  },
+  {
+    "id": 12,
+    "tip": "Monitor bar velocity loss.",
+    "actionable_advice": "Stop a strength set if bar speed drops by more than 10–20%."
+  },
+  {
+    "id": 13,
+    "tip": "Pull the slack out of the deadlift bar.",
+    "actionable_advice": "Listen for the barbell 'click', wedge your hips, and pull with 50% tension before lifting."
+  },
+  {
+    "id": 14,
+    "tip": "Optimise pre-workout hydration and sodium.",
+    "actionable_advice": "Consume 500–1000mg of sodium and 20 oz of water 90 minutes before lifting."
+  },
+  {
+    "id": 15,
+    "tip": "Incorporate paused reps.",
+    "actionable_advice": "Hold a 1-second count at the bottom of the lift to eliminate momentum."
+  },
+  {
+    "id": 16,
+    "tip": "Balance push and pull volume.",
+    "actionable_advice": "Match every set of heavy pressing with a set of rows or face pulls."
+  },
+  {
+    "id": 17,
+    "tip": "Maintain a neutral neck in the squat.",
+    "actionable_advice": "Fix your eyes on the floor 4–6 feet ahead instead of looking up at a mirror."
+  },
+  {
+    "id": 18,
+    "tip": "Simulate competition conditions.",
+    "actionable_advice": "Practice your peak singles using formal commands (Squat, Bench, Rack)."
+  },
+  {
+    "id": 19,
+    "tip": "Utilise block periodisation.",
+    "actionable_advice": "Separate training into distinct phases: accumulation (volume), transmutation (strength), and realization (taper)."
+  },
+  {
+    "id": 20,
+    "tip": "Use active recovery on rest days.",
+    "actionable_advice": "Do 20–30 minutes of low-intensity walking or cycling to flush metabolic waste."
+  }
+]

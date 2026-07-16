@@ -1,0 +1,7 @@
+title = "dedicate_workout_pwa gitleaks config"
+
+[[allowlists]]
+description = "CI compose file contains local test credentials and embedded test keys"
+paths = [
+  '''docker-compose\.ci\.yml$''',
+]

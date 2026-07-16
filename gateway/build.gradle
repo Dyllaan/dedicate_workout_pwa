@@ -1,0 +1,76 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.3.4'
+	id 'io.spring.dependency-management' version '1.1.6'
+	id 'org.owasp.dependencycheck' version '12.2.1'
+}
+
+group = 'com.louisfiges.gateway'
+version = '2.0.6'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+def odcDataDir = System.getenv('ODC_DATA_DIR') ?: "${System.getProperty('user.home')}/.gradle/dependency-check-data"
+def odcAutoUpdate = System.getenv('ODC_AUTO_UPDATE')?.toBoolean()
+def odcOssIndexEnabled = System.getenv('ODC_OSS_INDEX_ENABLED')?.toBoolean()
+def odcCi = System.getenv('CI')?.toBoolean() ?: false
+
+dependencyCheck {
+	autoUpdate = odcAutoUpdate != null ? odcAutoUpdate : true
+	failBuildOnCVSS = 7.0
+	data {
+		directory = odcDataDir
+	}
+	analyzers {
+		ossIndex {
+			enabled = odcOssIndexEnabled != null ? odcOssIndexEnabled : !odcCi
+		}
+	}
+	nvd {
+		apiKey = System.getenv('NVD_API_KEY')
+	}
+}
+
+ext {
+	set('springCloudVersion', "2023.0.3")
+}
+
+springBoot {
+    buildInfo()
+}
+
+dependencies {
+    implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-reactor-resilience4j'
+    implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
+    implementation 'io.github.cdimascio:dotenv-java:3.1.0'
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    implementation 'org.slf4j:slf4j-api:2.0.16'
+
+    // rate limiting
+    implementation 'com.bucket4j:bucket4j-core:8.7.0'
+
+    // health checks
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
+}

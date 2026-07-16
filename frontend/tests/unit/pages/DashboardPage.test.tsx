@@ -1,0 +1,125 @@
+const authMock = vi.fn();
+const dashboardSummaryMock = vi.fn();
+const refreshDashboardMock = vi.fn();
+
+vi.mock("@/hooks/useAuth", () => ({
+  useAuth: () => authMock(),
+}));
+
+vi.mock("@/hooks/workout/useDashboardSummary", () => ({
+  useDashboardSummary: () => dashboardSummaryMock(),
+}));
+
+vi.mock("@/hooks/workout/useDashboardRefresh", () => ({
+  useDashboardRefresh: () => ({
+    refreshDashboard: refreshDashboardMock,
+    isRefreshing: false,
+  }),
+}));
+
+vi.mock("@/components/theme/ThemeToggle", () => ({
+  ThemeToggle: () => <div>Theme toggle</div>,
+}));
+
+vi.mock("@/components/dash/TrainingStatusBanner", () => ({
+  default: ({ splitId }: { splitId: string }) => <div>Training banner {splitId}</div>,
+}));
+
+vi.mock("@/components/dash/NextWorkoutCard", () => ({
+  default: () => <div>Next workout card</div>,
+}));
+
+vi.mock("@/components/dash/LiftSummaryCard.tsx", () => ({
+  default: () => <div>Lift summary card</div>,
+}));
+
+vi.mock("@/components/dash/TipCarousel.tsx", () => ({
+  default: () => <div>Tip carousel</div>,
+}));
+
+vi.mock("@/components/onboarding/OnboardingDialog", () => ({
+  default: ({ open }: { open: boolean }) => (open ? <div>Onboarding open</div> : null),
+}));
+
+import { screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import DashboardPage from "@/pages/DashboardPage";
+import { buildDashboardSummary, buildSplit, buildUser } from "tests/shared/builders";
+import { renderWithProviders } from "tests/setup/test-utils";
+
+describe("DashboardPage", () => {
+  beforeEach(() => {
+    refreshDashboardMock.mockReset();
+  });
+
+  it("shows a loading subtitle while the summary query is resolving", () => {
+    authMock.mockReturnValue({ user: buildUser({ username: "Louis" }) });
+    dashboardSummaryMock.mockReturnValue({
+      data: undefined,
+      isLoading: true,
+    });
+
+    renderWithProviders(<DashboardPage />);
+
+    expect(screen.getByText("Loading your training summary.")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Create Workout/i })).toBeInTheDocument();
+  });
+
+  it("renders the signed-in dashboard shell and opens onboarding", async () => {
+    const user = userEvent.setup();
+    vi.setSystemTime(new Date("2026-04-26T09:00:00.000Z"));
+    const split = buildSplit({ name: "Upper Lower Split" });
+
+    authMock.mockReturnValue({ user: buildUser({ username: "Louis" }) });
+    dashboardSummaryMock.mockReturnValue({
+      data: buildDashboardSummary({
+        activeSplit: { id: split.id, name: split.name },
+      }),
+      isLoading: false,
+    });
+
+    renderWithProviders(<DashboardPage />);
+
+    expect(screen.getByText(/Morning/)).toHaveTextContent("Morning Louis.");
+    expect(screen.getByText("Active split: Upper Lower Split.")).toBeInTheDocument();
+    expect(screen.getByText("Next workout card")).toBeInTheDocument();
+    expect(screen.getByText(`Training banner ${split.id}`)).toBeInTheDocument();
+    expect(screen.getByText("Lift summary card")).toBeInTheDocument();
+    expect(screen.getByText("Tip carousel")).toBeInTheDocument();
+    expect(screen.getByText("Theme toggle")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Refresh dashboard" })).toBeVisible();
+
+    await user.click(screen.getByRole("button", { name: "Help" }));
+    expect(screen.getByText("Onboarding open")).toBeInTheDocument();
+  });
+
+  it("manually refreshes dashboard analytics from the header", async () => {
+    const user = userEvent.setup();
+    authMock.mockReturnValue({ user: buildUser({ username: "Louis" }) });
+    dashboardSummaryMock.mockReturnValue({
+      data: buildDashboardSummary(),
+      isLoading: false,
+    });
+
+    renderWithProviders(<DashboardPage />);
+
+    await user.click(screen.getByRole("button", { name: "Refresh dashboard" }));
+
+    expect(refreshDashboardMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("shows the no-active-split state", () => {
+    vi.setSystemTime(new Date("2026-04-26T18:00:00.000Z"));
+
+    authMock.mockReturnValue({ user: buildUser({ username: "Louis" }) });
+    dashboardSummaryMock.mockReturnValue({
+      data: buildDashboardSummary({ activeSplit: null }),
+      isLoading: false,
+    });
+
+    renderWithProviders(<DashboardPage />);
+
+    expect(screen.getByText(/Evening/)).toHaveTextContent("Evening Louis.");
+    expect(screen.getByText("No active split yet. Set one in periodisation to tailor the dashboard.")).toBeInTheDocument();
+  });
+});

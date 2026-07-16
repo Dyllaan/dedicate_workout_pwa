@@ -1,0 +1,15 @@
+**
+!auth-service/
+!auth-service/**
+!gateway/
+!gateway/**
+!analysis/
+!analysis/**
+!workout_service/
+!workout_service/**
+!ops/
+!ops/scripts/
+!ops/scripts/jlink-runtime.sh
+**/build
+**/.gradle
+**/out

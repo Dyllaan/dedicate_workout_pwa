@@ -1,0 +1,86 @@
+name: Frontend Tests
+
+on:
+  pull_request:
+    branches: [main, feature/**, Feature/**, bugfix/**, Bugfix/**]
+    paths:
+      - "frontend/**"
+      - "ops/local/docker-compose.yml"
+      - "ops/local/.env.ci.example"
+      - ".github/workflows/frontend-tests.yml"
+      - ".github/workflows/deploy.yml"
+      - "ops/scripts/wait_for_gateway_stack.sh"
+  push:
+    branches: [main, feature/**, Feature/**, bugfix/**, Bugfix/**]
+    paths:
+      - "frontend/**"
+      - "ops/local/docker-compose.yml"
+      - "ops/local/.env.ci.example"
+      - ".github/workflows/frontend-tests.yml"
+      - ".github/workflows/deploy.yml"
+      - "ops/scripts/wait_for_gateway_stack.sh"
+
+jobs:
+  frontend-tests:
+    runs-on: ubuntu-latest
+    env:
+      CI_COMPOSE_FILE: ops/local/docker-compose.yml
+      CI_COMPOSE_ENV_FILE: /tmp/ops-local-ci.env
+    defaults:
+      run:
+        working-directory: ./frontend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: ./frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium webkit
+
+      - name: Run unit coverage gate
+        run: npm run test:coverage
+
+      - name: Run mocked browser tests
+        run: npm run test:e2e
+
+      - name: Generate CI compose env file
+        working-directory: .
+        run: cp ops/local/.env.ci.example "$CI_COMPOSE_ENV_FILE"
+
+      - name: Validate CI compose config
+        working-directory: .
+        run: docker compose --env-file "$CI_COMPOSE_ENV_FILE" -f "$CI_COMPOSE_FILE" config
+
+      - name: Ensure shared Docker network exists
+        working-directory: .
+        run: docker network inspect dedicate_network >/dev/null 2>&1 || docker network create dedicate_network
+
+      - name: Start backend stack for smoke tests
+        working-directory: .
+        run: docker compose --env-file "$CI_COMPOSE_ENV_FILE" -f "$CI_COMPOSE_FILE" up -d dedicate-auth-db dedicate-auth-service dedicate-workout-db dedicate-workout-service api-gateway
+
+      - name: Wait for gateway stack readiness
+        working-directory: .
+        run: bash ops/scripts/wait_for_gateway_stack.sh
+
+      - name: Run real-stack smoke tests
+        run: npm run test:e2e:smoke
+
+      - name: Stop backend stack
+        if: always()
+        working-directory: .
+        run: |
+          if [ ! -f "$CI_COMPOSE_ENV_FILE" ]; then
+            cp ops/local/.env.ci.example "$CI_COMPOSE_ENV_FILE"
+          fi
+          docker compose --env-file "$CI_COMPOSE_ENV_FILE" -f "$CI_COMPOSE_FILE" down -v

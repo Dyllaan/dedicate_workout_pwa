@@ -1,0 +1,110 @@
+#
+# Production application stack.
+# Pair it with `../dbs/docker-compose.yml` for bundled stateful services, or
+# override the connection env vars below to point at managed infrastructure.
+#
+services:
+  frontend:
+    image: ${DOCKER_REGISTRY:-dflouis}/dedicate-frontend:${IMAGE_TAG:?Set IMAGE_TAG to an immutable image tag}
+    pull_policy: always
+    container_name: dedicate-frontend
+    environment:
+      VITE_API_URL: ${VITE_API_URL:-/api/}
+    depends_on:
+      api-gateway:
+        condition: service_started
+    ports:
+      - "${FRONTEND_PORT:-80}:80"
+    restart: unless-stopped
+    networks:
+      - dedicate_network
+    labels:
+      dedicate_logging_scrape: "true"
+      dedicate_logging_service: "frontend"
+      dedicate_logging_environment: "production"
+      dedicate_logging_component: "nginx"
+
+  api-gateway:
+    image: ${DOCKER_REGISTRY:-dflouis}/dedicate-api-gateway:${IMAGE_TAG:?Set IMAGE_TAG to an immutable image tag}
+    pull_policy: always
+    container_name: dedicate-api-gateway
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      JWT_PUBLIC_KEY_B64: ${JWT_PUBLIC_KEY_B64:?Set JWT_PUBLIC_KEY_B64}
+      JWT_ISSUER: ${JWT_ISSUER:?Set JWT_ISSUER}
+      URI_WORKOUT_SERVICE: http://dedicate-workout-service:8081/
+      URI_AUTH_SERVICE: http://dedicate-auth-service:8010/
+    depends_on:
+      dedicate-auth-service:
+        condition: service_started
+      dedicate-workout-service:
+        condition: service_started
+    restart: unless-stopped
+    networks:
+      - dedicate_network
+    labels:
+      dedicate_logging_scrape: "true"
+      dedicate_logging_service: "api-gateway"
+      dedicate_logging_environment: "production"
+      dedicate_logging_component: "gateway"
+
+  dedicate-auth-service:
+    image: ${DOCKER_REGISTRY:-dflouis}/dedicate-auth-service:${IMAGE_TAG:?Set IMAGE_TAG to an immutable image tag}
+    pull_policy: always
+    container_name: dedicate-auth-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: ${AUTH_DATABASE_URL:-jdbc:postgresql://dedicate-auth-db:5432/auth?sslmode=disable}
+      SPRING_DATASOURCE_USERNAME: ${AUTH_DATABASE_USERNAME:-auth_user}
+      SPRING_DATASOURCE_PASSWORD: ${AUTH_DATABASE_PASSWORD:?Set AUTH_DATABASE_PASSWORD}
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+      DB_SSL_ENABLED: ${AUTH_DB_SSL_ENABLED:-false}
+      DB_SSL_MODE: ${AUTH_DB_SSL_MODE:-disable}
+      SPRING_DATA_REDIS_HOST: ${AUTH_REDIS_HOST:-dedicate-auth-redis}
+      SPRING_DATA_REDIS_PORT: ${AUTH_REDIS_PORT:-6379}
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: ${KAFKA_BOOTSTRAP_SERVERS:-dedicate-kafka:9092}
+      JWT_PRIVATE_KEY_B64: ${JWT_PRIVATE_KEY_B64:?Set JWT_PRIVATE_KEY_B64}
+      JWT_PUBLIC_KEY_B64: ${JWT_PUBLIC_KEY_B64:?Set JWT_PUBLIC_KEY_B64}
+      JWT_ISSUER: ${JWT_ISSUER:?Set JWT_ISSUER}
+      TEMP_MFA_SECRET_KEY: ${TEMP_MFA_SECRET_KEY:?Set TEMP_MFA_SECRET_KEY}
+    restart: unless-stopped
+    networks:
+      - dedicate_network
+    labels:
+      dedicate_logging_scrape: "true"
+      dedicate_logging_service: "auth-service"
+      dedicate_logging_environment: "production"
+      dedicate_logging_component: "spring"
+
+  dedicate-workout-service:
+    image: ${DOCKER_REGISTRY:-dflouis}/dedicate-workout-service:${IMAGE_TAG:?Set IMAGE_TAG to an immutable image tag}
+    pull_policy: always
+    container_name: dedicate-workout-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: ${WORKOUT_DATABASE_URL:-jdbc:postgresql://dedicate-workout-db:5432/workout?sslmode=disable}
+      SPRING_DATASOURCE_USERNAME: ${WORKOUT_DATABASE_USERNAME:-workout_user}
+      SPRING_DATASOURCE_PASSWORD: ${WORKOUT_DATABASE_PASSWORD:?Set WORKOUT_DATABASE_PASSWORD}
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+      DB_SSL_ENABLED: ${WORKOUT_DB_SSL_ENABLED:-false}
+      DB_SSL_MODE: ${WORKOUT_DB_SSL_MODE:-disable}
+      WORKOUT_REDIS_HOST: ${WORKOUT_REDIS_HOST:-dedicate-workout-redis}
+      WORKOUT_REDIS_PORT: ${WORKOUT_REDIS_PORT:-6379}
+      APP_ANALYTICS_CACHE_ENABLED: ${APP_ANALYTICS_CACHE_ENABLED:-true}
+      APP_ANALYTICS_CACHE_REDIS_ENABLED: ${APP_ANALYTICS_CACHE_REDIS_ENABLED:-true}
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: ${KAFKA_BOOTSTRAP_SERVERS:-dedicate-kafka:9092}
+      JWT_PUBLIC_KEY_B64: ${JWT_PUBLIC_KEY_B64:?Set JWT_PUBLIC_KEY_B64}
+      JWT_ISSUER: ${JWT_ISSUER:?Set JWT_ISSUER}
+    restart: unless-stopped
+    networks:
+      - dedicate_network
+    labels:
+      dedicate_logging_scrape: "true"
+      dedicate_logging_service: "workout-service"
+      dedicate_logging_environment: "production"
+      dedicate_logging_component: "spring"
+
+networks:
+  dedicate_network:
+    name: dedicate_network
+    external: true

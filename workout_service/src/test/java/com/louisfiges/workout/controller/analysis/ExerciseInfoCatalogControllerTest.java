@@ -2,8 +2,8 @@ package com.louisfiges.workout.controller.analysis;
 
 import com.louisfiges.workout.dto.responses.PagedResponse;
 import com.louisfiges.workout.dto.responses.heatmap.ExerciseInfoCatalogItemDTO;
-import com.louisfiges.workout.service.workout.ExerciseInfoCatalogService;
 
+import com.louisfiges.workout.service.workout.ExerciseInfoCatalogService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

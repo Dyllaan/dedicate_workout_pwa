@@ -13,9 +13,9 @@ import com.louisfiges.workout.repository.SplitRepository;
 import com.louisfiges.workout.service.workout.WorkoutTemplateService;
 import com.louisfiges.workout.repository.WorkoutEntryRepository;
 import com.louisfiges.workout.service.analysis.AnalysisCacheEvictor;
+import com.louisfiges.workout.service.mapper.SplitMapper;
+import com.louisfiges.workout.util.PaginationUtils;
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,49 +30,49 @@ public class SplitService {
     private final WorkoutTemplateService workoutTemplateService;
     private final WorkoutEntryRepository workoutEntryRepository;
     private final AnalysisCacheEvictor analysisCacheEvictor;
+    private final SplitMapper splitMapper;
 
-    @Autowired
     public SplitService(
             SplitRepository splitRepository,
             WorkoutTemplateService workoutTemplateService,
             WorkoutEntryRepository workoutEntryRepository,
-            AnalysisCacheEvictor analysisCacheEvictor) {
+            AnalysisCacheEvictor analysisCacheEvictor,
+            SplitMapper splitMapper) {
         this.splitRepository = splitRepository;
         this.workoutTemplateService = workoutTemplateService;
         this.workoutEntryRepository = workoutEntryRepository;
         this.analysisCacheEvictor = analysisCacheEvictor;
+        this.splitMapper = splitMapper;
     }
 
     @Transactional(readOnly = true)
     public List<SplitDTO> getAllByUser(UUID userId) {
         return splitRepository.findAllByUserIdWithWorkouts(userId)
                 .stream()
-                .map(Split::toDTO)
+                .map(splitMapper::toDTO)
                 .toList();
     }
 
     @Transactional(readOnly = true)
     public PagedResponse<SplitDTO> getAllByUser(UUID userId, int page, int size) {
-        int safePage = Math.max(0, page);
-        int safeSize = Math.min(Math.max(1, size), 25);
         return PagedResponse.from(
-                splitRepository.findPageByUserIdWithWorkouts(userId, PageRequest.of(safePage, safeSize))
-                        .map(Split::toDTO)
+                splitRepository.findPageByUserIdWithWorkouts(userId, PaginationUtils.toPageable(page, size))
+                        .map(splitMapper::toDTO)
         );
     }
 
     @Transactional(readOnly = true)
     public SplitDTO getActiveSplit(UUID userId) {
-        return splitRepository.findActiveByUserIdWithWorkouts(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("No active split found"))
-                .toDTO();
+        Split activeSplit = splitRepository.findActiveByUserIdWithWorkouts(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("No active split found"));
+        return splitMapper.toDTO(activeSplit);
     }
 
     @Transactional(readOnly = true)
     public SplitDTO getById(UUID id, UUID userId) {
-        return splitRepository.findByIdAndUserIdWithWorkouts(id, userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Split not found"))
-                .toDTO();
+        Split foundSplit = splitRepository.findByIdAndUserIdWithWorkouts(id, userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Split not found"));
+        return splitMapper.toDTO(foundSplit);
     }
 
     @Transactional
@@ -90,7 +90,8 @@ public class SplitService {
             ));
         }
 
-        SplitDTO response = splitRepository.saveAndFlush(split).toDTO();
+        Split savedSplit = splitRepository.saveAndFlush(split);
+        SplitDTO response = splitMapper.toDTO(savedSplit);
         analysisCacheEvictor.evictAnalysisCachesAfterCommit();
         return response;
     }
@@ -119,7 +120,8 @@ public class SplitService {
             }
         }
 
-        SplitDTO response = splitRepository.saveAndFlush(split).toDTO();
+        Split savedSplit = splitRepository.saveAndFlush(split);
+        SplitDTO response = splitMapper.toDTO(savedSplit);
         analysisCacheEvictor.evictAnalysisCachesAfterCommit();
         return response;
     }
@@ -138,7 +140,8 @@ public class SplitService {
         Split split = splitRepository.findByIdAndUserIdWithWorkouts(id, userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Split not found"));
         split.setActive(true);
-        SplitDTO response = splitRepository.saveAndFlush(split).toDTO();
+        Split savedSplit = splitRepository.saveAndFlush(split);
+        SplitDTO response = splitMapper.toDTO(savedSplit);
         analysisCacheEvictor.evictAnalysisCachesAfterCommit();
         return response;
     }
@@ -221,7 +224,8 @@ public class SplitService {
             }
         }
 
-        SplitDTO response = splitRepository.saveAndFlush(split).toDTO();
+        Split savedSplit = splitRepository.saveAndFlush(split);
+        SplitDTO response = splitMapper.toDTO(savedSplit);
         analysisCacheEvictor.evictAnalysisCachesAfterCommit();
         return response;
     }
@@ -237,7 +241,8 @@ public class SplitService {
             .orElseThrow(() -> new ResourceNotFoundException("Workout not found in split"));
 
         assignment.setSessionsPerWeek(sessionsPerWeek);
-        SplitDTO response = splitRepository.saveAndFlush(split).toDTO();
+        Split savedSplit = splitRepository.saveAndFlush(split);
+        SplitDTO response = splitMapper.toDTO(savedSplit);
         analysisCacheEvictor.evictAnalysisCachesAfterCommit();
         return response;
     }

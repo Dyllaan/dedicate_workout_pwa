@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-vi.mock("@/startup/AppVersionRecovery", () => ({
+vi.mock("@/features/startup/components/AppVersionRecovery", () => ({
   default: ({ children }: { children: ReactNode }) => <>{children}</>,
 }));
 

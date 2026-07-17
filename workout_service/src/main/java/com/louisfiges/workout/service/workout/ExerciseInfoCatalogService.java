@@ -4,6 +4,8 @@ import com.louisfiges.workout.dao.workout.ExerciseInfo;
 import com.louisfiges.workout.dto.responses.PagedResponse;
 import com.louisfiges.workout.dto.responses.heatmap.ExerciseInfoCatalogItemDTO;
 import com.louisfiges.workout.repository.ExerciseInfoRepository;
+import com.louisfiges.workout.service.mapper.ExerciseInfoMapper;
+import com.louisfiges.workout.util.PaginationUtils;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,9 +28,11 @@ public class ExerciseInfoCatalogService {
     );
 
     private final ExerciseInfoRepository exerciseInfoRepository;
+    private final ExerciseInfoMapper exerciseInfoMapper;
 
-    public ExerciseInfoCatalogService(ExerciseInfoRepository exerciseInfoRepository) {
+    public ExerciseInfoCatalogService(ExerciseInfoRepository exerciseInfoRepository, ExerciseInfoMapper exerciseInfoMapper) {
         this.exerciseInfoRepository = exerciseInfoRepository;
+        this.exerciseInfoMapper = exerciseInfoMapper;
     }
 
     public List<ExerciseInfoCatalogItemDTO> searchCatalog(String query, Integer limit) {
@@ -39,8 +43,8 @@ public class ExerciseInfoCatalogService {
     }
 
     public PagedResponse<ExerciseInfoCatalogItemDTO> searchCatalog(String query, int page, int size) {
-        int safePage = Math.max(0, page);
-        int safeSize = Math.min(Math.max(1, size), 25);
+        int safePage = PaginationUtils.safePage(page);
+        int safeSize = PaginationUtils.safeSize(size);
         List<ExerciseInfoCatalogItemDTO> results = searchCatalogInternal(query);
         int fromIndex = Math.min(results.size(), safePage * safeSize);
         int toIndex = Math.min(results.size(), fromIndex + safeSize);
@@ -55,8 +59,8 @@ public class ExerciseInfoCatalogService {
     }
 
     public PagedResponse<ExerciseInfoCatalogItemDTO> getQuickPicks(int page, int size) {
-        int safePage = Math.max(0, page);
-        int safeSize = Math.min(Math.max(1, size), 25);
+        int safePage = PaginationUtils.safePage(page);
+        int safeSize = PaginationUtils.safeSize(size);
         List<ExerciseInfoCatalogItemDTO> quickPicks = buildQuickPicks();
         int fromIndex = Math.min(quickPicks.size(), safePage * safeSize);
         int toIndex = Math.min(quickPicks.size(), fromIndex + safeSize);
@@ -71,7 +75,7 @@ public class ExerciseInfoCatalogService {
 
         if (trimmed.isBlank()) {
             return catalog.stream()
-                    .map(this::toCatalogItemDto)
+                    .map(exerciseInfoMapper::toDTO)
                     .toList();
         }
 
@@ -87,7 +91,7 @@ public class ExerciseInfoCatalogService {
                         .thenComparing(CatalogSearchCandidate::matchedTokenCount).reversed()
                         .thenComparing(c -> c.item().getName(), String.CASE_INSENSITIVE_ORDER)
                         .thenComparing(c -> emptyToNull(c.item().getVariation()) == null ? "" : c.item().getVariation(), String.CASE_INSENSITIVE_ORDER))
-                .map(c -> toCatalogItemDto(c.item()))
+                .map(c -> exerciseInfoMapper.toDTO(c.item()))
                 .toList();
     }
 
@@ -99,21 +103,11 @@ public class ExerciseInfoCatalogService {
         for (String label : QUICK_PICK_EXERCISE_NAMES) {
             findBestQuickPickMatch(label, catalog).ifPresent(item -> {
                 if (seenNames.add(normalizeCatalogSearchValue(item.getName()))) {
-                    quickPicks.add(toCatalogItemDto(item));
+                    quickPicks.add(exerciseInfoMapper.toDTO(item));
                 }
             });
         }
         return quickPicks;
-    }
-
-    private ExerciseInfoCatalogItemDTO toCatalogItemDto(ExerciseInfo item) {
-        return new ExerciseInfoCatalogItemDTO(
-                item.getId(),
-                item.getName(),
-                item.getVariation(),
-                lookupName(item.getEquipmentLookup()),
-                lookupName(item.getMainMuscleLookup())
-        );
     }
 
     private java.util.Optional<ExerciseInfo> findBestQuickPickMatch(String label, List<ExerciseInfo> catalog) {

@@ -1,5 +1,5 @@
 import { fireEvent, screen } from "@testing-library/react";
-import MfaCodeInput from "@/components/auth/MfaCodeInput";
+import MfaCodeInput from "@/features/auth/components/MfaCodeInput";
 import { renderWithProviders } from "tests/setup/test-utils";
 
 describe("MfaCodeInput", () => {

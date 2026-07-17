@@ -11,6 +11,7 @@ import com.louisfiges.workout.dto.responses.ExerciseDefinitionDTO;
 import com.louisfiges.workout.dto.responses.WorkoutTemplateDTO;
 import com.louisfiges.workout.heatmap.MappingSource;
 import com.louisfiges.workout.repository.ExerciseConfigRepository;
+import com.louisfiges.workout.service.mapper.ExerciseConfigMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,9 @@ class ExerciseConfigPersistenceIT extends BaseIntegrationTest {
 
     @Autowired
     private ExerciseConfigRepository exerciseConfigRepository;
+
+    @Autowired
+    private ExerciseConfigMapper exerciseConfigMapper;
 
     @Autowired
     private WorkoutTemplateService workoutTemplateService;
@@ -67,7 +71,7 @@ class ExerciseConfigPersistenceIT extends BaseIntegrationTest {
         );
 
         assertThat(owned).isPresent();
-        assertThat(owned.get().toDTO().goalSets()).isEqualTo(3);
+        assertThat(exerciseConfigMapper.toDTO(owned.get()).goalSets()).isEqualTo(3);
         assertThat(foreign).isEmpty();
 
         List<ExerciseConfig> ownedConfigs = exerciseConfigRepository.findAllByWorkoutTemplateIdAndWorkoutTemplateUserId(

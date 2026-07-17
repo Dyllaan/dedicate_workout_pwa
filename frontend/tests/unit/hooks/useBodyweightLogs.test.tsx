@@ -2,7 +2,7 @@ import type { PropsWithChildren } from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { renderHook, waitFor, act } from "@testing-library/react";
 import { workoutApi } from "@/api/api";
-import useBodyweightLogs from "@/hooks/workout/useBodyweightLogs";
+import useBodyweightLogs from "@/features/bodyweight/hooks/useBodyweightLogs";
 import { buildBodyweightLog } from "tests/shared/builders";
 import { createTestQueryClient } from "tests/setup/test-utils";
 
@@ -18,7 +18,7 @@ vi.mock("@/api/api", async (importActual) => {
   };
 });
 
-vi.mock("@/hooks/useAuth", () => ({
+vi.mock("@/features/auth/hooks/useAuth", () => ({
   useAuth: () => ({ user: { accessToken: "test-token" } }),
 }));
 

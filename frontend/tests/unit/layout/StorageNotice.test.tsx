@@ -1,7 +1,7 @@
 import { fireEvent, screen } from "@testing-library/react";
 import StorageNotice, {
   STORAGE_NOTICE_ACK_KEY,
-} from "@/components/layout/StorageNotice";
+} from "@/components/layout/app/StorageNotice";
 import { createAuthContextValue, renderWithProviders } from "tests/setup/test-utils";
 
 describe("StorageNotice", () => {

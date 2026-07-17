@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import type { Programme } from "@/types/Periodisation";
-import { buildBlockTabPath, resolveBlockTabSelection } from "@/utils/periodisationTabs";
+import type { Programme } from "@/features/periodisation/types/Periodisation";
+import { buildBlockTabPath, resolveBlockTabSelection } from "@/features/periodisation/utils/periodisationTabs";
 
 function makeProgramme(overrides: Partial<Programme> = {}): Programme {
   return {

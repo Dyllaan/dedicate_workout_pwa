@@ -14,7 +14,9 @@ import com.louisfiges.workout.exception.exceptions.ResourceNotFoundException;
 import com.louisfiges.workout.repository.WorkoutEntryRepository;
 import com.louisfiges.workout.repository.WorkoutTemplateRepository;
 import com.louisfiges.workout.service.analysis.AnalysisCacheEvictor;
+import com.louisfiges.workout.service.mapper.WorkoutEntryMapper;
 import com.louisfiges.workout.validation.RestTimeValidator;
+import com.louisfiges.workout.util.PaginationUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,18 +37,21 @@ public class WorkoutEntryService {
     private final ExerciseDefinitionService exerciseDefinitionService;
     private final ReadinessService readinessService;
     private final AnalysisCacheEvictor analysisCacheEvictor;
+    private final WorkoutEntryMapper workoutEntryMapper;
 
     public WorkoutEntryService(
             WorkoutEntryRepository workoutEntryRepository,
             WorkoutTemplateRepository workoutTemplateRepository,
             ExerciseDefinitionService exerciseDefinitionService,
             ReadinessService readinessService,
-            AnalysisCacheEvictor analysisCacheEvictor) {
+            AnalysisCacheEvictor analysisCacheEvictor,
+            WorkoutEntryMapper workoutEntryMapper) {
         this.workoutEntryRepository = workoutEntryRepository;
         this.workoutTemplateRepository = workoutTemplateRepository;
         this.exerciseDefinitionService = exerciseDefinitionService;
         this.readinessService = readinessService;
         this.analysisCacheEvictor = analysisCacheEvictor;
+        this.workoutEntryMapper = workoutEntryMapper;
     }
 
     @Transactional(readOnly = true)
@@ -58,27 +63,26 @@ public class WorkoutEntryService {
     public List<WorkoutEntryDTO> getAllByUser(UUID userId, UUID workoutTemplateId) {
         if (workoutTemplateId != null) {
             return workoutEntryRepository.findHistoryByTemplateIdAndUserId(workoutTemplateId, userId)
-                    .stream().map(WorkoutEntry::toDTO).toList();
+                    .stream().map(workoutEntryMapper::toDTO).toList();
         }
         return workoutEntryRepository.findHistoryByUserId(userId)
-                .stream().map(WorkoutEntry::toDTO).toList();
+                .stream().map(workoutEntryMapper::toDTO).toList();
     }
 
     @Transactional(readOnly = true)
     public PagedResponse<WorkoutEntryDTO> getAllByUser(UUID userId, UUID workoutTemplateId, int page, int size) {
-        int safePage = Math.max(0, page);
-        int safeSize = Math.min(Math.max(1, size), 25);
+        var pageable = PaginationUtils.toPageable(page, size);
         if (workoutTemplateId != null) {
             return PagedResponse.from(
                     workoutEntryRepository.findDetailedHistoryPageByTemplateIdAndUserId(
-                            workoutTemplateId, userId, PageRequest.of(safePage, safeSize)
-                    ).map(WorkoutEntry::toDTO)
+                            workoutTemplateId, userId, pageable
+                    ).map(workoutEntryMapper::toDTO)
             );
         }
         return PagedResponse.from(
                 workoutEntryRepository.findDetailedHistoryPageByUserId(
-                        userId, PageRequest.of(safePage, safeSize)
-                ).map(WorkoutEntry::toDTO)
+                        userId, pageable
+                ).map(workoutEntryMapper::toDTO)
         );
     }
 
@@ -87,27 +91,25 @@ public class WorkoutEntryService {
         Instant start = startDate.atStartOfDay().toInstant(ZoneOffset.UTC);
         Instant end = endDate.plusDays(1L).atStartOfDay().minusNanos(1L).toInstant(ZoneOffset.UTC);
         return workoutEntryRepository.findHistoryByUserIdAndCreatedAtBetween(userId, start, end)
-                .stream().map(WorkoutEntry::toDTO).toList();
+                .stream().map(workoutEntryMapper::toDTO).toList();
     }
 
     @Transactional(readOnly = true)
     public PagedResponse<WorkoutEntryDTO> getByDateRange(UUID userId, LocalDate startDate, LocalDate endDate, int page, int size) {
         Instant start = startDate.atStartOfDay().toInstant(ZoneOffset.UTC);
         Instant end = endDate.plusDays(1L).atStartOfDay().minusNanos(1L).toInstant(ZoneOffset.UTC);
-        int safePage = Math.max(0, page);
-        int safeSize = Math.min(Math.max(1, size), 25);
         return PagedResponse.from(
                 workoutEntryRepository.findDetailedHistoryPageByUserIdAndCreatedAtBetween(
-                        userId, start, end, PageRequest.of(safePage, safeSize)
-                ).map(WorkoutEntry::toDTO)
+                        userId, start, end, PaginationUtils.toPageable(page, size)
+                ).map(workoutEntryMapper::toDTO)
         );
     }
 
     @Transactional(readOnly = true)
     public WorkoutEntryDTO getById(UUID id, UUID userId) {
-        return workoutEntryRepository.findDetailedByIdAndUserId(id, userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Workout entry not found"))
-                .toDTO();
+        WorkoutEntry entry = workoutEntryRepository.findDetailedByIdAndUserId(id, userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Workout entry not found"));
+        return workoutEntryMapper.toDTO(entry);
     }
 
     @Transactional
@@ -117,11 +119,11 @@ public class WorkoutEntryService {
         WorkoutEntry saved = workoutEntryRepository.save(
                 new WorkoutEntry(template, userId, buildExerciseEntries(request.exercises(), userId), request.notes())
         );
-        if (request.readiness() != null && readinessService != null) {
+        if (request.readiness() != null) {
             readinessService.createCheckIn(userId, saved.getId(), request.readiness());
         }
         analysisCacheEvictor.evictAnalysisCachesAfterCommit();
-        return saved.toDTO();
+        return workoutEntryMapper.toDTO(saved);
     }
 
     @Transactional
@@ -132,7 +134,8 @@ public class WorkoutEntryService {
         workoutEntryRepository.flush();
         entry.getExercises().addAll(buildExerciseEntries(request.exercises(), userId));
         entry.setNotes(request.notes());
-        WorkoutEntryDTO response = workoutEntryRepository.save(entry).toDTO();
+        WorkoutEntry savedEntry = workoutEntryRepository.save(entry);
+        WorkoutEntryDTO response = workoutEntryMapper.toDTO(savedEntry);
         analysisCacheEvictor.evictAnalysisCachesAfterCommit();
         return response;
     }
@@ -148,16 +151,14 @@ public class WorkoutEntryService {
     @Transactional(readOnly = true)
     public List<WorkoutEntryDTO> getRecentEntries(UUID userId, int limit) {
         return workoutEntryRepository.findHistoryByUserId(userId, PageRequest.of(0, Math.max(1, limit)))
-                .stream().map(WorkoutEntry::toDTO).toList();
+                .stream().map(workoutEntryMapper::toDTO).toList();
     }
 
     @Transactional(readOnly = true)
     public PagedResponse<WorkoutEntryDTO> getRecentEntries(UUID userId, int page, int size) {
-        int safePage = Math.max(0, page);
-        int safeSize = Math.clamp(size, 1, 25);
         return PagedResponse.from(
-                workoutEntryRepository.findHistoryPageByUserId(userId, PageRequest.of(safePage, safeSize))
-                        .map(WorkoutEntry::toDTO)
+                workoutEntryRepository.findHistoryPageByUserId(userId, PaginationUtils.toPageable(page, size))
+                        .map(workoutEntryMapper::toDTO)
         );
     }
 

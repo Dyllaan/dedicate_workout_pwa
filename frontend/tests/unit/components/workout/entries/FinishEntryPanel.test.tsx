@@ -1,13 +1,13 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
-import type { FinishEntryAnalysisContext } from "@/utils/workoutEntryAnalysis";
-import type { WorkoutEntryExerciseDraft } from "@/hooks/forms/workoutEntryFormTypes";
-import type { WorkoutEntry } from "@/types/Workout";
-import { createExerciseIdentityDraft } from "@/types/exerciseIdentity";
-import FinishEntryPanel from "@/components/workout/entries/FinishEntryPanel";
+import type { FinishEntryAnalysisContext } from "@/features/analysis/utils/workoutEntryAnalysis";
+import type { WorkoutEntryExerciseDraft } from "@/features/workout/entries/types/workoutEntryFormTypes";
+import type { WorkoutEntry } from "@/features/workout/types/Workout";
+import { createExerciseIdentityDraft } from "@/features/workout/entries/types/ExerciseIdentity";
+import FinishEntryPanel from "@/features/workout/entries/components/panels/FinishEntryPanel";
 
-vi.mock("@/hooks/useUnitPreference", () => ({
+vi.mock("@/features/preferences/unit/hooks/useUnitPreference", () => ({
   useUnitPreference: () => ({
     format: (value: number) => `${value}kg`,
   }),

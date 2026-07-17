@@ -1,7 +1,5 @@
 package com.louisfiges.workout.dao.workout;
 
-import com.louisfiges.workout.dao.interfaces.DAO;
-import com.louisfiges.workout.dto.responses.SetEntryDTO;
 import com.louisfiges.workout.analysis.SetRole;
 import jakarta.persistence.*;
 
@@ -9,7 +7,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "set_entries")
-public class SetEntry implements DAO<SetEntryDTO> {
+public class SetEntry {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -34,6 +32,9 @@ public class SetEntry implements DAO<SetEntryDTO> {
     @Column(name = "rest_before_seconds")
     private Integer restBeforeSeconds;
 
+    @Version
+    private Long version = 0L;
+
     public SetEntry() { }
 
     public SetEntry(int reps, Double weight, Double rpe, String notes) {
@@ -51,11 +52,6 @@ public class SetEntry implements DAO<SetEntryDTO> {
         this.notes = notes;
         this.setRole = setRole;
         this.restBeforeSeconds = restBeforeSeconds;
-    }
-
-    @Override
-    public SetEntryDTO toDTO() {
-        return new SetEntryDTO(id, reps, weight, rpe, notes, setRole, restBeforeSeconds);
     }
 
     public UUID getId() { return id; }

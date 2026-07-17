@@ -17,6 +17,7 @@ import com.louisfiges.workout.repository.WorkoutTemplateRepository;
 import com.louisfiges.workout.exception.exceptions.BadRequestException;
 import com.louisfiges.workout.exception.exceptions.ResourceNotFoundException;
 import com.louisfiges.workout.service.analysis.AnalysisCacheEvictor;
+import com.louisfiges.workout.service.mapper.ExerciseDefinitionMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -69,6 +70,8 @@ class ExerciseDefinitionServiceCollapseTest {
         when(exerciseConfigRepository.saveAll(any())).thenAnswer(invocation -> invocation.getArgument(0, List.class));
         when(exerciseEntryRepository.saveAll(any())).thenAnswer(invocation -> invocation.getArgument(0, List.class));
 
+        ExerciseDefinitionMapper exerciseDefinitionMapper = mock(ExerciseDefinitionMapper.class);
+
         ExerciseDefinitionService service = new ExerciseDefinitionService(
                 exerciseDefinitionRepository,
                 exerciseConfigRepository,
@@ -77,7 +80,8 @@ class ExerciseDefinitionServiceCollapseTest {
                 workoutTemplateRepository,
                 workoutEntryRepository,
                 programmeRepository,
-                analysisCacheEvictor
+                analysisCacheEvictor,
+                exerciseDefinitionMapper
         );
 
         ExerciseDefinitionCollapseResponseDTO response = service.collapse(
@@ -108,6 +112,8 @@ class ExerciseDefinitionServiceCollapseTest {
         ProgrammeRepository programmeRepository = mock(ProgrammeRepository.class);
         AnalysisCacheEvictor analysisCacheEvictor = mock(AnalysisCacheEvictor.class);
 
+        ExerciseDefinitionMapper exerciseDefinitionMapper = mock(ExerciseDefinitionMapper.class);
+
         ExerciseDefinitionService service = new ExerciseDefinitionService(
                 exerciseDefinitionRepository,
                 exerciseConfigRepository,
@@ -116,7 +122,8 @@ class ExerciseDefinitionServiceCollapseTest {
                 workoutTemplateRepository,
                 workoutEntryRepository,
                 programmeRepository,
-                analysisCacheEvictor
+                analysisCacheEvictor,
+                exerciseDefinitionMapper
         );
 
         UUID definitionId = UUID.fromString("00000000-0000-0000-0000-000000000555");
@@ -141,6 +148,8 @@ class ExerciseDefinitionServiceCollapseTest {
         when(exerciseDefinitionRepository.findByIdAndUserId(eq(canonical.getId()), eq(USER_ID))).thenReturn(java.util.Optional.of(canonical));
         when(exerciseDefinitionRepository.findByUserIdAndIdIn(eq(USER_ID), anyCollection())).thenReturn(new ArrayList<>());
 
+        ExerciseDefinitionMapper exerciseDefinitionMapper = mock(ExerciseDefinitionMapper.class);
+
         ExerciseDefinitionService service = new ExerciseDefinitionService(
                 exerciseDefinitionRepository,
                 exerciseConfigRepository,
@@ -149,7 +158,8 @@ class ExerciseDefinitionServiceCollapseTest {
                 workoutTemplateRepository,
                 workoutEntryRepository,
                 programmeRepository,
-                analysisCacheEvictor
+                analysisCacheEvictor,
+                exerciseDefinitionMapper
         );
 
         assertThatThrownBy(() -> service.collapse(USER_ID, canonical.getId(), List.of(UUID.randomUUID())))

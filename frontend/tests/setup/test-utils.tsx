@@ -4,9 +4,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, type RenderOptions } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { vi } from "vitest";
-import { AuthContext, type AuthContextType } from "@/components/auth/auth";
+import { AuthContext, type AuthContextType } from "@/features/auth/hooks/useAuth";
 import { ThemeProvider } from "@/components/theme/theme-provider";
-import type { LoginResult } from "@/types/User";
+import type { LoginResult } from "@/features/auth/types/User";
 import { buildUser } from "../shared/builders";
 
 export function createTestQueryClient() {

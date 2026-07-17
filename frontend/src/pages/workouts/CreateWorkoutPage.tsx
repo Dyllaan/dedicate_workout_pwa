@@ -1,12 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { enqueueSnackbar } from "notistack";
-import { WorkoutEditorContainer as WorkoutEditor } from "@/features/workout/WorkoutEditorContainer";
+import { WorkoutEditorContainer as WorkoutEditor } from "@/features/workout/templates/components/WorkoutEditorContainer";
 import useWorkoutEditorForm, {
   createEmptyWorkoutEditorValues,
   editorValuesToCreateWorkoutPayload,
   type WorkoutEditorValues,
-} from "@/hooks/forms/useWorkoutEditorForm";
-import useWorkoutTemplates from "@/hooks/workout/useWorkoutTemplates";
+} from "@/features/workout/templates/hooks/useWorkoutEditorForm";
+import useWorkoutTemplates from "@/features/workout/templates/hooks/useWorkoutTemplates";
 import { ICONS } from "@/config/iconConfig";
 
 export default function CreateWorkoutPage() {

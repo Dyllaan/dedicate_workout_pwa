@@ -1,8 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import { Dumbbell } from "lucide-react";
 import { describe, expect, it, vi } from "vitest";
-import FormPage from "@/components/layout/FormPage";
-import Page from "@/components/layout/section/Page";
+import FormPage from "@/components/layout/frames/FormPage";
+import Page from "@/components/layout/frames/Page";
 
 describe("Page", () => {
   it("applies the shared top padding used by the shell layout", () => {

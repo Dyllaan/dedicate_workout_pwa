@@ -1,5 +1,5 @@
 import { screen } from "@testing-library/react";
-import { Results } from "@/components/workout/entries/1rm/Results";
+import { Results } from "@/features/workout/entries/components/1rm/Results";
 import { buildBodyweightLog } from "tests/shared/builders";
 import { renderWithProviders } from "tests/setup/test-utils";
 

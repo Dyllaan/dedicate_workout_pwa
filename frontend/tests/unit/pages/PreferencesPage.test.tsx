@@ -12,7 +12,7 @@ vi.mock("notistack", async () => {
   };
 });
 
-vi.mock("@/hooks/workout/useWorkoutSettings", () => ({
+vi.mock("@/features/workout/hooks/useWorkoutSettings", () => ({
   useWorkoutSettings: () => workoutSettingsHookMock(),
 }));
 

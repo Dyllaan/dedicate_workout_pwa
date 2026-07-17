@@ -1,22 +1,22 @@
 import { act, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useCallback, useState } from "react";
-import YourProgramme from "@/components/periodisation/panels/YourProgramme";
+import YourProgramme from "@/features/periodisation/components/panels/YourProgramme";
 import { buildProgramme, buildSplit } from "tests/shared/builders";
 import { renderWithProviders } from "tests/setup/test-utils";
 
 const programmeMock = vi.fn();
 const periodisationActionsMock = vi.fn();
 
-vi.mock("@/hooks/periodisation/useProgramme", () => ({
+vi.mock("@/features/periodisation/programme/hooks/useProgramme", () => ({
   default: (...args: unknown[]) => programmeMock(...args),
 }));
 
-vi.mock("@/hooks/periodisation/usePeriodisationActions", () => ({
+vi.mock("@/features/periodisation/hooks/usePeriodisationActions", () => ({
   default: (...args: unknown[]) => periodisationActionsMock(...args),
 }));
 
-vi.mock("@/components/programme/ProgrammeTimeline", () => ({
+vi.mock("@/features/periodisation/programme/components/ProgrammeTimeline", () => ({
   default: () => <div>Programme timeline</div>,
 }));
 

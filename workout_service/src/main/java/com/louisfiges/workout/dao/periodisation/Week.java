@@ -1,13 +1,11 @@
 package com.louisfiges.workout.dao.periodisation;
 
-import com.louisfiges.workout.dao.interfaces.DAO;
-import com.louisfiges.workout.dto.responses.WeekDTO;
 import jakarta.persistence.*;
 import java.util.UUID;
 
 @Entity
 @Table(name = "block_weeks")
-public class Week implements DAO<WeekDTO> {
+public class Week {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -34,18 +32,6 @@ public class Week implements DAO<WeekDTO> {
 
     public boolean isDeload() { return deload; }
     public void setDeload(boolean deload) { this.deload = deload; }
-
-    @Override
-    public WeekDTO toDTO() {
-        return new WeekDTO(
-                id,
-                weekNumber,
-                deload,
-                targetSetsPerExercise,
-                rpeOverrideMin,
-                rpeOverrideMax
-        );
-    }
 
     public UUID getId() {
         return id;

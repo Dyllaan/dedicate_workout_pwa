@@ -1,4 +1,4 @@
-import { installCspProbe } from "@/security/cspProbe";
+import { installCspProbe } from "@/lib/cspProbe";
 
 describe("installCspProbe", () => {
   it("captures security policy violation details on window", () => {

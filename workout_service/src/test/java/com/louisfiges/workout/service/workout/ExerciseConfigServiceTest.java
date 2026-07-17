@@ -15,6 +15,8 @@ import com.louisfiges.workout.exception.exceptions.BadRequestException;
 import com.louisfiges.workout.exception.exceptions.ResourceNotFoundException;
 import com.louisfiges.workout.repository.ExerciseConfigRepository;
 import com.louisfiges.workout.service.analysis.AnalysisCacheEvictor;
+import com.louisfiges.workout.service.mapper.ExerciseConfigMapper;
+import com.louisfiges.workout.service.mapper.ExerciseDefinitionMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,6 +45,8 @@ class ExerciseConfigServiceTest {
     @Mock
     private AnalysisCacheEvictor analysisCacheEvictor;
 
+    private final ExerciseConfigMapper exerciseConfigMapper = new ExerciseConfigMapper(new ExerciseDefinitionMapper());
+
     private ExerciseConfigService service;
     private UUID userId;
     private UUID configId;
@@ -51,7 +55,7 @@ class ExerciseConfigServiceTest {
 
     @BeforeEach
     void setUp() {
-        service = new ExerciseConfigService(repository, analysisCacheEvictor);
+        service = new ExerciseConfigService(repository, analysisCacheEvictor, exerciseConfigMapper);
         userId = UUID.randomUUID();
         configId = UUID.randomUUID();
         templateId = UUID.randomUUID();

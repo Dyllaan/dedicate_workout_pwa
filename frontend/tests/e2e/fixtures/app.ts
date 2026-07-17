@@ -1,27 +1,27 @@
 import { expect, test as base, type Page, type Route } from "@playwright/test";
-import type { DashboardSummary, ExerciseDefinition, Split, WorkoutEntry, WorkoutTemplate } from "@/types/Workout";
-import type { DashboardSummaryTopLift } from "@/types/Workout";
-import type { Programme } from "@/types/Periodisation";
+import type { DashboardSummary, ExerciseDefinition, Split, WorkoutEntry, WorkoutTemplate } from "@/features/workout/types/Workout";
+import type { DashboardSummaryTopLift } from "@/features/workout/types/Workout";
+import type { Programme } from "@/features/periodisation/types/Periodisation";
 import type {
   DashboardTrainingInsights,
   ExerciseTrainingInsight,
   ReadinessCheckIn,
   WorkoutTemplateTrainingInsights,
-} from "@/types/Insights";
+} from "@/features/insights/types/Insights";
 import type {
   PowerliftingSummary,
   ProgressChartPreset,
   ProgressChartQueryResponse,
   ProgressSeriesCatalogItem,
   ProgressSeriesDiagnostics,
-} from "@/types/Progress";
+} from "@/features/progress/types/Progress";
 import type {
   ExerciseInfoCatalogItem,
   MuscleHeatmapResponse,
   ResolvedExerciseHeatmap,
   WeeklyMuscleVolumeResponse,
-} from "@/types/Heatmap";
-import type { User } from "@/types/User";
+} from "@/features/heatmap/types/Heatmap";
+import type { User } from "@/features/auth/types/User";
 import {
   buildDashboardSummary,
   buildExerciseDefinition,

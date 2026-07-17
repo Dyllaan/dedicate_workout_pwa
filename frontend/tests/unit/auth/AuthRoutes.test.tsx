@@ -1,8 +1,8 @@
 import { screen } from "@testing-library/react";
 import { Route, Routes } from "react-router-dom";
-import ProtectedRoute from "@/components/auth/routes/ProtectedRoute";
-import PublicRoute from "@/components/auth/routes/PublicRoute";
-import RootRoute from "@/components/auth/routes/RootRoute";
+import ProtectedRoute from "@/features/auth/components/routes/ProtectedRoute";
+import PublicRoute from "@/features/auth/components/routes/PublicRoute";
+import RootRoute from "@/features/auth/components/routes/RootRoute";
 import { createAuthContextValue, renderWithProviders } from "tests/setup/test-utils";
 
 describe("auth routes", () => {

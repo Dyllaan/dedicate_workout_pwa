@@ -3,7 +3,7 @@ import { renderHook } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { workoutApi } from "@/api/api";
-import { useCollapseExerciseDefinitions } from "@/hooks/workout/useExerciseDefinitions";
+import { useCollapseExerciseDefinitions } from "@/features/workout/exercise-definitions/hooks/useExerciseDefinitions";
 
 const { enqueueSnackbar } = vi.hoisted(() => ({
   enqueueSnackbar: vi.fn(),
@@ -13,7 +13,7 @@ vi.mock("notistack", () => ({
   enqueueSnackbar,
 }));
 
-vi.mock("@/hooks/useAuth", () => ({
+vi.mock("@/features/auth/hooks/useAuth", () => ({
   useAuth: () => ({
     user: {
       accessToken: "token",

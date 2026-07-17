@@ -6,6 +6,7 @@ import com.louisfiges.workout.dto.responses.WeekDTO;
 import com.louisfiges.workout.periodisation.PeriodisationValidationMessages;
 import com.louisfiges.workout.repository.WeekRepository;
 import com.louisfiges.workout.service.analysis.AnalysisCacheEvictor;
+import com.louisfiges.workout.service.mapper.WeekMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -19,16 +20,18 @@ public class WeekService {
 
     private final WeekRepository weekRepository;
     private final AnalysisCacheEvictor analysisCacheEvictor;
+    private final WeekMapper weekMapper;
 
-    public WeekService(WeekRepository weekRepository, AnalysisCacheEvictor analysisCacheEvictor) {
+    public WeekService(WeekRepository weekRepository, AnalysisCacheEvictor analysisCacheEvictor, WeekMapper weekMapper) {
         this.weekRepository = weekRepository;
         this.analysisCacheEvictor = analysisCacheEvictor;
+        this.weekMapper = weekMapper;
     }
 
     public WeekDTO getWeek(UUID weekId, UUID userId) {
         Week week = weekRepository.findByIdAndUserId(weekId, userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Week not found"));
-        return week.toDTO();
+        return weekMapper.toDTO(week);
     }
 
     @Transactional
@@ -44,7 +47,8 @@ public class WeekService {
         if (request.isDeload() != null) {
             week.setDeload(request.isDeload());
         }
-        WeekDTO response = weekRepository.save(week).toDTO();
+        Week savedWeek = weekRepository.save(week);
+        WeekDTO response = weekMapper.toDTO(savedWeek);
         analysisCacheEvictor.evictAnalysisCachesAfterCommit();
         return response;
     }
@@ -55,7 +59,8 @@ public class WeekService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Week not found"));
         assertProgrammeMutable(week);
         week.setDeload(deload);
-        WeekDTO response = weekRepository.save(week).toDTO();
+        Week savedWeek = weekRepository.save(week);
+        WeekDTO response = weekMapper.toDTO(savedWeek);
         analysisCacheEvictor.evictAnalysisCachesAfterCommit();
         return response;
     }

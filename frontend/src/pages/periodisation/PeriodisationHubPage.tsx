@@ -1,16 +1,16 @@
 import { Layers } from "lucide-react";
-import Page from "@/components/layout/section/Page";
+import Page from "@/components/layout/frames/Page";
 import { Plus } from "lucide-react";
 import { DashCardRow } from "@/components/layout/card/DashCardRow";
 import { ICONS } from "@/config/iconConfig";
-import useSplits from "@/hooks/periodisation/useSplits";
+import useSplits from "@/features/periodisation/splits/hooks/useSplits";
 import { sortByCreatedAtDesc } from "@/utils/sort";
 import { useUrlPagination } from "@/hooks/useUrlPagination";
-import PaginatedContainer from "@/components/layout/PaginatedContainer.tsx";
+import PaginatedContainer from "@/components/layout/frames/PaginatedContainer";
 import {PrimaryAction} from "@/components/layout/card/PrimaryAction.tsx";
-import SplitDrawer from "@/components/splits/SplitDrawer.tsx";
+import SplitDrawer from "@/features/periodisation/splits/components/splits/SplitDrawer";
 import {useState} from "react";
-import type {Split} from "@/types/Workout.ts";
+import type {Split} from "@/features/workout/types/Workout";
 
 
 export default function PeriodisationHubPage() {

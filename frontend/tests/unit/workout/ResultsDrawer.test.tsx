@@ -1,4 +1,4 @@
-vi.mock("@/components/workout/entries/1rm/Results", () => ({
+vi.mock("@/features/workout/entries/components/1rm/Results", () => ({
   Results: ({ set }: { set: { reps: number; weight: number } }) => (
     <div>Drawer results {set.weight}x{set.reps}</div>
   ),
@@ -13,12 +13,12 @@ const useBodyweightLogsMock = vi.hoisted(() =>
   })),
 );
 
-vi.mock("@/hooks/workout/useBodyweightLogs", () => ({
+vi.mock("@/features/bodyweight/hooks/useBodyweightLogs", () => ({
   default: useBodyweightLogsMock,
 }));
 
 import { fireEvent, screen } from "@testing-library/react";
-import ResultsDrawer from "@/components/workout/entries/1rm/ResultsDrawer";
+import ResultsDrawer from "@/features/workout/entries/components/1rm/ResultsDrawer";
 import { renderWithProviders } from "tests/setup/test-utils";
 
 describe("ResultsDrawer", () => {

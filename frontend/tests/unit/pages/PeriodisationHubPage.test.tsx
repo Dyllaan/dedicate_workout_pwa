@@ -1,6 +1,6 @@
 const splitsMock = vi.fn();
 
-vi.mock("@/hooks/periodisation/useSplits", () => ({
+vi.mock("@/features/periodisation/splits/hooks/useSplits", () => ({
   default: () => splitsMock(),
 }));
 

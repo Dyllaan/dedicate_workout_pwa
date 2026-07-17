@@ -1,13 +1,13 @@
 import { screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import ChartTabContent from "@/components/progress/ChartTabContent";
-import type { ProgressChartQueryResponse } from "@/types/Progress";
+import ChartTabContent from "@/features/progress/components/ChartTabContent";
+import type { ProgressChartQueryResponse } from "@/features/progress/types/Progress";
 import { renderWithProviders } from "tests/setup/test-utils";
 
 const useProgressQueryMock = vi.fn();
 
-vi.mock("@/hooks/progress/useProgressQuery.ts", () => ({
+vi.mock("@/features/progress/hooks/useProgressQuery", () => ({
   default: () => useProgressQueryMock(),
 }));
 

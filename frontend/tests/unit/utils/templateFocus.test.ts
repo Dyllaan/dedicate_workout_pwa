@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { matchesFocusExerciseConfigId, matchesTemplateFocus } from "@/utils/templateFocus";
+import { matchesFocusExerciseConfigId, matchesTemplateFocus } from "@/features/workout/entries/utils/templateFocus";
 
 describe("templateFocus", () => {
   it("matches a focused exercise by resolved definition id", () => {

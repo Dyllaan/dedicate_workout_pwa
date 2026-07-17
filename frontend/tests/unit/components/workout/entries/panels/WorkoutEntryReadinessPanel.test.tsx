@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import WorkoutEntryReadinessPanel from "@/components/workout/entries/panels/WorkoutEntryReadinessPanel";
-import { DEFAULT_READINESS_FORM_STATE } from "@/hooks/forms/workoutEntryFormTypes";
+import WorkoutEntryReadinessPanel from "@/features/workout/entries/components/panels/WorkoutEntryReadinessPanel";
+import { DEFAULT_READINESS_FORM_STATE } from "@/features/workout/entries/types/workoutEntryFormTypes";
 
 describe("WorkoutEntryReadinessPanel", () => {
   it("renders the readiness controls in their own panel", () => {

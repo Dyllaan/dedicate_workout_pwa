@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import type { TrainingState } from "@/types/Insights";
+import type { TrainingState } from "@/features/insights/types/Insights";
 
 type StatusBadgeProps = {
   status: TrainingState;

@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { Shield } from "lucide-react";
 
-import AuthDialogHeader from "@/components/auth/dialog/AuthDialogHeader";
+import AuthDialogHeader from "@/features/auth/components/dialog/AuthDialogHeader";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 describe("AuthDialogHeader", () => {

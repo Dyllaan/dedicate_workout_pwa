@@ -6,6 +6,7 @@ import com.louisfiges.workout.exception.exceptions.NoPermissionException;
 import com.louisfiges.workout.exception.exceptions.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -42,6 +43,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<StringErrorResponse> handleBadRequest(com.louisfiges.workout.exception.exceptions.BadRequestException ex) {
         StringErrorResponse errorDTO = new StringErrorResponse(ex.getMessage());
         return new ResponseEntity<>(errorDTO, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(OptimisticLockingFailureException.class)
+    public ResponseEntity<StringErrorResponse> handleOptimisticLock(OptimisticLockingFailureException ex) {
+        StringErrorResponse errorDTO = new StringErrorResponse("Resource was modified by another request. Please reload and try again.");
+        return new ResponseEntity<>(errorDTO, HttpStatus.CONFLICT);
     }
 
     /**

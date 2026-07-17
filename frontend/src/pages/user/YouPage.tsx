@@ -1,10 +1,10 @@
-import Page from '@/components/layout/section/Page';
-import DeleteAccount from '@/components/auth/dialog/DeleteAccount.tsx';
-import { useAuth } from '@/hooks/useAuth';
-import ManageMfa from '@/components/auth/dialog/ManageMfa.tsx';
-import Section from '@/components/layout/Section';
+import Page from '@/components/layout/frames/Page';
+import DeleteAccount from '@/features/auth/components/dialog/DeleteAccount.tsx';
+import { useAuth } from '@/features/auth/hooks/useAuth';
+import ManageMfa from '@/features/auth/components/dialog/ManageMfa.tsx';
+import Section from '@/components/layout/section/Section';
 import { ICONS } from '@/config/iconConfig';
-import Footer from '@/components/layout/section/Footer';
+import Footer from '@/components/layout/app/Footer';
 import { DashCardRow } from '@/components/layout/card/DashCardRow';
 import {Scale, Settings, Shield, Menu} from "lucide-react";
 

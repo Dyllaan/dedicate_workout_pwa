@@ -10,7 +10,7 @@ vi.mock("notistack", async () => {
 
 import { fireEvent, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import DeleteAccount from "@/components/auth/dialog/DeleteAccount";
+import DeleteAccount from "@/features/auth/components/dialog/DeleteAccount";
 import ChangePasswordPage from "@/pages/user/ChangePasswordPage";
 import { buildUser } from "tests/shared/builders";
 import { createAuthContextValue, renderWithProviders } from "tests/setup/test-utils";

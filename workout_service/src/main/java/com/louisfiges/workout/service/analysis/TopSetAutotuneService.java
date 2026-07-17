@@ -51,7 +51,7 @@ public class TopSetAutotuneService {
 
     @Cacheable(
             cacheNames = "topSetAutotuneRecommendations",
-            key = "T(java.lang.String).format('%s|%s|%s|%s|%s', #userId, #workoutTemplateId, #exerciseDefinitionId, #exerciseName, #variant == null ? '' : #variant)"
+            key = "T(java.lang.String).format('%s|%s|%s|%s|%s', #userId, #workoutTemplateId, #exerciseDefinitionId, #exerciseName, #variant == null ? '__NULL__' : #variant)"
     )
     public TopSetAutotuneRecommendationDTO recommendTopSet(
             UUID userId,
@@ -106,6 +106,8 @@ public class TopSetAutotuneService {
             throw new BadRequestException("Autotune action is required");
         }
         // Intentionally no persistence for the modernized flow.
+        // The modernized autotune flow computes recommendations from stored
+        // workout history rather than explicit outcome feedback.
     }
 
     private void validateInputs(UUID workoutTemplateId, String exerciseName) {

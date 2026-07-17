@@ -3,23 +3,23 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter } from "react-router-dom";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { useWorkoutEditor } from "@/features/workout/hooks/useWorkoutEditor";
+import { useWorkoutEditor } from "@/features/workout/templates/hooks/useWorkoutEditor";
 import type {
   WorkoutEditorController,
   WorkoutEditorExerciseValues,
-} from "@/hooks/forms/useWorkoutEditorForm";
-import type { ExerciseDefinitionResolveResponse } from "@/types/Workout";
-import { createExerciseIdentityDraft } from "@/types/exerciseIdentity";
+} from "@/features/workout/templates/hooks/useWorkoutEditorForm";
+import type { ExerciseDefinitionResolveResponse } from "@/features/workout/types/Workout";
+import { createExerciseIdentityDraft } from "@/features/workout/entries/types/ExerciseIdentity";
 
 const { resolveExerciseDefinitionMock } = vi.hoisted(() => ({
   resolveExerciseDefinitionMock: vi.fn<[], Promise<ExerciseDefinitionResolveResponse>>(),
 }));
 
-vi.mock("@/hooks/workout/useMuscleHeatmap", () => ({
+vi.mock("@/features/heatmap/hooks/useMuscleHeatmap", () => ({
   useExerciseInfoQuickPicks: () => ({ data: [] }),
 }));
 
-vi.mock("@/hooks/workout/useResolveExerciseDefinition", () => ({
+vi.mock("@/features/workout/exercise-definitions/hooks/useResolveExerciseDefinition", () => ({
   useResolveExerciseDefinition: () => ({
     mutateAsync: resolveExerciseDefinitionMock,
     isPending: false,

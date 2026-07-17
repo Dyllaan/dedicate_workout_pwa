@@ -3,7 +3,7 @@ import {
   calculatePowerToWeightRatios,
   findBodyweightLogForDate,
   formatPowerToWeightRatio,
-} from "@/utils/powerToWeightRatio";
+} from "@/features/workout/entries/utils/powerToWeightRatio";
 import { buildBodyweightLog } from "tests/shared/builders";
 
 describe("powerToWeightRatio", () => {

@@ -1,4 +1,4 @@
-import Page from "@/components/layout/section/Page";
+import Page from "@/components/layout/frames/Page";
 import { ICONS } from "@/config/iconConfig";
 
 export default function NotFoundPage() {

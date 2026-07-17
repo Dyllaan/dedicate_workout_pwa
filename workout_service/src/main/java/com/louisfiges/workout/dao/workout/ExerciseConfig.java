@@ -3,10 +3,10 @@ package com.louisfiges.workout.dao.workout;
 import com.louisfiges.workout.analysis.types.PrimaryBenchmark;
 import com.louisfiges.workout.analysis.types.ProgressionMode;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import java.time.Instant;
 import java.util.UUID;
-
-import com.louisfiges.workout.dto.ExerciseConfigDTO;
-import com.louisfiges.workout.dao.interfaces.DAO;
 
 /**
  * ExerciseConfig is the configuration of an ExerciseDefinition existing within the workout template
@@ -14,7 +14,7 @@ import com.louisfiges.workout.dao.interfaces.DAO;
 
 @Entity
 @Table(name = "exercise_configs")
-public class ExerciseConfig implements DAO<ExerciseConfigDTO> {
+public class ExerciseConfig {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -51,6 +51,17 @@ public class ExerciseConfig implements DAO<ExerciseConfigDTO> {
     @Column(name = "focus")
     private Boolean focus;
 
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private Instant createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private Instant updatedAt;
+
+    @Version
+    private Long version = 0L;
+
     public ExerciseConfig() { }
 
     public ExerciseConfig(
@@ -69,20 +80,6 @@ public class ExerciseConfig implements DAO<ExerciseConfigDTO> {
         this.primaryBenchmark = primaryBenchmark == null ? PrimaryBenchmark.WORKING_SETS : primaryBenchmark;
         this.targetRestSeconds = targetRestSeconds;
         this.focus = focus;
-    }
-
-    public ExerciseConfigDTO toDTO() {
-
-        return new ExerciseConfigDTO(
-                exerciseConfigId,
-                exerciseDefinition.toDTO(),
-                goalSets,
-                goalReps,
-                progressionMode,
-                primaryBenchmark,
-                targetRestSeconds,
-                focus
-        );
     }
 
     public UUID getExerciseConfigId() { return exerciseConfigId; }

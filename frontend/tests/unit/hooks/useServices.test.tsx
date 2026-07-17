@@ -2,7 +2,7 @@ import type { PropsWithChildren } from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { renderHook, waitFor } from "@testing-library/react";
 import { gatewayApi } from "@/api/api";
-import { useServices } from "@/hooks/useServices";
+import { useServices } from "@/features/health/hooks/useServices";
 import { createTestQueryClient } from "tests/setup/test-utils";
 
 function createWrapper() {

@@ -4,16 +4,16 @@ import { useSearchParams } from "react-router-dom";
 
 import {
   useInsightsOverview,
-} from "@/hooks/workout/useTrainingInsights.ts";
-import InsightsVolumePanel from "@/components/insights/InsightsVolumePanel.tsx";
-import { InsightsOverviewPanel } from "@/components/insights/InsightsOverviewPanel.tsx";
-import { type InsightsViewTab } from "@/components/insights/insightsUtils.ts";
-import Section from "@/components/layout/Section.tsx";
-import Page from "@/components/layout/section/Page.tsx";
+} from "@/features/insights/hooks/useTrainingInsights";
+import InsightsVolumePanel from "@/features/insights/components/InsightsVolumePanel.tsx";
+import { InsightsOverviewPanel } from "@/features/insights/components/InsightsOverviewPanel.tsx";
+import { type InsightsViewTab } from "@/features/insights/utils/insightsUtils";
+import Section from "@/components/layout/section/Section";
+import Page from "@/components/layout/frames/Page";
 import { type TabItem } from "@/components/tabs/TabBar.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import StatGrid from "@/components/ui/StatGrid.tsx";
-import ProgressPage from "@/components/insights/ProgressPage.tsx";
+import ProgressPanel from "@/features/progress/components/ProgressPanel";
 import TabShell from "@/components/tabs/TabShell.tsx";
 
 const SMART_COACH_TABS: TabItem<InsightsViewTab>[] = [
@@ -82,7 +82,7 @@ export default function InsightsPage() {
       >
         {activeTab === "overview" ? overviewContent : null}
         {activeTab === "volume" ? <InsightsVolumePanel /> : null}
-        {activeTab === "lift" ? <ProgressPage /> : null}
+        {activeTab === "lift" ? <ProgressPanel /> : null}
       </TabShell>
     </Page>
   );

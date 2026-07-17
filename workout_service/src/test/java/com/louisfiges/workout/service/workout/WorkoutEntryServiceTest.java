@@ -12,6 +12,12 @@ import com.louisfiges.workout.dto.responses.insights.ReadinessCheckInDTO;
 import com.louisfiges.workout.repository.WorkoutEntryRepository;
 import com.louisfiges.workout.repository.WorkoutTemplateRepository;
 import com.louisfiges.workout.service.analysis.AnalysisCacheEvictor;
+import com.louisfiges.workout.service.mapper.ExerciseConfigMapper;
+import com.louisfiges.workout.service.mapper.ExerciseDefinitionMapper;
+import com.louisfiges.workout.service.mapper.ExerciseEntryMapper;
+import com.louisfiges.workout.service.mapper.SetEntryMapper;
+import com.louisfiges.workout.service.mapper.WorkoutEntryMapper;
+import com.louisfiges.workout.service.mapper.WorkoutTemplateMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -50,6 +56,11 @@ class WorkoutEntryServiceTest {
     @Mock
     private AnalysisCacheEvictor analysisCacheEvictor;
 
+    private final WorkoutEntryMapper workoutEntryMapper = new WorkoutEntryMapper(
+            new ExerciseEntryMapper(new SetEntryMapper()),
+            new WorkoutTemplateMapper(new ExerciseConfigMapper(new ExerciseDefinitionMapper()))
+    );
+
     private WorkoutEntryService service;
 
     @BeforeEach
@@ -59,7 +70,8 @@ class WorkoutEntryServiceTest {
                 workoutTemplateRepository,
                 exerciseDefinitionService,
                 readinessService,
-                analysisCacheEvictor
+                analysisCacheEvictor,
+                workoutEntryMapper
         );
     }
 

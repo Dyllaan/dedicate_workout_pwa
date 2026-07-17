@@ -20,6 +20,7 @@ import com.louisfiges.workout.repository.ProgrammeRepository;
 import com.louisfiges.workout.repository.WorkoutEntryRepository;
 import com.louisfiges.workout.repository.WorkoutTemplateRepository;
 import com.louisfiges.workout.service.analysis.AnalysisCacheEvictor;
+import com.louisfiges.workout.service.mapper.ExerciseDefinitionMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -97,6 +98,8 @@ class ExerciseDefinitionServiceHeatmapFallbackTest {
         when(workoutEntryRepository.findDetailedHistoryByTemplateIdAndUserId(eq(template.getId()), eq(USER_ID)))
                 .thenReturn(List.of(workoutEntry));
 
+        ExerciseDefinitionMapper exerciseDefinitionMapper = mock(ExerciseDefinitionMapper.class);
+
         ExerciseDefinitionService service = new ExerciseDefinitionService(
                 exerciseDefinitionRepository,
                 exerciseConfigRepository,
@@ -105,7 +108,8 @@ class ExerciseDefinitionServiceHeatmapFallbackTest {
                 workoutTemplateRepository,
                 workoutEntryRepository,
                 programmeRepository,
-                analysisCacheEvictor
+                analysisCacheEvictor,
+                exerciseDefinitionMapper
         );
 
         MuscleHeatmapResponseDTO response = service.getTemplateHeatmap(USER_ID, template.getId());

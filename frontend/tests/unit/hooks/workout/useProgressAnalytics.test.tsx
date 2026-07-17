@@ -2,7 +2,7 @@ import type { PropsWithChildren } from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { renderHook, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { useProgressChartQuery } from "@/hooks/workout/useProgressAnalytics";
+import { useProgressChartQuery } from "@/features/progress/hooks/useProgressAnalytics";
 import { createTestQueryClient } from "tests/setup/test-utils";
 
 vi.mock("@/api/api", async (importOriginal) => {

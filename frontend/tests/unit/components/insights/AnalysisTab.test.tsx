@@ -2,15 +2,15 @@ import { act, fireEvent, screen, waitFor } from "@testing-library/react";
 import { useLocation } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import AnalysisTab from "@/components/insights/AnalysisTab";
-import type { AnalysisExerciseOption } from "@/types/Analysis";
+import AnalysisTab from "@/features/analysis/components/AnalysisTab";
+import type { AnalysisExerciseOption } from "@/features/analysis/types/Analysis";
 import { renderWithProviders } from "tests/setup/test-utils";
 
 const optionsMock = vi.fn();
 const recommendationMock = vi.fn();
 
-vi.mock("@/hooks/workout/useAnalysis.ts", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@/hooks/workout/useAnalysis")>();
+vi.mock("@/features/analysis/hooks/useAnalysis", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/features/analysis/hooks/useAnalysis")>();
 
   return {
     ...actual,
@@ -27,6 +27,23 @@ function LocationProbe() {
 
 function buildOption(overrides: AnalysisExerciseOption): AnalysisExerciseOption {
   return overrides;
+}
+
+function formatDateInputValue(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function expectedDefaultRange() {
+  const end = new Date();
+  const start = new Date(end);
+  start.setDate(start.getDate() - 30);
+  return {
+    startDate: formatDateInputValue(start),
+    endDate: formatDateInputValue(end),
+  };
 }
 
 describe("AnalysisTab", () => {
@@ -113,6 +130,7 @@ describe("AnalysisTab", () => {
   });
 
   it("renders the selected exercise and loads analysis for its template", () => {
+    const range = expectedDefaultRange();
     renderWithProviders(<AnalysisTab />, { route: "/insights?tab=analysis&exerciseDefinitionId=bench-press" });
 
     expect(screen.getByRole("combobox", { name: "Exercise analysis picker" })).toHaveTextContent("Bench Press");
@@ -120,19 +138,20 @@ describe("AnalysisTab", () => {
     expect(screen.getByText("Bench Press")).toBeInTheDocument();
     expect(recommendationMock).toHaveBeenCalledWith("template-latest-bench", {
       limit: 10,
-      startDate: "2026-06-15",
-      endDate: "2026-07-15",
+      startDate: range.startDate,
+      endDate: range.endDate,
     });
   });
 
   it("uses the selected exercise definition from the URL", () => {
+    const range = expectedDefaultRange();
     renderWithProviders(<AnalysisTab />, { route: "/insights?tab=analysis&exerciseDefinitionId=squat" });
 
     expect(screen.getByRole("combobox", { name: "Exercise analysis picker" })).toHaveTextContent("Back Squat");
     expect(recommendationMock).toHaveBeenCalledWith("template-squat", {
       limit: 10,
-      startDate: "2026-06-15",
-      endDate: "2026-07-15",
+      startDate: range.startDate,
+      endDate: range.endDate,
     });
   });
 

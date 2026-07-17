@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { act, renderHook } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it } from "vitest";
-import { buildPageParams, clampPageSize, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE } from "@/api/pagination";
+import { buildPageParams, clampPageSize, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE } from "@/api/utils/PaginationHelper";
 import { useUrlPagination } from "@/hooks/useUrlPagination";
 
 function createWrapper(route: string) {

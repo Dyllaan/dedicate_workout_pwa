@@ -2,7 +2,7 @@ import type { PropsWithChildren } from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { renderHook, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { useExerciseHistory } from "@/hooks/workout/useExerciseHistory";
+import { useExerciseHistory } from "@/features/workout/exercise-definitions/hooks/useExerciseHistory";
 import { buildWorkoutEntry } from "tests/shared/builders";
 import { createTestQueryClient } from "tests/setup/test-utils";
 

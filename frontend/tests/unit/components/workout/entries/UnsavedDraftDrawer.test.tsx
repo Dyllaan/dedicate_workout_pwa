@@ -22,9 +22,13 @@ vi.mock("@/components/ui/drawer", () => ({
   DrawerTitle: ({ children }: { children: any }) => <h2>{children}</h2>,
 }));
 
-vi.mock("@/hooks/forms/workoutEntryDraft", async () => {
-  const actual = await vi.importActual<typeof import("@/hooks/forms/workoutEntryDraft")>(
-    "@/hooks/forms/workoutEntryDraft",
+vi.mock("@/features/workout/entries/hooks/useWorkoutEntryDrafts", () => ({
+  useWorkoutEntryDrafts: () => [],
+}));
+
+vi.mock("@/features/workout/entries/types/workoutEntryDraft", async () => {
+  const actual = await vi.importActual<typeof import("@/features/workout/entries/types/workoutEntryDraft")>(
+    "@/features/workout/entries/types/workoutEntryDraft",
   );
 
   return {
@@ -35,8 +39,8 @@ vi.mock("@/hooks/forms/workoutEntryDraft", async () => {
 
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import UnsavedDraftDrawer from "@/components/workout/entries/UnsavedDraftDrawer";
-import type { WorkoutEntryDraftSummary } from "@/hooks/forms/workoutEntryDraft";
+import UnsavedDraftDrawer from "@/features/workout/entries/components/UnsavedDraftDrawer";
+import type { WorkoutEntryDraftSummary } from "@/features/workout/entries/types/workoutEntryDraft";
 import { renderWithProviders } from "tests/setup/test-utils";
 
 describe("UnsavedDraftDrawer", () => {

@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   createBrowserLogger,
   installBrowserLogger,
-} from "@/logging/browserLogger";
+} from "@/lib/browserLogger";
 
 describe("browser logging", () => {
   beforeEach(() => {

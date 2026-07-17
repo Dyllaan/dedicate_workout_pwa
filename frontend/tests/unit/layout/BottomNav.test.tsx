@@ -1,5 +1,5 @@
 import { screen } from "@testing-library/react";
-import BottomNav from "@/components/layout/section/BottomNav";
+import BottomNav from "@/components/layout/app/BottomNav";
 import { createAuthContextValue, renderWithProviders } from "tests/setup/test-utils";
 
 describe("BottomNav", () => {

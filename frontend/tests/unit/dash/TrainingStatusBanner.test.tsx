@@ -2,12 +2,12 @@ const programmeQueryMock = vi.hoisted(() => ({
   useProgramme: vi.fn(),
 }));
 
-vi.mock("@/hooks/periodisation/useProgramme", () => ({
+vi.mock("@/features/periodisation/programme/hooks/useProgramme", () => ({
   default: (...args: unknown[]) => programmeQueryMock.useProgramme(...args),
 }));
 
 import { screen } from "@testing-library/react";
-import TrainingStatusBanner from "@/components/dash/TrainingStatusBanner";
+import TrainingStatusBanner from "@/features/dashboard/components/TrainingStatusBanner";
 import { buildBlock, buildProgramme, buildSplit } from "tests/shared/builders";
 import { renderWithProviders } from "tests/setup/test-utils";
 

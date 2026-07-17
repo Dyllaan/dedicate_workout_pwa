@@ -1,6 +1,6 @@
 import { Dumbbell } from "lucide-react";
 import { fireEvent, screen } from "@testing-library/react";
-import FormPage from "@/components/layout/FormPage";
+import FormPage from "@/components/layout/frames/FormPage";
 import { renderWithProviders } from "tests/setup/test-utils";
 
 describe("FormPage", () => {

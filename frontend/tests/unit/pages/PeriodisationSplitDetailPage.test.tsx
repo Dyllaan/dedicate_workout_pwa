@@ -23,12 +23,12 @@ const programmeContextValue = vi.hoisted(() => ({
   programmes: [] as unknown[],
 }));
 
-vi.mock("@/hooks/periodisation/useSplits", () => ({
+vi.mock("@/features/periodisation/splits/hooks/useSplits", () => ({
   default: () => splitsMock(),
   useSplit: (...args: unknown[]) => splitMock(...args),
 }));
 
-vi.mock("@/hooks/periodisation/usePeriodisationActions", () => ({
+vi.mock("@/features/periodisation/hooks/usePeriodisationActions", () => ({
   default: () => ({
     handleSelectSplit: vi.fn(),
     handleDeleteSplit: vi.fn(),
@@ -38,32 +38,32 @@ vi.mock("@/hooks/periodisation/usePeriodisationActions", () => ({
 
 const programmeMock = vi.fn();
 
-vi.mock("@/hooks/periodisation/useProgramme", () => ({
+vi.mock("@/features/periodisation/programme/hooks/useProgramme", () => ({
   default: (...args: unknown[]) => programmeMock(...args),
   useProgrammePage: (...args: unknown[]) => programmePageMock(...args),
 }));
 
-vi.mock("@/hooks/forms/context/useProgrammeContext", () => ({
+vi.mock("@/features/periodisation/programme/hooks/useProgrammeContext", () => ({
   useProgrammeContext: () => programmeContextValue,
 }));
 
-vi.mock("@/components/periodisation/panels/ProgrammesPanel", () => ({
+vi.mock("@/features/periodisation/components/panels/ProgrammesPanel", () => ({
   default: () => <div>Programmes panel</div>,
 }));
 
-vi.mock("@/components/periodisation/panels/BlockPanel", () => ({
+vi.mock("@/features/periodisation/components/panels/BlockPanel", () => ({
   default: () => <div>Block panel</div>,
 }));
 
-vi.mock("@/components/periodisation/panels/ProgrammeSetupPanel", () => ({
+vi.mock("@/features/periodisation/components/panels/ProgrammeSetupPanel", () => ({
   default: () => <div>Programme setup panel</div>,
 }));
 
-vi.mock("@/components/periodisation/panels/YourProgramme", () => ({
+vi.mock("@/features/periodisation/components/panels/YourProgramme", () => ({
   default: () => <div>Your programme panel</div>,
 }));
 
-vi.mock("@/components/periodisation/panels/SplitOverviewPanel", () => ({
+vi.mock("@/features/periodisation/components/panels/SplitOverviewPanel", () => ({
   default: () => <div>Split overview card</div>,
 }));
 

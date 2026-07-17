@@ -1,8 +1,5 @@
 package com.louisfiges.workout.dao.workout;
 
-import com.louisfiges.workout.dao.interfaces.DAO;
-import com.louisfiges.workout.dto.responses.ExerciseEntryDTO;
-import com.louisfiges.workout.dto.responses.SetEntryDTO;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -13,7 +10,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "exercise_entries")
-public class ExerciseEntry implements DAO<ExerciseEntryDTO> {
+public class ExerciseEntry {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -47,21 +44,6 @@ public class ExerciseEntry implements DAO<ExerciseEntryDTO> {
         this.loggedVariant = loggedVariant;
         this.goalSets = goalSets;
         this.sets = sets;
-    }
-
-    @Override
-    public ExerciseEntryDTO toDTO() {
-        List<SetEntryDTO> setDTOs = sets.stream()
-                .map(SetEntry::toDTO)
-                .toList();
-
-        return new ExerciseEntryDTO(
-                goalSets,
-                setDTOs,
-                loggedExerciseName,
-                loggedVariant,
-                exerciseDefinition == null ? null : exerciseDefinition.getId()
-        );
     }
 
     public UUID getId() { return id; }

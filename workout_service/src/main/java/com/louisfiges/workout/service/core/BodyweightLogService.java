@@ -6,6 +6,8 @@ import com.louisfiges.workout.dto.responses.PagedResponse;
 import com.louisfiges.workout.dto.responses.BodyweightLogDTO;
 import com.louisfiges.workout.exception.exceptions.ResourceNotFoundException;
 import com.louisfiges.workout.repository.BodyweightLogRepository;
+import com.louisfiges.workout.service.mapper.BodyweightLogMapper;
+import com.louisfiges.workout.util.PaginationUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -18,25 +20,25 @@ public class BodyweightLogService {
     private static final int MAX_LOGS = 60;
 
     private final BodyweightLogRepository bodyweightLogRepository;
+    private final BodyweightLogMapper bodyweightLogMapper;
 
-    public BodyweightLogService(BodyweightLogRepository bodyweightLogRepository) {
+    public BodyweightLogService(BodyweightLogRepository bodyweightLogRepository, BodyweightLogMapper bodyweightLogMapper) {
         this.bodyweightLogRepository = bodyweightLogRepository;
+        this.bodyweightLogMapper = bodyweightLogMapper;
     }
 
     public List<BodyweightLogDTO> getAll(UUID userId) {
         return bodyweightLogRepository
                 .findByUserIdOrderByLoggedAtDesc(userId, PageRequest.of(0, MAX_LOGS))
                 .stream()
-                .map(this::toDTO)
+                .map(bodyweightLogMapper::toDTO)
                 .toList();
     }
 
     public PagedResponse<BodyweightLogDTO> getAll(UUID userId, int page, int size) {
-        int safePage = Math.max(0, page);
-        int safeSize = Math.min(Math.max(1, size), 25);
         return PagedResponse.from(
-                bodyweightLogRepository.findPageByUserIdOrderByLoggedAtDesc(userId, PageRequest.of(safePage, safeSize))
-                        .map(this::toDTO)
+                bodyweightLogRepository.findPageByUserIdOrderByLoggedAtDesc(userId, PaginationUtils.toPageable(page, size))
+                        .map(bodyweightLogMapper::toDTO)
         );
     }
 
@@ -47,7 +49,7 @@ public class BodyweightLogService {
                 request.loggedAt(),
                 request.notes()
         );
-        return toDTO(bodyweightLogRepository.save(log));
+        return bodyweightLogMapper.toDTO(bodyweightLogRepository.save(log));
     }
 
     public void delete(UUID id, UUID userId) {
@@ -63,7 +65,4 @@ public class BodyweightLogService {
         bodyweightLogRepository.deleteAllByUserId(userId);
     }
 
-    private BodyweightLogDTO toDTO(BodyweightLog log) {
-        return new BodyweightLogDTO(log.getId(), log.getWeightKg(), log.getLoggedAt(), log.getNotes());
-    }
 }

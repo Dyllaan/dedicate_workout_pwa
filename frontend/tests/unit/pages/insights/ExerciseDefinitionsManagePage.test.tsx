@@ -8,7 +8,7 @@ import ExerciseDefinitionsManagePage from "@/pages/insights/ExerciseDefinitionsM
 const collapseMock = vi.fn();
 const groupsMock = vi.fn();
 
-vi.mock("@/hooks/workout/useExerciseDefinitionDuplicates", () => ({
+vi.mock("@/features/workout/exercise-definitions/hooks/useExerciseDefinitionDuplicates", () => ({
   useCollapseExerciseDefinitions: () => ({
     mutateAsync: collapseMock,
     isPending: false,

@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "@/hooks/useAuth";
-import LoginForm from "@/components/auth/forms/LoginForm";
-import RegisterForm from "@/components/auth/forms/RegisterForm";
-import MfaForm from "@/components/auth/forms/MfaForm";
+import { useAuth } from "@/features/auth/hooks/useAuth";
+import LoginForm from "@/features/auth/components/forms/LoginForm";
+import RegisterForm from "@/features/auth/components/forms/RegisterForm";
+import MfaForm from "@/features/auth/components/forms/MfaForm";
 import { ICONS } from "@/config/iconConfig";
-import AuthRequirementsDialog from "@/components/auth/dialog/AuthRequirementsDialog";
+import AuthRequirementsDialog from "@/features/auth/components/dialog/AuthRequirementsDialog";
 import { HelpCircle } from "lucide-react";
-import { ServiceVersions } from "@/components/health/ServiceVersions";
+import { ServiceVersions } from "@/features/health/components/ServiceVersions";
 import { useNavigate } from "react-router-dom";
-import Page from "@/components/layout/section/Page";
+import Page from "@/components/layout/frames/Page";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 

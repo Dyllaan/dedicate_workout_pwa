@@ -1,10 +1,10 @@
 import type { PropsWithChildren } from "react";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { AuthContext } from "@/components/auth/auth";
+import { AuthContext } from "@/features/auth/hooks/useAuth";
 import { workoutApi } from "@/api/api";
 import { queryKeys } from "@/api/queryKeys";
-import useWorkoutTemplates from "@/hooks/workout/useWorkoutTemplates";
+import useWorkoutTemplates from "@/features/workout/templates/hooks/useWorkoutTemplates";
 import { buildWorkoutTemplate } from "tests/shared/builders";
 import { createAuthContextValue } from "tests/setup/test-utils";
 

@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import WorkoutEntryShell from "@/components/workout/entries/panels/WorkoutEntryShell";
+import WorkoutEntryShell from "@/features/workout/entries/components/panels/WorkoutEntryShell";
 
 describe("WorkoutEntryShell", () => {
   it("uses the shared vertical rhythm for its top content block", () => {

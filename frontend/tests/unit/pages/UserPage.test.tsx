@@ -1,4 +1,4 @@
-vi.mock("@/components/health/ServiceVersions", () => ({
+vi.mock("@/features/health/components/ServiceVersions", () => ({
   ServiceVersions: () => <div>Service versions stub</div>,
 }));
 

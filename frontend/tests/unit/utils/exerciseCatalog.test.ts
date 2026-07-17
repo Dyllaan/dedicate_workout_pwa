@@ -1,7 +1,7 @@
 import {
   getExerciseCatalogDisplayMetadata,
   getExerciseCatalogWorkoutVariant,
-} from "@/utils/exerciseCatalog";
+} from "@/features/heatmap/utils/exerciseCatalog";
 import { buildExerciseInfoCatalogItem } from "tests/shared/builders";
 
 describe("exerciseCatalog helpers", () => {

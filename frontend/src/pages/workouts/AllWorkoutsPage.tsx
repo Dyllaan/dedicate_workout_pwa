@@ -1,13 +1,13 @@
 import { ChevronRight, Plus, List } from "lucide-react";
-import useWorkout from "@/hooks/workout/useWorkoutTemplates";
-import Page from "@/components/layout/section/Page";
+import useWorkout from "@/features/workout/templates/hooks/useWorkoutTemplates";
+import Page from "@/components/layout/frames/Page";
 import formatDate from "@/utils/date";
 import { DashCardRow } from "@/components/layout/card/DashCardRow";
 import { useUrlPagination } from "@/hooks/useUrlPagination";
 import {ICONS} from "@/config/iconConfig.ts";
-import PaginatedContainer from "@/components/layout/PaginatedContainer.tsx";
-import NextWorkoutCard from "@/components/dash/NextWorkoutCard.tsx";
-import CreateWorkoutButton from "@/components/workout/CreateWorkoutButton.tsx";
+import PaginatedContainer from "@/components/layout/frames/PaginatedContainer";
+import NextWorkoutCard from "@/features/dashboard/components/NextWorkoutCard.tsx";
+import CreateWorkoutButton from "@/features/workout/templates/components/CreateWorkoutButton.tsx";
 
 export default function AllWorkoutsPage() {
     const { page, size, setPage } = useUrlPagination({ pageParam: "workoutsPage", sizeParam: "workoutsSize" });

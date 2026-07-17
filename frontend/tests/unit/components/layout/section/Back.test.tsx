@@ -1,7 +1,7 @@
 import { MemoryRouter } from "react-router-dom";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import Back from "@/components/layout/section/Back";
+import Back from "@/components/layout/app/Back";
 
 describe("Back", () => {
   it("uses the shared shell spacing without the old nested padding", () => {

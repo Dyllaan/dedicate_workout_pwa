@@ -1,5 +1,5 @@
 import { buildBlock, buildProgramme, buildStartupSplit, buildWorkoutTemplate } from "tests/shared/builders";
-import { composeSplit } from "@/utils/periodisation/splitComposer";
+import { composeSplit } from "@/features/periodisation/splits/utils/splitComposer";
 
 describe("composeSplit", () => {
   it("orders workouts from assignments and derives frequencies and blocks", () => {

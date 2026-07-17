@@ -13,9 +13,9 @@ import com.louisfiges.workout.repository.WorkoutTemplateRepository;
 import com.louisfiges.workout.exception.exceptions.BadRequestException;
 import com.louisfiges.workout.exception.exceptions.ResourceNotFoundException;
 import com.louisfiges.workout.service.analysis.AnalysisCacheEvictor;
+import com.louisfiges.workout.service.mapper.WorkoutTemplateMapper;
 import com.louisfiges.workout.validation.RestTimeValidator;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.louisfiges.workout.util.PaginationUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,33 +29,33 @@ public class WorkoutTemplateService {
     private final WorkoutTemplateRepository workoutTemplateRepository;
     private final ExerciseDefinitionService exerciseDefinitionService;
     private final AnalysisCacheEvictor analysisCacheEvictor;
+    private final WorkoutTemplateMapper workoutTemplateMapper;
 
-    @Autowired
     public WorkoutTemplateService(
             WorkoutTemplateRepository workoutTemplateRepository,
             ExerciseDefinitionService exerciseDefinitionService,
-            AnalysisCacheEvictor analysisCacheEvictor
+            AnalysisCacheEvictor analysisCacheEvictor,
+            WorkoutTemplateMapper workoutTemplateMapper
     ) {
         this.workoutTemplateRepository = workoutTemplateRepository;
         this.exerciseDefinitionService = exerciseDefinitionService;
         this.analysisCacheEvictor = analysisCacheEvictor;
+        this.workoutTemplateMapper = workoutTemplateMapper;
     }
 
     @Transactional(readOnly = true)
     public List<WorkoutTemplateDTO> getAllByUser(UUID userId) {
         return workoutTemplateRepository.findByUserId(userId)
                 .stream()
-                .map(WorkoutTemplate::toDTO)
+                .map(workoutTemplateMapper::toDTO)
                 .toList();
     }
 
     @Transactional(readOnly = true)
     public PagedResponse<WorkoutTemplateDTO> getAllByUser(UUID userId, int page, int size) {
-        int safePage = Math.max(0, page);
-        int safeSize = Math.min(Math.max(1, size), 25);
         return PagedResponse.from(
-                workoutTemplateRepository.findByUserId(userId, PageRequest.of(safePage, safeSize))
-                        .map(WorkoutTemplate::toDTO)
+                workoutTemplateRepository.findByUserId(userId, PaginationUtils.toPageable(page, size))
+                        .map(workoutTemplateMapper::toDTO)
         );
     }
 
@@ -63,25 +63,23 @@ public class WorkoutTemplateService {
     public List<WorkoutTemplateDTO> getByCategory(UUID userId, String category) {
         return workoutTemplateRepository.findByUserIdAndCategory(userId, category)
                 .stream()
-                .map(WorkoutTemplate::toDTO)
+                .map(workoutTemplateMapper::toDTO)
                 .toList();
     }
 
     @Transactional(readOnly = true)
     public PagedResponse<WorkoutTemplateDTO> getByCategory(UUID userId, String category, int page, int size) {
-        int safePage = Math.max(0, page);
-        int safeSize = Math.min(Math.max(1, size), 25);
         return PagedResponse.from(
-                workoutTemplateRepository.findByUserIdAndCategory(userId, category, PageRequest.of(safePage, safeSize))
-                        .map(WorkoutTemplate::toDTO)
+                workoutTemplateRepository.findByUserIdAndCategory(userId, category, PaginationUtils.toPageable(page, size))
+                        .map(workoutTemplateMapper::toDTO)
         );
     }
 
     @Transactional(readOnly = true)
     public WorkoutTemplateDTO getById(UUID id, UUID userId) {
-        return workoutTemplateRepository.findByIdAndUserId(id, userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Workout template not found"))
-                .toDTO();
+        WorkoutTemplate template = workoutTemplateRepository.findByIdAndUserId(id, userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Workout template not found"));
+        return workoutTemplateMapper.toDTO(template);
     }
 
     @Transactional
@@ -96,7 +94,7 @@ public class WorkoutTemplateService {
                 )
         );
         analysisCacheEvictor.evictAnalysisCachesAfterCommit();
-        return saved.toDTO();
+        return workoutTemplateMapper.toDTO(saved);
     }
 
     @Transactional
@@ -111,7 +109,8 @@ public class WorkoutTemplateService {
         workoutTemplateRepository.flush();
         template.replaceExercises(toExerciseConfigs(userId, request.exercises()));
 
-        WorkoutTemplateDTO response = workoutTemplateRepository.save(template).toDTO();
+        WorkoutTemplate savedTemplate = workoutTemplateRepository.save(template);
+        WorkoutTemplateDTO response = workoutTemplateMapper.toDTO(savedTemplate);
         analysisCacheEvictor.evictAnalysisCachesAfterCommit();
         return response;
     }

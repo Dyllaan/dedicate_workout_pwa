@@ -4,21 +4,21 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const templatesMock = vi.fn();
 const workoutEntriesMock = vi.fn();
 
-vi.mock("@/hooks/workout/useWorkoutTemplates", () => ({
+vi.mock("@/features/workout/templates/hooks/useWorkoutTemplates", () => ({
   useAllWorkoutTemplates: () => templatesMock(),
 }));
 
-vi.mock("@/hooks/workout/useWorkoutEntries", () => ({
+vi.mock("@/features/workout/entries/hooks/useWorkoutEntries", () => ({
   useAllWorkoutEntries: () => workoutEntriesMock(),
 }));
 
-vi.mock("@/hooks/useAuth", () => ({
+vi.mock("@/features/auth/hooks/useAuth", () => ({
   useAuth: () => ({
     user: { accessToken: "token" },
   }),
 }));
 
-import { useAnalysisExerciseOptions } from "@/hooks/workout/useAnalysis";
+import { useAnalysisExerciseOptions } from "@/features/analysis/hooks/useAnalysis";
 
 describe("useAnalysisExerciseOptions", () => {
   beforeEach(() => {

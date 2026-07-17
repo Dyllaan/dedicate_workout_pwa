@@ -1,10 +1,10 @@
 import { Lock, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
-import { useAuth } from '@/hooks/useAuth';
-import MfaCodeInput from "@/components/auth/MfaCodeInput";
+import { useAuth } from '@/features/auth/hooks/useAuth';
+import MfaCodeInput from "@/features/auth/components/MfaCodeInput";
 import { enqueueSnackbar } from 'notistack';
-import Page from "@/components/layout/section/Page.tsx";
+import Page from "@/components/layout/frames/Page";
 import {PasswordInput} from "@/components/layout/input/BaseInput.tsx";
 
 export default function ChangePasswordPage() {

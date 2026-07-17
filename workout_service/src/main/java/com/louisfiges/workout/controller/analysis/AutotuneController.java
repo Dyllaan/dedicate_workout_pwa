@@ -42,6 +42,11 @@ public class AutotuneController {
         );
     }
 
+    /**
+     * Reserved for future use. The outcome recording flow has been modernized
+     * and persistence is no longer required. This endpoint accepts the request
+     * body but does not persist any data.
+     */
     @PostMapping("/outcomes")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void recordOutcome(Principal principal, @RequestBody AutotuneOutcomeRequestDTO request) {

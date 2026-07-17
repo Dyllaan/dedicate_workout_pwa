@@ -1,10 +1,10 @@
 import { Suspense } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 
-import RouteLoadingPage from "@/routes/RouteLoadingPage";
+import RouteLoadingPage from "@/features/auth/components/routes/RouteLoadingPage";
 
 import ShellFrame from "./ShellFrame";
-import { shouldShowPublicBack } from "./shellNavigation";
+import { shouldShowPublicBack } from "./utils/ShellNavigation";
 
 export default function PublicShell() {
   const { pathname } = useLocation();

@@ -1,7 +1,7 @@
 import { fireEvent, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import LoginForm from "@/components/auth/forms/LoginForm";
-import RegisterForm from "@/components/auth/forms/RegisterForm";
+import LoginForm from "@/features/auth/components/forms/LoginForm";
+import RegisterForm from "@/features/auth/components/forms/RegisterForm";
 import { createAuthContextValue, renderWithProviders } from "tests/setup/test-utils";
 
 describe("auth forms", () => {

@@ -2,15 +2,26 @@ const authMock = vi.fn();
 const dashboardSummaryMock = vi.fn();
 const refreshDashboardMock = vi.fn();
 
-vi.mock("@/hooks/useAuth", () => ({
-  useAuth: () => authMock(),
-}));
+vi.mock("@/features/auth/hooks/useAuth", () => {
+  const MockAuthContext = Object.assign(
+    ({ children }: { children: React.ReactNode }) => children as React.JSX.Element,
+    {
+      Provider: ({ children }: { children: React.ReactNode }) => children as React.JSX.Element,
+      displayName: "AuthContext",
+    },
+  );
 
-vi.mock("@/hooks/workout/useDashboardSummary", () => ({
+  return {
+    useAuth: () => authMock(),
+    AuthContext: MockAuthContext,
+  };
+});
+
+vi.mock("@/features/dashboard/hooks/useDashboardSummary", () => ({
   useDashboardSummary: () => dashboardSummaryMock(),
 }));
 
-vi.mock("@/hooks/workout/useDashboardRefresh", () => ({
+vi.mock("@/features/dashboard/hooks/useDashboardRefresh", () => ({
   useDashboardRefresh: () => ({
     refreshDashboard: refreshDashboardMock,
     isRefreshing: false,
@@ -21,23 +32,23 @@ vi.mock("@/components/theme/ThemeToggle", () => ({
   ThemeToggle: () => <div>Theme toggle</div>,
 }));
 
-vi.mock("@/components/dash/TrainingStatusBanner", () => ({
+vi.mock("@/features/dashboard/components/TrainingStatusBanner", () => ({
   default: ({ splitId }: { splitId: string }) => <div>Training banner {splitId}</div>,
 }));
 
-vi.mock("@/components/dash/NextWorkoutCard", () => ({
+vi.mock("@/features/dashboard/components/NextWorkoutCard", () => ({
   default: () => <div>Next workout card</div>,
 }));
 
-vi.mock("@/components/dash/LiftSummaryCard.tsx", () => ({
+vi.mock("@/features/dashboard/components/LiftSummaryCard", () => ({
   default: () => <div>Lift summary card</div>,
 }));
 
-vi.mock("@/components/dash/TipCarousel.tsx", () => ({
+vi.mock("@/features/dashboard/components/TipCarousel", () => ({
   default: () => <div>Tip carousel</div>,
 }));
 
-vi.mock("@/components/onboarding/OnboardingDialog", () => ({
+vi.mock("@/features/onboarding/components/OnboardingDialog", () => ({
   default: ({ open }: { open: boolean }) => (open ? <div>Onboarding open</div> : null),
 }));
 

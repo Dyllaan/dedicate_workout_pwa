@@ -2,8 +2,8 @@ import { act, renderHook } from "@testing-library/react";
 import useWorkoutEditorForm, {
   createEmptyWorkoutEditorValues,
   editorValuesToCreateWorkoutPayload,
-} from "@/hooks/forms/useWorkoutEditorForm";
-import { createExerciseIdentityDraft } from "@/types/exerciseIdentity";
+} from "@/features/workout/templates/hooks/useWorkoutEditorForm";
+import { createExerciseIdentityDraft } from "@/features/workout/entries/types/ExerciseIdentity";
 import { buildExerciseInfoCatalogItem } from "tests/shared/builders";
 
 describe("useWorkoutEditorForm", () => {

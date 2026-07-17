@@ -11,6 +11,10 @@ export default defineConfig({
     alias: {
       "@": path.resolve(__dirname, "./src"),
       tests: path.resolve(__dirname, "./tests"),
+      "virtual:pwa-register/react": path.resolve(
+        __dirname,
+        "./tests/setup/__mocks__/pwa-register.ts",
+      ),
     },
   },
   define: {
@@ -30,15 +34,15 @@ export default defineConfig({
       reporter: ["text", "json-summary", "json", "html"],
       include: [
         "src/api/**/*.ts",
-        "src/components/auth/**/*.{ts,tsx}",
+        "src/features/auth/hooks/useAuth.tsx",
         "src/components/charts/**/*.{ts,tsx}",
         "src/components/dash/MiniProgressChart.tsx",
         "src/config/config.ts",
         "src/hooks/useLocalStorage.tsx",
         "src/hooks/useMfa.ts",
-        "src/hooks/periodisation/useProgramme.ts",
-        "src/hooks/periodisation/useSplits.ts",
-        "src/hooks/workout/useProgressAnalytics.ts",
+        "src/features/periodisation/programme/hooks/useProgramme.ts",
+        "src/features/periodisation/splits/hooks/useSplits.ts",
+        "src/features/progress/hooks/useProgressAnalytics.ts",
       ],
       exclude: [
         "src/main.tsx",
@@ -46,7 +50,7 @@ export default defineConfig({
         "src/assets/**",
         "src/components/ui/**",
         "src/components/skeletons/**",
-        "src/components/auth/dialog/AuthRequirementsDialog.tsx",
+        "src/features/auth/components/dialog/AuthRequirementsDialog.tsx",
       ],
     },
   },

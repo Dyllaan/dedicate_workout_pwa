@@ -10,17 +10,17 @@ const {
 
 import { MemoryRouter } from "react-router-dom";
 import { act, renderHook } from "@testing-library/react";
-import { useWorkoutEntryForm } from "@/hooks/forms/useWorkoutEntryForm";
-import { buildWorkoutEntryPayload } from "@/hooks/forms/workoutEntryPayload";
-import { loadWorkoutEntryDraft } from "@/hooks/forms/workoutEntryDraft";
-import { createExerciseIdentityDraft } from "@/types/exerciseIdentity";
+import { useWorkoutEntryForm } from "@/features/workout/entries/hooks/useWorkoutEntryForm";
+import buildWorkoutEntryPayload from "@/features/workout/entries/utils/buildWorkoutEntryPayload";
+import { loadWorkoutEntryDraft } from "@/features/workout/entries/types/workoutEntryDraft";
+import { createExerciseIdentityDraft } from "@/features/workout/entries/types/ExerciseIdentity";
 import {
   buildExerciseInfoCatalogItem,
   buildWorkoutEntry,
   buildWorkoutTemplate,
 } from "tests/shared/builders";
 
-vi.mock("@/hooks/workout/useWorkoutEntries", () => ({
+vi.mock("@/features/workout/entries/hooks/useWorkoutEntries", () => ({
   default: () => ({
     createWorkoutEntry: addWorkoutEntryMock,
   }),

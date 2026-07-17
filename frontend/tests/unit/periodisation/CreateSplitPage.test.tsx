@@ -9,7 +9,7 @@ vi.mock("react-router-dom", async () => {
   };
 });
 
-vi.mock("@/components/splits/creation/SplitSelector", () => ({
+vi.mock("@/features/periodisation/splits/components/splits/creation/SplitSelector", () => ({
   default: ({
     selectedIds,
     availableWorkouts,
@@ -28,7 +28,7 @@ vi.mock("@/components/splits/creation/SplitSelector", () => ({
   ),
 }));
 
-vi.mock("@/components/splits/creation/SplitOrder", () => ({
+vi.mock("@/features/periodisation/splits/components/splits/creation/SplitOrder", () => ({
   default: ({ initialFrequencies }: { initialFrequencies: Record<string, number> }) => (
     <div data-testid="split-order">{JSON.stringify(initialFrequencies)}</div>
   ),

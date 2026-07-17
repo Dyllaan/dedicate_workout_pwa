@@ -1,5 +1,5 @@
 import { fireEvent, screen } from "@testing-library/react";
-import ManageMfa from "@/components/auth/dialog/ManageMfa";
+import ManageMfa from "@/features/auth/components/dialog/ManageMfa";
 import { buildUser } from "tests/shared/builders";
 import { createAuthContextValue, renderWithProviders } from "tests/setup/test-utils";
 

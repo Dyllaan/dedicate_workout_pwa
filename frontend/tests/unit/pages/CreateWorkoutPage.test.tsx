@@ -23,18 +23,18 @@ vi.mock("notistack", async () => {
   };
 });
 
-vi.mock("@/hooks/workout/useWorkoutTemplates", () => ({
+vi.mock("@/features/workout/templates/hooks/useWorkoutTemplates", () => ({
   default: () => ({
     createWorkout: addWorkoutMock,
   }),
 }));
 
-vi.mock("@/hooks/workout/useMuscleHeatmap", () => ({
+vi.mock("@/features/heatmap/hooks/useMuscleHeatmap", () => ({
   useExerciseInfoCatalog: vi.fn(),
   useExerciseInfoQuickPicks: vi.fn(),
 }));
 
-vi.mock("@/hooks/workout/useResolveExerciseDefinition", () => ({
+vi.mock("@/features/workout/exercise-definitions/hooks/useResolveExerciseDefinition", () => ({
   useResolveExerciseDefinition: () => ({
     mutateAsync: resolveExerciseDefinitionMock,
     isPending: false,
@@ -45,7 +45,7 @@ import { fireEvent, screen, waitFor } from "@testing-library/react";
 import CreateWorkoutPage from "@/pages/workouts/CreateWorkoutPage";
 import { buildWorkoutTemplate } from "tests/shared/builders";
 import { renderWithProviders } from "tests/setup/test-utils";
-import { useExerciseInfoCatalog, useExerciseInfoQuickPicks } from "@/hooks/workout/useMuscleHeatmap";
+import { useExerciseInfoCatalog, useExerciseInfoQuickPicks } from "@/features/heatmap/hooks/useMuscleHeatmap";
 
 const mockedUseExerciseInfoCatalog = vi.mocked(useExerciseInfoCatalog);
 const mockedUseExerciseInfoQuickPicks = vi.mocked(useExerciseInfoQuickPicks);

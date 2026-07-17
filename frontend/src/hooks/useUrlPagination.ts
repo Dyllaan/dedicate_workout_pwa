@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-import { clampPage, clampPageSize, DEFAULT_PAGE_SIZE } from "@/api/pagination";
+import { clampPage, clampPageSize, DEFAULT_PAGE_SIZE } from "@/api/utils/PaginationHelper";
 
 type UseUrlPaginationOptions = {
   pageParam?: string;

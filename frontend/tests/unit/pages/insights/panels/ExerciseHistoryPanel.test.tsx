@@ -1,20 +1,20 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import ExerciseHistoryPanel from "@/pages/insights/panels/ExerciseHistoryPanel";
+import ExerciseHistoryPanel from "@/features/insights/components/ExerciseHistoryPanel";
 
 const mockUseExerciseHistory = vi.hoisted(() => vi.fn());
 
-vi.mock("@/hooks/workout/useExerciseHistory", () => ({
+vi.mock("@/features/workout/exercise-definitions/hooks/useExerciseHistory", () => ({
   useExerciseHistory: (...args: unknown[]) => mockUseExerciseHistory(...args),
 }));
 
-vi.mock("@/hooks/useUnitPreference", () => ({
+vi.mock("@/features/preferences/unit/hooks/useUnitPreference", () => ({
   useUnitPreference: () => ({
     format: (value: number) => `${value}kg`,
   }),
 }));
 
-vi.mock("@/components/workout/ExerciseSetsTable", () => ({
+vi.mock("@/features/workout/components/ExerciseSetsTable", () => ({
   default: ({ sets }: { sets: Array<{ id: string }> }) => (
     <div data-testid="exercise-sets">{sets.length} sets</div>
   ),

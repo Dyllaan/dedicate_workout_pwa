@@ -1,4 +1,4 @@
-vi.mock("@/hooks/periodisation/usePeriodisationActions", () => ({
+vi.mock("@/features/periodisation/hooks/usePeriodisationActions", () => ({
   default: () => ({
     handleSelectSplit: vi.fn(),
     handleDeleteSplit: vi.fn(),
@@ -8,7 +8,7 @@ vi.mock("@/hooks/periodisation/usePeriodisationActions", () => ({
 
 import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
-import SplitOverviewPanel from "@/components/periodisation/panels/SplitOverviewPanel";
+import SplitOverviewPanel from "@/features/periodisation/components/panels/SplitOverviewPanel";
 import { buildStartupSplit, buildWorkoutTemplate } from "tests/shared/builders";
 import { renderWithProviders } from "tests/setup/test-utils";
 import { server } from "tests/shared/msw/server";

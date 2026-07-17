@@ -1,21 +1,21 @@
 import { Dumbbell, Calendar, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import useWorkoutContext from "@/hooks/forms/context/useWorkoutContext";
+import useWorkoutContext from "@/features/workout/hooks/useWorkoutContext.ts";
 import { useNavigate } from "react-router-dom";
-import Page from "@/components/layout/section/Page";
-import Section from "@/components/layout/Section";
+import Page from "@/components/layout/frames/Page.tsx";
+import Section from "@/components/layout/section/Section.tsx";
 import LoadingState from "@/components/layout/feedback/LoadingState";
 import { Button } from "@/components/ui/button";
 import ErrorState from "@/components/layout/feedback/ErrorState";
 import useTabState from "@/hooks/useTabState";
 import TabShell from "@/components/tabs/TabShell";
 import type { TabItem } from "@/components/tabs/TabBar";
-import SelectedWorkoutOverviewPanel from "./panels/SelectedWorkoutOverviewPanel";
-import WorkoutEntriesPanel from "./panels/WorkoutEntriesPanel.tsx";
-import HeatmapPanel from "./panels/HeatmapPanel";
-import ConfigurePanel from "@/pages/workouts/panels/ConfigurePanel.tsx";
+import SelectedWorkoutOverviewPanel from "@/features/workout/components/panels/SelectedWorkoutOverviewPanel.tsx";
+import WorkoutEntriesPanel from "@/features/workout/components/panels/WorkoutEntriesPanel.tsx";
+import HeatmapPanel from "@/features/workout/components/panels/HeatmapPanel.tsx";
+import ConfigurePanel from "@/features/workout/components/panels/ConfigurePanel.tsx";
 import {formatDateShort} from "@/utils/date.ts";
-import {SelectedWorkoutDropdown} from "@/components/workout/dropdown/SelectedWorkoutDropdown.tsx";
+import {SelectedWorkoutDropdown} from "@/features/workout/components/dropdown/SelectedWorkoutDropdown.tsx";
 
 type SelectedWorkoutTab = "overview" | "entries" | "heatmap" | "configure";
 

@@ -38,7 +38,8 @@ class V33LegacyProgressionModeReplayIT extends BaseIntegrationTest {
 
     @BeforeEach
     void prepareSchema() throws Exception {
-        prepareSchemaThroughMigrationVersion(32);
+        prepareSchemaThroughMigrationVersion(34);
+        applyMigration("db/migration/V35__add_version_columns.sql");
         seedWorkoutTemplateWithLegacyProgressionMode();
     }
 

@@ -34,6 +34,9 @@ public class SetEntry implements DAO<SetEntryDTO> {
     @Column(name = "rest_before_seconds")
     private Integer restBeforeSeconds;
 
+    @Version
+    private Long version = 0L;
+
     public SetEntry() { }
 
     public SetEntry(int reps, Double weight, Double rpe, String notes) {

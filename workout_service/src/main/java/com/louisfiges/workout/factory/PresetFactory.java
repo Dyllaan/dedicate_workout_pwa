@@ -11,6 +11,8 @@ import com.louisfiges.workout.dto.request.CreateProgrammeRequest;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -25,10 +27,10 @@ public class PresetFactory {
             LocalDate meetDate;
             try {
                 meetDate = Instant.parse(request.meetDate()).atZone(ZoneOffset.UTC).toLocalDate();
-            } catch (Exception e) {
+            } catch (DateTimeParseException e) {
                 try {
-                    meetDate = LocalDate.parse(request.meetDate());
-                } catch (Exception e2) {
+                    meetDate = LocalDate.parse(request.meetDate(), DateTimeFormatter.ISO_LOCAL_DATE);
+                } catch (DateTimeParseException e2) {
                     throw new BadRequestException("Invalid meet date format. Use ISO-8601, e.g. '2026-07-01T00:00:00Z' or '2026-07-01'");
                 }
             }
@@ -45,7 +47,7 @@ public class PresetFactory {
         Instant startInstant;
         try {
             startInstant = Instant.parse(startDate);
-        } catch (Exception e) {
+        } catch (DateTimeParseException e) {
             throw new BadRequestException("Invalid start date format. Please use ISO-8601 format, e.g. '2024-07-01T00:00:00Z'");
         }
 

@@ -3,6 +3,9 @@ package com.louisfiges.workout.dao.workout;
 import com.louisfiges.workout.analysis.types.PrimaryBenchmark;
 import com.louisfiges.workout.analysis.types.ProgressionMode;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import java.time.Instant;
 import java.util.UUID;
 
 import com.louisfiges.workout.dto.ExerciseConfigDTO;
@@ -50,6 +53,17 @@ public class ExerciseConfig implements DAO<ExerciseConfigDTO> {
 
     @Column(name = "focus")
     private Boolean focus;
+
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private Instant createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private Instant updatedAt;
+
+    @Version
+    private Long version = 0L;
 
     public ExerciseConfig() { }
 

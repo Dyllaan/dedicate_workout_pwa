@@ -4,7 +4,7 @@ import SimpleBarChart from "@/components/charts/SimpleBarChart";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { SelectionChip } from "@/components/ui/selection-chip";
-import Panel from "@/components/layout/Panel.tsx";
+import Panel from "@/components/layout/frames/Panel";
 import useChart from "@/features/progress/hooks/useChart";
 import useProgressQuery from "@/features/progress/hooks/useProgressQuery";
 

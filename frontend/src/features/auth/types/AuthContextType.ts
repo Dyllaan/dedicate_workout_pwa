@@ -1,4 +1,4 @@
-import type { User, MfaStatus, LoginResult } from '@/types/User';
+import type { User, MfaStatus, LoginResult } from '@/features/auth/types/User';
 
 export type AuthContextType = {
   user: User | null;

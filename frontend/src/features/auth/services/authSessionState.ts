@@ -1,4 +1,4 @@
-import type { MfaStatus, User } from "@/types/User";
+import type { MfaStatus, User } from "@/features/auth/types/User";
 
 export type AuthSessionState = {
   user: User | null;

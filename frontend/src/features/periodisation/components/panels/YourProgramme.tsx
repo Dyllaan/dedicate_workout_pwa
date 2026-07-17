@@ -1,16 +1,16 @@
 import { MapPin, Trash2, Archive, Calendar, CheckCircle2, CircleOff } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { getProgrammePresetLabel } from "@/utils/periodisationConfig";
+import { getProgrammePresetLabel } from "@/features/periodisation/utils/periodisationConfig";
 import ProgrammeTimeline from "@/features/periodisation/programme/components/ProgrammeTimeline";
-import usePeriodisationActions from "@/hooks/periodisation/usePeriodisationActions";
-import useProgramme from "@/hooks/periodisation/useProgramme";
-import { BLOCK_TYPE_CONFIG, BLOCK_TYPE_FALLBACK } from "@/utils/periodisationConfig";
-import type { Split } from "@/types/Workout";
-import type { Programme } from "@/types/Periodisation";
+import usePeriodisationActions from "@/features/periodisation/hooks/usePeriodisationActions";
+import useProgramme from "@/features/periodisation/programme/hooks/useProgramme";
+import { BLOCK_TYPE_CONFIG, BLOCK_TYPE_FALLBACK } from "@/features/periodisation/utils/periodisationConfig";
+import type { Split } from "@/features/workout/types/Workout";
+import type { Programme } from "@/features/periodisation/types/Periodisation";
 import { ConfirmDashCardRow } from "@/components/layout/card/ConfirmDashCardRow";
 import { DashCardRow } from "@/components/layout/card/DashCardRow";
-import Section from "@/components/layout/Section";
+import Section from "@/components/layout/section/Section";
 import { ICONS } from "@/config/iconConfig";
 
 export default function YourProgramme({ split, activeProgramme }: { split: Split; activeProgramme: Programme | null }) {

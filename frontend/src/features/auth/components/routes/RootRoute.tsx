@@ -1,7 +1,7 @@
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 import Landing from '@/pages/core/Landing';
-import RouteLoadingPage from '@/routes/RouteLoadingPage';
+import RouteLoadingPage from '@/features/auth/components/routes/RouteLoadingPage';
 
 export default function RootRoute() {
   const { signedIn, isLoading } = useAuth();

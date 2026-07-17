@@ -6,8 +6,8 @@ import SimpleBarChart from "@/components/charts/SimpleBarChart.tsx";
 import EmptyState from "@/components/layout/feedback/EmptyState.tsx";
 import ErrorState from "@/components/layout/feedback/ErrorState.tsx";
 import LoadingState from "@/components/layout/feedback/LoadingState.tsx";
-import Page from "@/components/layout/section/Page.tsx";
-import Section from "@/components/layout/Section.tsx";
+import Page from "@/components/layout/frames/Page.tsx";
+import Section from "@/components/layout/section/Section.tsx";
 import { SelectionChip } from "@/components/ui";
 import { Button } from "@/components/ui/button.tsx";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select.tsx";
@@ -15,11 +15,11 @@ import StatGrid from "@/components/ui/StatGrid.tsx";
 import StatTile from "@/components/ui/stat-tile.tsx";
 import useProgressQuery from "@/features/progress/hooks/useProgressQuery.ts";
 import useChart from "@/features/progress/hooks/useChart.ts";
-import { useExerciseHistory } from "@/hooks/workout/useExerciseHistory.ts";
-import { useAnalysisExerciseOptions, useTemplateAnalysisRecommendation } from "@/hooks/workout/useAnalysis.ts";
-import { useUnitPreference } from "@/hooks/useUnitPreference.ts";
+import { useExerciseHistory } from "@/features/workout/exercise-definitions/hooks/useExerciseHistory.ts";
+import { useAnalysisExerciseOptions, useTemplateAnalysisRecommendation } from "@/features/analysis/hooks/useAnalysis.ts";
+import { useUnitPreference } from "@/features/preferences/unit/hooks/useUnitPreference.ts";
 import { cn } from "@/lib/utils.ts";
-import { formatShortDateTime, formatStatusToken } from "../../insights/helpers/insightsUtils.ts";
+import { formatShortDateTime, formatStatusToken } from "../../insights/utils/insightsUtils.ts";
 
 function formatMetricValue(value: number, unit: string) {
   if (unit === "%") {

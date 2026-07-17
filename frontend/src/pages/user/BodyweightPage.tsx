@@ -1,19 +1,19 @@
 import { useState } from "react";
 import { Scale, Trash2 } from "lucide-react";
-import Page from "@/components/layout/section/Page";
-import Section from "@/components/layout/Section";
+import Page from "@/components/layout/frames/Page";
+import Section from "@/components/layout/section/Section";
 import EmptyState from "@/components/layout/feedback/EmptyState";
 import { Skeleton } from "@/components/ui/skeleton";
 import LoadingState from "@/components/layout/feedback/LoadingState";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import useBodyweightLogs, { useAllBodyweightLogs } from "@/hooks/workout/useBodyweightLogs";
+import useBodyweightLogs, { useAllBodyweightLogs } from "@/features/bodyweight/hooks/useBodyweightLogs";
 import { PaginationControls } from "@/components/ui";
 import { useUrlPagination } from "@/hooks/useUrlPagination";
-import { useUnitPreference } from "@/hooks/useUnitPreference";
-import { toStorageKg } from "@/utils/unitConversion";
-import type { CreateBodyweightLogRequest } from "@/types/Bodyweight";
+import { useUnitPreference } from "@/features/preferences/unit/hooks/useUnitPreference";
+import { toStorageKg } from "@/features/preferences/unit/utils/unitConversion";
+import type { CreateBodyweightLogRequest } from "@/features/bodyweight/types/Bodyweight";
 
 const VIEWBOX_W = 600;
 const VIEWBOX_H = 140;

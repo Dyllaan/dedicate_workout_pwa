@@ -3,7 +3,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import LoadingState from "@/components/layout/feedback/LoadingState";
 
 import ShellFrame from "./ShellFrame";
-import { shouldShowAppBack } from "./shellNavigation";
+import { shouldShowAppBack } from "./utils/ShellNavigation";
 
 export default function AppShell() {
   const { pathname } = useLocation();

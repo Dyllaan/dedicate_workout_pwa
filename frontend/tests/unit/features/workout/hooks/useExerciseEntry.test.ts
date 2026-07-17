@@ -1,7 +1,7 @@
 import { renderHook, act } from "@testing-library/react";
 import { useExerciseEntry } from "@/features/workout/hooks/useExerciseEntry";
 import type { UseExerciseEntryInput } from "@/features/workout/hooks/useExerciseEntry";
-import type { ExerciseFormData, SetFormData } from "@/hooks/forms/workoutEntryFormTypes";
+import type { ExerciseFormData, SetFormData } from "@/features/workout/entries/types/workoutEntryFormTypes";
 
 vi.mock("@/hooks/useUnitPreference", () => ({
   useUnitPreference: () => ({ format: (v: number) => `${v}kg` }),

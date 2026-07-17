@@ -1,8 +1,8 @@
-import type { Block, Programme } from '@/types/Periodisation';
-import { BLOCK_TYPE_CONFIG, BLOCK_TYPE_FALLBACK } from '@/utils/periodisationConfig';
+import type { Block, Programme } from '@/features/periodisation/types/Periodisation';
+import { BLOCK_TYPE_CONFIG, BLOCK_TYPE_FALLBACK } from '@/features/periodisation/utils/periodisationConfig';
 import { Badge } from '@/components/ui/badge';
 import { DashCardRow } from '../../../../components/layout/card/DashCardRow';
-import { buildBlockTabPath } from '@/utils/periodisationTabs';
+import { buildBlockTabPath } from '@/features/periodisation/utils/periodisationTabs';
 
 type Props = {
   splitId: string;

@@ -14,7 +14,7 @@ import {
     Pencil, Trash2,
 } from "lucide-react"
 import {useNavigate} from "react-router-dom";
-import {useWorkoutTemplateMutations} from "@/hooks/workout/useWorkoutTemplates.ts";
+import {useWorkoutTemplateMutations} from "@/features/workout/templates/hooks/useWorkoutTemplates";
 import {enqueueSnackbar} from "notistack";
 
 interface SelectedWorkoutDropdownProps {

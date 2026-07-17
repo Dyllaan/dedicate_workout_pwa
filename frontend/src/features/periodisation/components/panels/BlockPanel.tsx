@@ -1,7 +1,7 @@
 import { Calendar, Hash, Hourglass, SlidersHorizontal } from "lucide-react";
-import type { Block, Programme } from "@/types/Periodisation";
-import { STRATEGY_LABELS } from "@/utils/periodisationConfig";
-import Section from "@/components/layout/Section";
+import type { Block, Programme } from "@/features/periodisation/types/Periodisation";
+import { STRATEGY_LABELS } from "@/features/periodisation/utils/periodisationConfig";
+import Section from "@/components/layout/section/Section";
 import { WeekCard } from "@/features/periodisation/week/components/WeekCard";
 import usePeriodisationActions from "@/features/periodisation/hooks/usePeriodisationActions";
 import { DashCardRow } from "@/components/layout/card/DashCardRow";
@@ -9,7 +9,7 @@ import EmptyState from "@/components/layout/feedback/EmptyState";
 import { ICONS } from "@/config/iconConfig";
 import StatTile from "@/components/ui/stat-tile";
 import StatGrid from "@/components/ui/StatGrid";
-import Panel from "@/components/layout/Panel";
+import Panel from "@/components/layout/frames/Panel";
 
 type BlockPanelProps = {
   splitId: string;

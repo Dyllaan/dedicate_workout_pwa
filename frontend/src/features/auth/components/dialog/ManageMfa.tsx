@@ -1,7 +1,7 @@
 import { Shield } from 'lucide-react';
-import { useAuth } from '@/hooks/useAuth.tsx';
+import { useAuth } from '@/features/auth/hooks/useAuth.tsx';
 import { useState } from 'react';
-import MfaSetupDialog from '@/components/auth/dialog/mfa/MfaSetupDialog.tsx';
+import MfaSetupDialog from '@/features/auth/components/dialog/mfa/MfaSetupDialog.tsx';
 import MfaDisableDialog from './mfa/MfaDisableDialog.tsx';
 import { DashCardRow } from '@/components/layout/card/DashCardRow.tsx';
 

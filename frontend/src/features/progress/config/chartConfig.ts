@@ -1,4 +1,4 @@
-import type { ProgressChartPresetRequest } from "@/types/Progress";
+import type { ProgressChartPresetRequest } from "@/features/progress/types/Progress";
 
 const PREFIX = "progress_chart_config_";
 

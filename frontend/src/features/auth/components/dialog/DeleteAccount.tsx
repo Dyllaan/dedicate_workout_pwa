@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Lock } from 'lucide-react';
 import ConfirmDialog from '@/components/layout/dialog/ConfirmDialog.tsx';
-import RequiresMfaVerificationDialog from '@/components/auth/dialog/mfa/RequiresMfaVerificationDialog.tsx';
-import type { User } from '@/types/User.ts';
+import RequiresMfaVerificationDialog from '@/features/auth/components/dialog/mfa/RequiresMfaVerificationDialog.tsx';
+import type { User } from '@/features/auth/types/User.ts';
 import { DashCardRow } from '@/components/layout/card/DashCardRow.tsx';
 
 export default function DeleteAccount({user, deleteUser} : {user?: User | null, deleteUser: (userCode: string) => Promise<void>}) {

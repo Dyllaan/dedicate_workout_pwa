@@ -1,11 +1,11 @@
 import { CheckCircle2, Clock } from "lucide-react";
 import { sortByCreatedAtDesc } from "@/utils/sort";
-import type { Programme } from "@/types/Periodisation";
-import type { Split } from "@/types/Workout";
-import type { PagedResponse } from "@/types/Pagination";
+import type { Programme } from "@/features/periodisation/types/Periodisation";
+import type { Split } from "@/features/workout/types/Workout";
+import type { PagedResponse } from "@/api/types/Pagination";
 import { DashCardRow } from "@/components/layout/card/DashCardRow";
-import Section from "@/components/layout/Section";
-import { getProgrammePresetLabel } from "@/utils/periodisationConfig";
+import Section from "@/components/layout/section/Section";
+import { getProgrammePresetLabel } from "@/features/periodisation/utils/periodisationConfig";
 import { PaginationControls } from "@/components/ui";
 import {PrimaryAction} from "@/components/layout/card/PrimaryAction.tsx";
 

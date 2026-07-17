@@ -1,16 +1,16 @@
 import { BarChart3, TableOfContents, TrendingUp } from "lucide-react";
 
 import EmptyState from "@/components/layout/feedback/EmptyState";
-import Section from "@/components/layout/Section";
+import Section from "@/components/layout/section/Section";
 import InsightsOverviewRow from "@/features/insights/components/InsightsOverviewRow";
 import {
   formatExerciseLabel,
   formatRecommendedAction,
   formatStatusToken,
   trainingStateTone,
-} from "../helpers/insightsUtils";
-import type { InsightsOverviewModel, NextWorkoutSignal, PrioritySignal } from "@/types/Insights";
-import type {DashboardSummaryTopLift} from "@/types/Workout.ts";
+} from "../utils/insightsUtils";
+import type { InsightsOverviewModel, NextWorkoutSignal, PrioritySignal } from "@/features/insights/types/Insights";
+import type {DashboardSummaryTopLift} from "@/features/workout/types/Workout";
 
 interface InsightsOverviewPanelProps {
   overview?: InsightsOverviewModel | null;

@@ -1,5 +1,5 @@
 import {useMemo} from "react";
-import type {ProgressChartQueryResponse} from "@/types/Progress.ts";
+import type {ProgressChartQueryResponse} from "@/features/progress/types/Progress.ts";
 import {formatDateShort} from "@/utils/date.ts";
 
 type SeriesPoint = {

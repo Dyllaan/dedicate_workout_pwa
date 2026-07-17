@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import type Tip from "@/types/Tip";
+import type Tip from "@/features/tips/types/Tip";
 
 function shuffleArray<T>(array: T[]): T[] {
     const shuffled = [...array];

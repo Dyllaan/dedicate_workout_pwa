@@ -3,7 +3,7 @@ import { renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { workoutApi } from "@/api/api";
 import { queryKeys } from "@/api/queryKeys";
-import useSplits, { useAllSplits, useSplit } from "@/hooks/periodisation/useSplits";
+import useSplits, { useAllSplits, useSplit } from @/features/periodisation/splits/hooks/useSplits";
 import {
   buildProgramme,
   buildSplit,

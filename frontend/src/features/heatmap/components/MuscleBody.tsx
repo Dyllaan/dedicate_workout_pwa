@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import Body from "react-muscle-highlighter";
 import type { ExtendedBodyPart } from "react-muscle-highlighter";
-import type { MuscleGroupId } from "@/types/Heatmap";
+import type { MuscleGroupId } from "@/features/heatmap/types/Heatmap";
 import { MUSCLE_GROUPS, intensityColor } from "../config/muscleMetadata";
 
 type MuscleBodyProps = {

@@ -1,5 +1,5 @@
-import { formatRestTime } from "@/utils/restTime.ts";
-import type { SetEntry } from "@/types/Workout.ts";
+import { formatRestTime } from "@/features/workout/entries/utils/restTime";
+import type { SetEntry } from "@/features/workout/types/Workout";
 import {
     Table,
     TableBody,

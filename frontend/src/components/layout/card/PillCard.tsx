@@ -1,6 +1,6 @@
-import { MUSCLE_LABELS } from "@/components/workout/heatmap/muscleMetadata";
-import type { ResolvedExerciseHeatmap } from "@/types/Heatmap";
-import { formatExerciseLabel } from "@/components/insights/insightsUtils";
+import { MUSCLE_LABELS } from "@/features/heatmap/config/muscleMetadata";
+import type { ResolvedExerciseHeatmap } from "@/features/heatmap/types/Heatmap";
+import { formatExerciseLabel } from "@/features/insights/utils/insightsUtils";
 
 type PillCardProps = {
   resolvedExercises: ResolvedExerciseHeatmap[];

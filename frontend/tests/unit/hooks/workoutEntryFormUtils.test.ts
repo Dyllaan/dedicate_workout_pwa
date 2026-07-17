@@ -4,7 +4,7 @@ import {
   buildSeededExerciseDraft,
   getRemainingSuggestions,
 } from "@/hooks/forms/workoutEntrySuggestions";
-import type { WorkoutEntryExerciseDraft } from "@/hooks/forms/workoutEntryFormTypes";
+import type { WorkoutEntryExerciseDraft } from "@/features/workout/entries/types/workoutEntryFormTypes";
 import { createExerciseIdentityDraft } from "@/types/exerciseIdentity";
 import { buildWorkoutEntry, buildWorkoutTemplate } from "tests/shared/builders";
 

@@ -8,7 +8,7 @@ import AuthRequirementsDialog from "@/features/auth/components/dialog/AuthRequir
 import { HelpCircle } from "lucide-react";
 import { ServiceVersions } from "@/features/health/components/ServiceVersions";
 import { useNavigate } from "react-router-dom";
-import Page from "@/components/layout/section/Page";
+import Page from "@/components/layout/frames/Page";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 

@@ -2,12 +2,12 @@ import { useMemo } from "react";
 import { Outlet, useParams } from "react-router-dom";
 import { Dumbbell } from "lucide-react";
 import ErrorState from "@/components/layout/feedback/ErrorState";
-import Page from "@/components/layout/section/Page";
-import { useAllWorkoutEntries } from "@/hooks/workout/useWorkoutEntries";
-import { useWorkoutTemplate } from "@/hooks/workout/useWorkoutTemplates";
-import { useUnitPreference } from "@/hooks/useUnitPreference";
-import type { WorkoutEntry, WorkoutTemplate } from "@/types/Workout";
-import type { WorkoutStartupSummary } from "@/types/Startup";
+import Page from "@/components/layout/frames/Page";
+import { useAllWorkoutEntries } from "@/features/workout/entries/hooks/useWorkoutEntries";
+import { useWorkoutTemplate } from "@/features/workout/templates/hooks/useWorkoutTemplates";
+import { useUnitPreference } from "@/features/preferences/unit/hooks/useUnitPreference";
+import type { WorkoutEntry, WorkoutTemplate } from "@/features/workout/types/Workout";
+import type { WorkoutStartupSummary } from "@/features/startup/types/Startup";
 
 type WorkoutContext = {
   workoutTemplate: WorkoutTemplate | null;

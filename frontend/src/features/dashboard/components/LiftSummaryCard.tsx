@@ -1,12 +1,12 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { formatPowerToWeightRatio } from "@/utils/powerToWeightRatio";
+import { formatPowerToWeightRatio } from "@/features/workout/entries/utils/powerToWeightRatio";
 import StatGrid from "@/components/ui/StatGrid";
 import StatTile from "@/components/ui/stat-tile";
-import Section from "@/components/layout/Section";
+import Section from "@/components/layout/section/Section";
 import { DashCardRow } from "@/components/layout/card/DashCardRow";
 import { ICONS } from "@/config/iconConfig";
-import { useUnitPreference } from "@/hooks/useUnitPreference";
-import type { DashboardSummaryTopLift } from "@/types/Workout";
+import { useUnitPreference } from "@/features/preferences/unit/hooks/useUnitPreference";
+import type { DashboardSummaryTopLift } from "@/features/workout/types/Workout";
 import { Gauge, Scale, TrendingUp, Trophy, History, ChevronRight, Clock3 } from "lucide-react";
 import {Link} from "react-router-dom";
 import { formatDateShort } from "@/utils/date";

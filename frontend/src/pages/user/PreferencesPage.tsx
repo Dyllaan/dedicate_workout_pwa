@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import { Timer } from "lucide-react";
 import { enqueueSnackbar } from "notistack";
 
-import Page from "@/components/layout/section/Page";
-import Section from "@/components/layout/Section";
+import Page from "@/components/layout/frames/Page";
+import Section from "@/components/layout/section/Section";
 import BaseInput from "@/components/layout/input/BaseInput";
 import { Button } from "@/components/ui/button";
 import { SelectionChip } from "@/components/ui/selection-chip";
 import { ICONS } from "@/config/iconConfig";
-import { useUnitPreference } from "@/hooks/useUnitPreference";
-import { useWorkoutSettings } from "@/hooks/workout/useWorkoutSettings";
+import { useUnitPreference } from "@/features/preferences/unit/hooks/useUnitPreference";
+import { useWorkoutSettings } from "@/features/workout/hooks/useWorkoutSettings";
 import { DashCardRow } from "@/components/layout/card/DashCardRow";
 
 export default function PreferencesPage() {

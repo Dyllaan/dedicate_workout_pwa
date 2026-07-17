@@ -7,8 +7,8 @@ import {
     DrawerHeader,
     DrawerTitle,
 } from "@/components/ui/drawer";
-import type {Split} from "@/types/Workout.ts";
-import SplitOverviewPanel from "@/components/periodisation/panels/SplitOverviewPanel.tsx";
+import type {Split} from "@/features/workout/types/Workout";
+import SplitOverviewPanel from "@/features/periodisation/components/panels/SplitOverviewPanel.tsx";
 
 type SplitDrawerProps = {
     split: Split | null;

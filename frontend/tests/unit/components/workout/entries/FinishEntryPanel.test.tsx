@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import type { FinishEntryAnalysisContext } from "@/utils/workoutEntryAnalysis";
-import type { WorkoutEntryExerciseDraft } from "@/hooks/forms/workoutEntryFormTypes";
+import type { WorkoutEntryExerciseDraft } from "@/features/workout/entries/types/workoutEntryFormTypes";
 import type { WorkoutEntry } from "@/types/Workout";
 import { createExerciseIdentityDraft } from "@/types/exerciseIdentity";
 import FinishEntryPanel from "@/components/workout/entries/FinishEntryPanel";

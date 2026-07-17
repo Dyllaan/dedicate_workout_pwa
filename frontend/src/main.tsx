@@ -1,9 +1,9 @@
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
-import { installCspProbe } from './security/cspProbe'
+import { installCspProbe } from './lib/cspProbe.ts'
 import config from './config/config'
-import { installBrowserLogger } from './logging/browserLogger'
+import { installBrowserLogger } from './lib/browserLogger.ts'
 
 installCspProbe()
 installBrowserLogger({

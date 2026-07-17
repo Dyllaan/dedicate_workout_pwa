@@ -1,19 +1,19 @@
 import { useNavigate } from "react-router-dom";
 import { Dumbbell, SquarePen } from "lucide-react";
 import { enqueueSnackbar } from "notistack";
-import { WorkoutEditorContainer as WorkoutEditor } from "@/features/workout/WorkoutEditorContainer";
-import Page from "@/components/layout/section/Page";
-import Section from "@/components/layout/Section";
+import { WorkoutEditorContainer as WorkoutEditor } from "@/features/workout/templates/components/WorkoutEditorContainer";
+import Page from "@/components/layout/frames/Page";
+import Section from "@/components/layout/section/Section";
 import LoadingState from "@/components/layout/feedback/LoadingState";
 import { Button } from "@/components/ui/button";
 import useWorkoutEditorForm, {
   editorValuesToUpdateWorkoutPayload,
   workoutTemplateToEditorValues,
   type WorkoutEditorValues,
-} from "@/hooks/forms/useWorkoutEditorForm";
-import useWorkoutContext from "@/hooks/forms/context/useWorkoutContext";
-import { useWorkoutTemplateMutations } from "@/hooks/workout/useWorkoutTemplates";
-import type { WorkoutTemplate } from "@/types/Workout";
+} from "@/features/workout/templates/hooks/useWorkoutEditorForm";
+import useWorkoutContext from "@/features/workout/hooks/useWorkoutContext";
+import { useWorkoutTemplateMutations } from "@/features/workout/templates/hooks/useWorkoutTemplates";
+import type { WorkoutTemplate } from "@/features/workout/types/Workout";
 import ErrorState from "@/components/layout/feedback/ErrorState";
 
 export default function ModifyWorkoutPage() {

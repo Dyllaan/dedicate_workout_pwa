@@ -9,7 +9,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import type { ExerciseDefinitionResolveMatch } from "@/types/Workout";
+import type { ExerciseDefinitionResolveMatch } from "@/features/workout/types/Workout";
 
 type ExerciseDefinitionChoiceDialogProps = {
   open: boolean;

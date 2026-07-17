@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { Plus, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
-import { useExerciseInfoCatalog } from "@/hooks/workout/useMuscleHeatmap";
-import type { ExerciseInfoCatalogItem } from "@/types/Heatmap";
-import { getExerciseCatalogDisplayMetadata } from "@/utils/exerciseCatalog";
-import Section from "@/components/layout/Section";
-import { DashCardRow } from "../layout/card/DashCardRow";
+import { useExerciseInfoCatalog } from "@/features/heatmap/hooks/useMuscleHeatmap";
+import type { ExerciseInfoCatalogItem } from "@/features/heatmap/types/Heatmap";
+import { getExerciseCatalogDisplayMetadata } from "@/features/heatmap/utils/exerciseCatalog";
+import Section from "@/components/layout/section/Section";
+import { DashCardRow } from "@/components/layout/card/DashCardRow";
 
 type ExerciseCatalogPickerProps = {
   label?: string;

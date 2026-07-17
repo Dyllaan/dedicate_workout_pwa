@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { workoutApi } from "@/api/api";
-import type { ProgressChartQueryRequest, ProgressChartQueryResponse } from "@/types/Progress";
+import type { ProgressChartQueryRequest, ProgressChartQueryResponse } from "@/features/progress/types/Progress";
 
 export function useProgressChartQuery(request: ProgressChartQueryRequest, enabled = true) {
   return useQuery({

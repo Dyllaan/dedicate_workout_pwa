@@ -1,7 +1,7 @@
 import {Github, Dumbbell, Layers, Smartphone, Download, LineChart, HeartPulse} from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import Page from '@/components/layout/section/Page';
-import Section from '@/components/layout/Section';
+import Page from '@/components/layout/frames/Page';
+import Section from '@/components/layout/section/Section';
 import { DashCardRow } from '@/components/layout/card/DashCardRow';
 import { ICONS } from '@/config/iconConfig';
 import {Button} from "@/components/ui";

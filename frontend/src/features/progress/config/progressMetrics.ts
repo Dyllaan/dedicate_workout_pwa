@@ -1,4 +1,4 @@
-import type { WorkoutEntry } from "@/types/Workout";
+import type { WorkoutEntry } from "@/features/workout/types/Workout";
 
 interface ExerciseDataPoint {
   exerciseName: string;

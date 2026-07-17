@@ -1,7 +1,7 @@
 import {useSearchParams} from "react-router-dom";
-import type {ProgressChartQueryRequest, ProgressComparisonMode, ProgressMetric} from "@/types/Progress.ts";
+import type {ProgressChartQueryRequest, ProgressComparisonMode, ProgressMetric} from "@/features/progress/types/Progress.ts";
 import {useMemo} from "react";
-import {useProgressChartQuery} from "@/hooks/workout/useProgressAnalytics.ts";
+import {useProgressChartQuery} from "@/features/progress/hooks/useProgressAnalytics.ts";
 
 interface IProgressChartData {
     exerciseDefinitionId:string;

@@ -1,16 +1,16 @@
 import { Activity, Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
-import type { WeeklyMuscleVolumeMuscle } from "@/types/Heatmap";
+import type { WeeklyMuscleVolumeMuscle } from "@/features/heatmap/types/Heatmap";
 import EmptyState from "@/components/layout/feedback/EmptyState";
-import CollapsiblePanel from "@/components/layout/CollapsiblePanel";
-import Panel from "@/components/layout/Panel";
-import Section from "@/components/layout/Section";
+import CollapsiblePanel from "@/components/layout/section/CollapsiblePanel";
+import Panel from "@/components/layout/frames/Panel";
+import Section from "@/components/layout/section/Section";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useDashboardWeeklyMuscleVolume } from "@/hooks/workout/useTrainingInsights";
-import { MUSCLE_LABELS } from "@/components/workout/heatmap/muscleMetadata";
-import { formatExerciseLabel, formatShortDateTime } from "../helpers/insightsUtils";
-import { DashCardRow } from "../layout/card/DashCardRow";
+import { useDashboardWeeklyMuscleVolume } from "@/features/insights/hooks/useTrainingInsights";
+import { MUSCLE_LABELS } from "@/features/heatmap/config/muscleMetadata";
+import { formatExerciseLabel, formatShortDateTime } from "../utils/insightsUtils";
+import { DashCardRow } from "@/components/layout/card/DashCardRow";
 
 type TrackingStatus = "ON_TRACK" | "AHEAD" | "BEHIND" | "COMPLETED";
 

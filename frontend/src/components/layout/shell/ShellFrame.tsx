@@ -1,12 +1,12 @@
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 
-import Back from "@/components/layout/section/Back";
-import BottomNav from "@/components/layout/section/BottomNav";
-import { useAuth } from "@/hooks/useAuth";
+import Back from "@/components/layout/app/Back";
+import BottomNav from "@/components/layout/app/BottomNav";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 import { cn } from "@/lib/utils";
-import UnsavedDraftDrawer from "@/components/workout/entries/UnsavedDraftDrawer.tsx";
-import { useWorkoutEntryDrafts } from "@/hooks/forms/useWorkoutEntryDrafts.ts";
+import UnsavedDraftDrawer from "@/features/workout/entries/components/UnsavedDraftDrawer.tsx";
+import { useWorkoutEntryDrafts } from "@/features/workout/entries/hooks/useWorkoutEntryDrafts";
 
 interface ShellFrameProps {
   children: ReactNode;

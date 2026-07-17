@@ -1,6 +1,6 @@
 ﻿import {Lock, User as UserIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import useLoginForm from '@/hooks/forms/auth/useLoginForm';
+import useLoginForm from '@/features/auth/hooks/forms/useLoginForm';
 import BaseInput, { PasswordInput } from '@/components/layout/input/BaseInput';
 
 export default function LoginForm() {

@@ -4,9 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
-import useRegisterForm from "@/hooks/forms/auth/useRegisterForm";
+import useRegisterForm from "@/features/auth/hooks/forms/useRegisterForm";
 import BaseInput, { PasswordInput } from "@/components/layout/input/BaseInput";
-import PolicyAgreementDrawer from "@/components/auth/PolicyAgreementDrawer";
+import PolicyAgreementDrawer from "@/features/auth/components/PolicyAgreementDrawer";
 
 export default function RegisterForm() {
   const { form, handleSubmitClick, shouldShowError } = useRegisterForm();

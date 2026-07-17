@@ -3,8 +3,8 @@ import { CalendarDays, Moon, Save, Sun } from 'lucide-react';
 import { enqueueSnackbar } from 'notistack';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import CollapsiblePanel from '@/components/layout/CollapsiblePanel';
-import type { Week } from '@/types/Periodisation';
+import CollapsiblePanel from '@/components/layout/section/CollapsiblePanel';
+import type { Week } from '@/features/periodisation/types/Periodisation';
 import { Stepper } from '@/components/ui/stepper';
 
 export function WeekCard({

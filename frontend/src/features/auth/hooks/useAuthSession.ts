@@ -8,7 +8,7 @@ import {
 } from "@/api/api";
 import type { AuthContextType } from "@/features/auth/types/AuthContextType";
 import type { LoginResult, MfaStatus, User } from "@/features/auth/types/User";
-import { getDeviceFingerprint } from "@/utils/deviceFingerprint";
+import { getDeviceFingerprint } from "@/features/auth/utils/deviceFingerprint";
 import { bootstrapSession } from "../services/authSessionBootstrap";
 import {
   authSessionReducer,

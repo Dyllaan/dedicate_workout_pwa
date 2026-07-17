@@ -1,5 +1,5 @@
-import type { MeResponse, User } from "@/types/User";
-import { decodeJwt } from "@/utils/auth/jwt";
+import type { MeResponse, User } from "@/features/auth/types/User";
+import { decodeJwt } from "@/features/auth/utils/jwt";
 
 export function withDerivedSub(userData: User): User {
   const payload = decodeJwt(userData.accessToken);
@@ -9,7 +9,7 @@ export function withDerivedSub(userData: User): User {
 
 export function buildUserFromMeResponse(response: MeResponse, accessToken: string): User {
   const payload = decodeJwt(accessToken);
-  return {
+return {
     username: response.username,
     mfaEnabled: response.mfaEnabled,
     accessToken,

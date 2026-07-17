@@ -1,10 +1,10 @@
 import { Badge } from "@/components/ui/badge";
 import { useDashboardSummary } from "@/features/dashboard/hooks/useDashboardSummary";
 import {Flame} from "lucide-react";
-import { Skeleton } from "../ui/skeleton";
-import PreviewChip from "../PreviewChip";
+import { Skeleton } from "@/components/ui/skeleton";
+import PreviewChip from "@/components/layout/card/PreviewChip";
 import {PrimaryAction} from "@/components/layout/card/PrimaryAction.tsx";
-import Section from "@/components/layout/Section.tsx";
+import Section from "@/components/layout/section/Section";
 import {ICONS} from "@/config/iconConfig.ts";
 
 function daysAgo(dateStr: string): string {

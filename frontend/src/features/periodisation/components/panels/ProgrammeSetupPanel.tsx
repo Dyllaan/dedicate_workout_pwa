@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import { CalendarDays, Check, ChevronRight, Wrench } from 'lucide-react';
-import type { PresetType } from '@/types/Periodisation';
-import useSplits from '@/hooks/periodisation/useSplits';
-import { PRESETS } from '@/utils/periodisationConfig';
+import type { PresetType } from '@/features/periodisation/types/Periodisation';
+import useSplits from '@/features/periodisation/splits/hooks/useSplits';
+import { PRESETS } from '@/features/periodisation/utils/periodisationConfig';
 import { enqueueSnackbar } from 'notistack';
 import { DashCardRow } from '@/components/layout/card/DashCardRow';
-import useProgramme from '@/hooks/periodisation/useProgramme';
+import useProgramme from '@/features/periodisation/programme/hooks/useProgramme';
 import { useNavigate } from 'react-router-dom';
-import type { Split } from '@/types/Workout';
-import FormSection from '@/components/layout/FormSection';
-import Section from '@/components/layout/Section';
+import type { Split } from '@/features/workout/types/Workout';
+import FormSection from '@/components/layout/section/FormSection';
+import Section from '@/components/layout/section/Section';
 
 const MEET_PREP_WEEKS =
   PRESETS.find((p) => p.type === 'POWERLIFT_MEET_PREP')?.weeks ?? 12;

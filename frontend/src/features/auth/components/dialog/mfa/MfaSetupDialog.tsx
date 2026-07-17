@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Shield, Copy, Check, Download } from "lucide-react";
 import { enqueueSnackbar } from "notistack";
 
-import { useMfa } from "@/hooks/useMfa";
+import { useMfa } from "@/features/auth/hooks/useMfa";
 import { Button } from "@/components/ui/button";
 import {
   Card,

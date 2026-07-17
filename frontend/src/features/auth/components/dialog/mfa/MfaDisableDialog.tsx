@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Shield } from "lucide-react";
 
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 

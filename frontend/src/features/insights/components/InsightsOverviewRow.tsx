@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import StatusBadge from "@/components/ui/status-badge";
 import { cn } from "@/lib/utils";
-import type { SignalTone, TrainingState } from "@/types/Insights";
+import type { SignalTone, TrainingState } from "@/features/insights/types/Insights";
 
 type InsightsOverviewRowProps = {
   overline: string;

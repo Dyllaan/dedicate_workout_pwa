@@ -7,12 +7,12 @@ import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import TrainingStatusBanner from "@/features/dashboard/components/TrainingStatusBanner";
 import NextWorkoutCard from "@/features/dashboard/components/NextWorkoutCard";
 import OnboardingDialog from "@/features/onboarding/components/OnboardingDialog";
-import Page from "@/components/layout/section/Page";
+import Page from "@/components/layout/frames/Page";
 import { cn } from "@/lib/utils";
 import { Tooltip } from "@/components/ui/tooltip";
 import TipCarousel from "@/features/dashboard/components/TipCarousel.tsx";
 import LiftSummaryCard from "@/features/dashboard/components/LiftSummaryCard.tsx";
-import CreateWorkoutButton from "@/features/workout/components/CreateWorkoutButton.tsx";
+import CreateWorkoutButton from "@/features/workout/templates/components/CreateWorkoutButton";
 
 function getGreeting(): string {
   const hour = new Date().getHours();

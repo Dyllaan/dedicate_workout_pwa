@@ -2,8 +2,8 @@ import { Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Stepper } from "@/components/ui";
-import type { Split } from "@/types/Workout";
-import type { SplitWorkoutFrequencyMap } from "@/utils/splitWorkoutFrequencies";
+import type { Split } from "@/features/workout/types/Workout";
+import type { SplitWorkoutFrequencyMap } from "@/features/periodisation/utils/splitWorkoutFrequencies";
 
 export default function WorkoutFrequencyStepper({
   split,

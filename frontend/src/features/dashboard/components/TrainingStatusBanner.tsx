@@ -1,16 +1,16 @@
 import { ArrowRight, ChevronRight } from "lucide-react";
-import type { Block, Programme } from "@/types/Periodisation";
+import type { Block, Programme } from "@/features/periodisation/types/Periodisation";
 import { cn } from "@/lib/utils";
 import {
   BLOCK_TYPE_CONFIG,
   BLOCK_TYPE_FALLBACK,
   getProgrammePresetLabel,
-} from "@/utils/periodisationConfig";
+} from "@/features/periodisation/utils/periodisationConfig";
 import { Progress } from "@/components/ui/progress";
-import { Skeleton } from "../ui/skeleton";
-import useProgramme from "@/hooks/periodisation/useProgramme";
+import { Skeleton } from "@/components/ui/skeleton";
+import useProgramme from "@/features/periodisation/programme/hooks/useProgramme";
 import { Link, useNavigate } from "react-router-dom";
-import Section from "@/components/layout/Section.tsx";
+import Section from "@/components/layout/section/Section";
 import {ICONS} from "@/config/iconConfig.ts";
 
 interface TrainingStatusBannerProps {

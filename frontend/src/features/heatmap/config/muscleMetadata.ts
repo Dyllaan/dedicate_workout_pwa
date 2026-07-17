@@ -1,4 +1,4 @@
-import type { MuscleGroupId } from "@/types/Heatmap";
+import type { MuscleGroupId } from "@/features/heatmap/types/Heatmap";
 
 type BodySlug =
   | "abs"

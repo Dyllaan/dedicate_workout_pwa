@@ -1,9 +1,9 @@
 import { Dumbbell } from "lucide-react";
 import EmptyState from "@/components/layout/feedback/EmptyState";
-import FormPage from "@/components/layout/FormPage";
+import FormPage from "@/components/layout/frames/FormPage";
 import { PaginationControls } from "@/components/ui";
 import { ICONS } from "@/config/iconConfig";
-import type { WorkoutTemplate } from "@/types/Workout";
+import type { WorkoutTemplate } from "@/features/workout/types/Workout";
 import { DashCheckRow } from "@/components/layout/card/DashCheckRow";
 
 interface WorkoutSelectionProps {

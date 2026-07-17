@@ -26,11 +26,11 @@ import {
   Plus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { WorkoutTemplate } from "@/types/Workout";
-import Section from "@/components/layout/Section";
-import type { CreateSplitRequest } from "@/types/Workout";
+import type { WorkoutTemplate } from "@/features/workout/types/Workout";
+import Section from "@/components/layout/section/Section";
+import type { CreateSplitRequest } from "@/features/workout/types/Workout";
 import { ICONS } from "@/config/iconConfig";
-import FormPage from "@/components/layout/FormPage";
+import FormPage from "@/components/layout/frames/FormPage";
 import BaseInput from "@/components/layout/input/BaseInput";
 
 interface WorkoutOrderingProps {

@@ -1,13 +1,13 @@
 import { Outlet, useParams } from "react-router-dom";
 import { useMemo } from "react";
-import useSplits, { useSplit } from "@/hooks/periodisation/useSplits";
-import type { CreateSplitRequest, Split } from "@/types/Workout";
-import { useAllWorkoutTemplates } from "@/hooks/workout/useWorkoutTemplates";
-import useBlocks from "@/hooks/periodisation/useBlocks";
-import useProgramme from "@/hooks/periodisation/useProgramme";
+import useSplits, { useSplit } from "@/features/periodisation/splits/hooks/useSplits";
+import type { CreateSplitRequest, Split } from "@/features/workout/types/Workout";
+import { useAllWorkoutTemplates } from "@/features/workout/templates/hooks/useWorkoutTemplates";
+import useBlocks from "@/features/periodisation/blocks/hooks/useBlocks";
+import useProgramme from "@/features/periodisation/programme/hooks/useProgramme";
 import { Layers } from "lucide-react";
 import ErrorState from "@/components/layout/feedback/ErrorState";
-import Page from "@/components/layout/section/Page";
+import Page from "@/components/layout/frames/Page";
 
 function ErrorCard({ title, message }: { title: string; message: string }) {
     return (

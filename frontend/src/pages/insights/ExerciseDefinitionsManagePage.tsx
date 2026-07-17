@@ -2,8 +2,8 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, CheckCircle2, Circle, Merge, Shield, Trash2 } from "lucide-react";
 
-import Page from "@/components/layout/section/Page";
-import Section from "@/components/layout/Section";
+import Page from "@/components/layout/frames/Page";
+import Section from "@/components/layout/section/Section";
 import { Button } from "@/components/ui/button";
 import { DashCardRow } from "@/components/layout/card/DashCardRow";
 import ConfirmDialog from "@/components/layout/dialog/ConfirmDialog";
@@ -14,7 +14,7 @@ import {
   useCollapseExerciseDefinitions,
   useExerciseDefinitionDuplicateGroups,
   type ExerciseDefinitionDuplicateGroup,
-} from "@/hooks/workout/useExerciseDefinitionDuplicates";
+} from "@/features/workout/exercise-definitions/hooks/useExerciseDefinitionDuplicates";
 import { cn } from "@/lib/utils";
 
 function buildDefinitionLabel(definition: { exerciseName: string; variant?: string | null }) {

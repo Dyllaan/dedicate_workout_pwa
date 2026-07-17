@@ -1,8 +1,8 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 import ShellFrame from "@/components/layout/shell/ShellFrame";
-import { shouldShowAppBack } from "@/components/layout/shell/shellNavigation";
-import RouteLoadingPage from "@/routes/RouteLoadingPage";
+import { shouldShowAppBack } from "@/components/layout/shell/utils/ShellNavigation";
+import RouteLoadingPage from "@/features/auth/components/routes/RouteLoadingPage";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 
 export default function ProtectedRoute() {

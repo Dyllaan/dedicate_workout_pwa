@@ -1,6 +1,7 @@
 import { Navigate, Outlet } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
-import RouteLoadingPage from '@/routes/RouteLoadingPage';
+import { useAuth } from '@/features/auth/hooks/useAuth';
+
+import RouteLoadingPage from '@/features/auth/components/routes/RouteLoadingPage';
 
 export default function PublicRoute() {
   const { signedIn, isLoading } = useAuth();

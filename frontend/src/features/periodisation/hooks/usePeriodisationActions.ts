@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { enqueueSnackbar } from "notistack";
-import useBlocks from "@/hooks/periodisation/useBlocks";
-import useProgramme from "@/hooks/periodisation/useProgramme";
-import useSplits from "@/hooks/periodisation/useSplits";
-import { ARCHIVED_PROGRAMME_IMMUTABLE_MESSAGE } from "@/hooks/periodisation/archiveRestrictions";
-import type { Programme } from "@/types/Periodisation";
-import type { Split } from "@/types/Workout";
-import useWeeks from "@/hooks/periodisation/useWeeks";
+import useBlocks from "@/features/periodisation/blocks/hooks/useBlocks";
+import useProgramme from "@/features/periodisation/programme/hooks/useProgramme";
+import useSplits from "@/features/periodisation/splits/hooks/useSplits";
+import { ARCHIVED_PROGRAMME_IMMUTABLE_MESSAGE } from "@/features/periodisation/utils/archiveRestrictions";
+import type { Programme } from "@/features/periodisation/types/Periodisation";
+import type { Split } from "@/features/workout/types/Workout";
+import useWeeks from "@/features/periodisation/week/hooks/useWeeks";
 
 type LoadingKey =
   | "selectSplit"

@@ -1,10 +1,11 @@
 ﻿import { useState } from 'react';
 import { Shield, ArrowLeft, KeyRound } from 'lucide-react';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/features/auth/hooks/useAuth';
+
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import Section from '@/components/layout/Section';
+import Section from '@/components/layout/section/Section';
 import {
   Card,
   CardContent,

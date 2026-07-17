@@ -4,12 +4,12 @@ import { useSearchParams } from "react-router-dom";
 
 import {
   useInsightsOverview,
-} from "@/hooks/workout/useTrainingInsights.ts";
+} from "@/features/insights/hooks/useTrainingInsights";
 import InsightsVolumePanel from "@/features/insights/components/InsightsVolumePanel.tsx";
 import { InsightsOverviewPanel } from "@/features/insights/components/InsightsOverviewPanel.tsx";
-import { type InsightsViewTab } from "@/features/insights/helpers/insightsUtils.ts";
-import Section from "@/components/layout/Section.tsx";
-import Page from "@/components/layout/section/Page.tsx";
+import { type InsightsViewTab } from "@/features/insights/utils/insightsUtils";
+import Section from "@/components/layout/section/Section";
+import Page from "@/components/layout/frames/Page";
 import { type TabItem } from "@/components/tabs/TabBar.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import StatGrid from "@/components/ui/StatGrid.tsx";

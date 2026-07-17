@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { enqueueSnackbar } from 'notistack';
-import { useAuth } from '@/hooks/useAuth';
-import type { MfaSetupResponse } from '@/types/dto/MfaResponses';
+import { useAuth } from '@/features/auth/hooks/useAuth';
+import type { MfaSetupResponse } from '@/features/auth/types/MfaResponses';
 import { authApi } from '@/api/api';
 
 export function useMfa() {

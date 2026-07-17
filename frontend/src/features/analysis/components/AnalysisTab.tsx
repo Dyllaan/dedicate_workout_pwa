@@ -6,9 +6,9 @@ import SimpleLineChart from "@/components/charts/SimpleLineChart.tsx";
 import EmptyState from "@/components/layout/feedback/EmptyState.tsx";
 import ErrorState from "@/components/layout/feedback/ErrorState.tsx";
 import LoadingState from "@/components/layout/feedback/LoadingState.tsx";
-import Section from "@/components/layout/Section.tsx";
+import Section from "@/components/layout/section/Section.tsx";
 import { DashCardRow } from "@/components/layout/card/DashCardRow.tsx";
-import Panel from "@/components/layout/Panel.tsx";
+import Panel from "@/components/layout/frames/Panel.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { SelectionChip } from "@/components/ui";
@@ -16,9 +16,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import StatGrid from "@/components/ui/StatGrid.tsx";
 import StatTile from "@/components/ui/stat-tile.tsx";
 import { ICONS } from "@/config/iconConfig.ts";
-import { useUnitPreference } from "@/hooks/useUnitPreference.ts";
-import { useAnalysisExerciseOptions, useTemplateAnalysisRecommendation } from "@/hooks/workout/useAnalysis.ts";
-import { formatShortDateTime, formatStatusToken } from "../../insights/helpers/insightsUtils.ts";
+import { useUnitPreference } from "@/features/preferences/unit/hooks/useUnitPreference.ts";
+import { useAnalysisExerciseOptions, useTemplateAnalysisRecommendation } from "@/features/analysis/hooks/useAnalysis.ts";
+import { formatShortDateTime, formatStatusToken } from "../../insights/utils/insightsUtils.ts";
 
 type TrajectoryPreset = "all" | "30d" | "90d" | "custom";
 const ANALYSIS_LIMIT_PARAM = "analysisLimit";

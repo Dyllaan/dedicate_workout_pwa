@@ -1,20 +1,20 @@
 import { useEffect, useMemo } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import EmptyState from "@/components/layout/feedback/EmptyState";
-import Page from "@/components/layout/section/Page";
+import Page from "@/components/layout/frames/Page";
 import { Button } from "@/components/ui/button";
-import YourProgramme from "@/components/periodisation/panels/YourProgramme";
-import usePeriodisationHubState from "@/hooks/periodisation/usePeriodisationHubState";
-import type { SplitDetailTab } from "@/types/Periodisation";
-import { useProgrammePage } from "@/hooks/periodisation/useProgramme";
-import ProgrammesPanel from "@/components/periodisation/panels/ProgrammesPanel";
-import ProgrammeSetupPanel from "@/components/periodisation/panels/ProgrammeSetupPanel";
+import YourProgramme from "@/features/periodisation/components/panels/YourProgramme";
+import usePeriodisationHubState from "@/features/periodisation//hooks/usePeriodisationHubState";
+import type { SplitDetailTab } from "@/features/periodisation/types/Periodisation";
+import { useProgrammePage } from "@/features/periodisation/programme/hooks/useProgramme";
+import ProgrammesPanel from "@/features/periodisation/components/panels/ProgrammesPanel";
+import ProgrammeSetupPanel from "@/features/periodisation/components/panels/ProgrammeSetupPanel";
 import { ICONS } from "@/config/iconConfig";
-import BlockPanel from "@/components/periodisation/panels/BlockPanel";
-import { resolveBlockTabSelection } from "@/utils/periodisationTabs";
+import BlockPanel from "@/features/periodisation/components/panels/BlockPanel";
+import { resolveBlockTabSelection } from "@/features/periodisation/utils/periodisationTabs";
 import { useUrlPagination } from "@/hooks/useUrlPagination";
 import TabShell from "@/components/tabs/TabShell";
-import { useProgrammeContext } from "@/hooks/forms/context/useProgrammeContext";
+import { useProgrammeContext } from "@/features/periodisation/programme/hooks/useProgrammeContext";
 
 export default function PeriodisationSplitDetailPage() {
     const { splitId = "" } = useParams<{ splitId: string }>();

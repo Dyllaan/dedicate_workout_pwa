@@ -19,7 +19,7 @@ import type {
   ProgressMetric,
   ProgressSeriesCatalogItem,
   ProgressSmoothing,
-} from "@/types/Progress";
+} from "@/features/progress/types/Progress";
 
 const DEFAULT_COLORS = [
   "#2563eb", "#f97316", "#16a34a", "#dc2626", "#7c3aed", "#0f766e",

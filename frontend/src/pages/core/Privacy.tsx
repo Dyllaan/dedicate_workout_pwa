@@ -1,5 +1,5 @@
 import { PrivacyPolicyContent } from "@/components/legal/PolicyContent";
-import Page from "@/components/layout/section/Page";
+import Page from "@/components/layout/frames/Page";
 
 export default function Privacy() {
   return (

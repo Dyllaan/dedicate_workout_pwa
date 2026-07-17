@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { CheckCircle2, Edit, Trash2 } from "lucide-react";
-import usePeriodisationActions from "@/hooks/periodisation/usePeriodisationActions";
-import { useSplit } from "@/hooks/periodisation/useSplits";
+import usePeriodisationActions from "@/features/periodisation/hooks/usePeriodisationActions";
+import { useSplit } from "@/features/periodisation/splits/hooks/useSplits";
 import { DashCardRow } from "@/components/layout/card/DashCardRow";
 import { ConfirmDashCardRow } from "@/components/layout/card/ConfirmDashCardRow";
 import WorkoutFrequencyStepper from "../WorkoutFrequencyStepper";
-import { normalizeSplitWorkoutFrequencies } from "@/utils/splitWorkoutFrequencies";
-import Panel from "@/components/layout/Panel.tsx";
+import { normalizeSplitWorkoutFrequencies } from "@/features/periodisation/utils/splitWorkoutFrequencies";
+import Panel from "@/components/layout/frames/Panel";
 
 export default function SplitOverviewPanel({ splitId }: { splitId: string }) {
   const { data: split } = useSplit(splitId);

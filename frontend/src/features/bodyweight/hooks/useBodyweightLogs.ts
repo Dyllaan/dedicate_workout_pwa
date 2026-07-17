@@ -1,10 +1,10 @@
 import { useMutation, useQuery, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { unwrapApiResponse, workoutApi } from "@/api/api";
-import { buildPageParams, DEFAULT_PAGE_SIZE, fetchAllPagedItems } from "@/api/pagination";
-import type { PagedResponse } from "@/types/Pagination";
-import type { BodyweightLog, CreateBodyweightLogRequest } from "@/types/Bodyweight";
-import { useAuth } from "../useAuth";
-import { invalidateDashboardData } from "./useDashboardRefresh";
+import { buildPageParams, DEFAULT_PAGE_SIZE, fetchAllPagedItems } from "@/api/utils/PaginationHelper";
+import type { PagedResponse } from "@/api/types/Pagination";
+import type { BodyweightLog, CreateBodyweightLogRequest } from "@/features/bodyweight/types/Bodyweight";
+import { useAuth } from "@/features/auth/hooks/useAuth";
+import { invalidateDashboardData } from "@/features/dashboard/hooks/useDashboardRefresh";
 
 type UseBodyweightLogsOptions = {
   enabled?: boolean;

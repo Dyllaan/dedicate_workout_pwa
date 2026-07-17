@@ -3,14 +3,14 @@ package com.louisfiges.workout.dao.periodisation;
 import jakarta.persistence.*;
 import java.util.UUID;
 
-import com.louisfiges.workout.dao.interfaces.DAO;
+import com.louisfiges.workout.dto.DtoConvertible;
 import com.louisfiges.workout.dao.workout.WorkoutTemplate;
 import com.louisfiges.workout.dto.responses.SplitWorkoutAssignmentDTO;
 
 @Entity
 @Table(name = "split_workout_assignments",
     uniqueConstraints = @UniqueConstraint(columnNames = {"split_id", "workout_template_id"}))
-public class SplitWorkoutAssignment implements DAO<SplitWorkoutAssignmentDTO> {
+public class SplitWorkoutAssignment implements DtoConvertible<SplitWorkoutAssignmentDTO> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

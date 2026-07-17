@@ -1,6 +1,6 @@
 package com.louisfiges.workout.dao.periodisation;
 
-import com.louisfiges.workout.dao.interfaces.DAO;
+import com.louisfiges.workout.dto.DtoConvertible;
 import com.louisfiges.workout.dto.responses.BlockDTO;
 import com.louisfiges.workout.dto.responses.ProgrammeDTO;
 import com.louisfiges.workout.periodisation.ProgrammePresetType;
@@ -19,7 +19,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "programmes")
-public class Programme implements DAO<ProgrammeDTO> {
+public class Programme implements DtoConvertible<ProgrammeDTO> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

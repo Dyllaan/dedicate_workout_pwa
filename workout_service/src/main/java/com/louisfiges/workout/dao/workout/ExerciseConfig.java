@@ -9,7 +9,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 import com.louisfiges.workout.dto.ExerciseConfigDTO;
-import com.louisfiges.workout.dao.interfaces.DAO;
+import com.louisfiges.workout.dto.DtoConvertible;
 
 /**
  * ExerciseConfig is the configuration of an ExerciseDefinition existing within the workout template
@@ -17,7 +17,7 @@ import com.louisfiges.workout.dao.interfaces.DAO;
 
 @Entity
 @Table(name = "exercise_configs")
-public class ExerciseConfig implements DAO<ExerciseConfigDTO> {
+public class ExerciseConfig implements DtoConvertible<ExerciseConfigDTO> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

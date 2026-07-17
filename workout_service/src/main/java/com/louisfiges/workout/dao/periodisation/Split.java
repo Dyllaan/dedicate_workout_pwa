@@ -1,6 +1,6 @@
 package com.louisfiges.workout.dao.periodisation;
 
-import com.louisfiges.workout.dao.interfaces.DAO;
+import com.louisfiges.workout.dto.DtoConvertible;
 import com.louisfiges.workout.dto.responses.SplitDTO;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -14,7 +14,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "splits")
-public class Split implements DAO<SplitDTO> {
+public class Split implements DtoConvertible<SplitDTO> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

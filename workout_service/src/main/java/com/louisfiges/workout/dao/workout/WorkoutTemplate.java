@@ -1,6 +1,6 @@
 package com.louisfiges.workout.dao.workout;
 
-import com.louisfiges.workout.dao.interfaces.DAO;
+import com.louisfiges.workout.dto.DtoConvertible;
 import com.louisfiges.workout.dto.responses.WorkoutTemplateDTO;
 import com.louisfiges.workout.dto.ExerciseConfigDTO;
 import jakarta.persistence.*;
@@ -18,7 +18,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "workout_templates")
-public class WorkoutTemplate implements DAO<WorkoutTemplateDTO> {
+public class WorkoutTemplate implements DtoConvertible<WorkoutTemplateDTO> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

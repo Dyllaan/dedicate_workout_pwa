@@ -3,7 +3,7 @@ package com.louisfiges.workout.dao.workout;
 import com.louisfiges.workout.heatmap.MappingSource;
 import com.louisfiges.workout.heatmap.MuscleGroupId;
 import com.louisfiges.workout.dto.responses.ExerciseDefinitionDTO;
-import com.louisfiges.workout.dao.interfaces.DAO;
+import com.louisfiges.workout.dto.DtoConvertible;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -33,7 +33,7 @@ import java.util.UUID;
                 columnNames = {"user_id", "normalized_exercise_name", "normalized_variant"}
         )
 )
-public class ExerciseDefinition implements DAO<ExerciseDefinitionDTO> {
+public class ExerciseDefinition implements DtoConvertible<ExerciseDefinitionDTO> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

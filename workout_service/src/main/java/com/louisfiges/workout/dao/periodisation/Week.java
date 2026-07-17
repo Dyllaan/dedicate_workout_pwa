@@ -1,13 +1,13 @@
 package com.louisfiges.workout.dao.periodisation;
 
-import com.louisfiges.workout.dao.interfaces.DAO;
+import com.louisfiges.workout.dto.DtoConvertible;
 import com.louisfiges.workout.dto.responses.WeekDTO;
 import jakarta.persistence.*;
 import java.util.UUID;
 
 @Entity
 @Table(name = "block_weeks")
-public class Week implements DAO<WeekDTO> {
+public class Week implements DtoConvertible<WeekDTO> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

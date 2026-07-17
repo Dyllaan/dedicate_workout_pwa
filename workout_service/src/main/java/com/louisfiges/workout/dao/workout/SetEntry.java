@@ -1,6 +1,6 @@
 package com.louisfiges.workout.dao.workout;
 
-import com.louisfiges.workout.dao.interfaces.DAO;
+import com.louisfiges.workout.dto.DtoConvertible;
 import com.louisfiges.workout.dto.responses.SetEntryDTO;
 import com.louisfiges.workout.analysis.SetRole;
 import jakarta.persistence.*;
@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "set_entries")
-public class SetEntry implements DAO<SetEntryDTO> {
+public class SetEntry implements DtoConvertible<SetEntryDTO> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

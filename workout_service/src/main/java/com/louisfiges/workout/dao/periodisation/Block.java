@@ -2,7 +2,7 @@ package com.louisfiges.workout.dao.periodisation;
 
 import com.louisfiges.workout.analysis.types.ProgressionStrategy;
 import com.louisfiges.workout.periodisation.BlockType;
-import com.louisfiges.workout.dao.interfaces.DAO;
+import com.louisfiges.workout.dto.DtoConvertible;
 import com.louisfiges.workout.dto.responses.BlockDTO;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Fetch;
@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "blocks")
-public class Block implements DAO<BlockDTO> {
+public class Block implements DtoConvertible<BlockDTO> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

@@ -3,6 +3,7 @@ package com.louisfiges.workout;
 import com.louisfiges.workout.analysis.types.ProgressionMode;
 import com.louisfiges.workout.dao.workout.ExerciseConfig;
 import com.louisfiges.workout.repository.ExerciseConfigRepository;
+import com.louisfiges.workout.service.mapper.ExerciseConfigMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,6 +37,9 @@ class V33LegacyProgressionModeReplayIT extends BaseIntegrationTest {
     @Autowired
     private ExerciseConfigRepository exerciseConfigRepository;
 
+    @Autowired
+    private ExerciseConfigMapper exerciseConfigMapper;
+
     @BeforeEach
     void prepareSchema() throws Exception {
         prepareSchemaThroughMigrationVersion(34);
@@ -59,7 +63,7 @@ class V33LegacyProgressionModeReplayIT extends BaseIntegrationTest {
                 .orElseThrow();
 
         assertThat(config.getProgressionMode()).isEqualTo(ProgressionMode.WEIGHT_FIRST);
-        assertThat(config.toDTO().progressionMode()).isEqualTo(ProgressionMode.WEIGHT_FIRST);
+        assertThat(exerciseConfigMapper.toDTO(config).progressionMode()).isEqualTo(ProgressionMode.WEIGHT_FIRST);
     }
 
     private void seedWorkoutTemplateWithLegacyProgressionMode() {

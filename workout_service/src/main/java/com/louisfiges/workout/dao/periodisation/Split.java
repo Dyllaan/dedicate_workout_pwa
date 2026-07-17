@@ -1,20 +1,16 @@
 package com.louisfiges.workout.dao.periodisation;
 
-import com.louisfiges.workout.dto.DtoConvertible;
-import com.louisfiges.workout.dto.responses.SplitDTO;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Table(name = "splits")
-public class Split implements DtoConvertible<SplitDTO> {
+public class Split {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -51,22 +47,6 @@ public class Split implements DtoConvertible<SplitDTO> {
     public Split(String name, UUID userId) {
         this.name = name;
         this.userId = userId;
-    }
-
-    @Override
-    public SplitDTO toDTO() {
-        LocalDateTime createdDateTime = createdAt != null
-                ? LocalDateTime.ofInstant(createdAt, ZoneId.systemDefault())
-                : LocalDateTime.now();
-
-        return new SplitDTO(
-                id,
-                name,
-                createdDateTime,
-                active,
-                programmes.stream().map(Programme::toDTO).toList(),
-                assignments.stream().map(SplitWorkoutAssignment::toDTO).toList()
-        );
     }
 
     public void addWorkoutAssignment(SplitWorkoutAssignment assignment) {

@@ -13,6 +13,7 @@ import com.louisfiges.workout.exception.exceptions.BadRequestException;
 import com.louisfiges.workout.exception.exceptions.ResourceNotFoundException;
 import com.louisfiges.workout.repository.ExerciseConfigRepository;
 import com.louisfiges.workout.service.analysis.AnalysisCacheEvictor;
+import com.louisfiges.workout.service.mapper.ExerciseConfigMapper;
 import com.louisfiges.workout.validation.RestTimeValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,15 +27,18 @@ public class ExerciseConfigService {
 
     private final ExerciseConfigRepository repository;
     private final AnalysisCacheEvictor analysisCacheEvictor;
+    private final ExerciseConfigMapper exerciseConfigMapper;
 
-    public ExerciseConfigService(ExerciseConfigRepository repository, AnalysisCacheEvictor analysisCacheEvictor) {
+    public ExerciseConfigService(ExerciseConfigRepository repository, AnalysisCacheEvictor analysisCacheEvictor, ExerciseConfigMapper exerciseConfigMapper) {
         this.repository = repository;
         this.analysisCacheEvictor = analysisCacheEvictor;
+        this.exerciseConfigMapper = exerciseConfigMapper;
     }
 
     @Transactional(readOnly = true)
     public ExerciseConfigDTO getById(UUID exerciseConfigId, UUID userId) {
-        return getRequired(exerciseConfigId, userId).toDTO();
+        ExerciseConfig found = getRequired(exerciseConfigId, userId);
+        return exerciseConfigMapper.toDTO(found);
     }
 
     public ExerciseConfigDTO setGoalSets(
@@ -48,7 +52,8 @@ public class ExerciseConfigService {
             throw new BadRequestException("Goal sets must be at least 1");
         }
         config.setGoalSets(goalSets);
-        ExerciseConfigDTO response = repository.save(config).toDTO();
+        ExerciseConfig saved = repository.save(config);
+        ExerciseConfigDTO response = exerciseConfigMapper.toDTO(saved);
         analysisCacheEvictor.evictAnalysisCachesAfterCommit();
         return response;
     }
@@ -64,7 +69,8 @@ public class ExerciseConfigService {
             throw new BadRequestException("Goal reps must be at least 1");
         }
         config.setGoalReps(goalReps);
-        ExerciseConfigDTO response = repository.save(config).toDTO();
+        ExerciseConfig saved = repository.save(config);
+        ExerciseConfigDTO response = exerciseConfigMapper.toDTO(saved);
         analysisCacheEvictor.evictAnalysisCachesAfterCommit();
         return response;
     }
@@ -80,7 +86,8 @@ public class ExerciseConfigService {
                 "Progression mode is required"
         );
         config.setProgressionMode(progressionMode);
-        ExerciseConfigDTO response = repository.save(config).toDTO();
+        ExerciseConfig saved = repository.save(config);
+        ExerciseConfigDTO response = exerciseConfigMapper.toDTO(saved);
         analysisCacheEvictor.evictAnalysisCachesAfterCommit();
         return response;
     }
@@ -96,7 +103,8 @@ public class ExerciseConfigService {
                 "Primary benchmark is required"
         );
         config.setPrimaryBenchmark(primaryBenchmark);
-        ExerciseConfigDTO response = repository.save(config).toDTO();
+        ExerciseConfig saved = repository.save(config);
+        ExerciseConfigDTO response = exerciseConfigMapper.toDTO(saved);
         analysisCacheEvictor.evictAnalysisCachesAfterCommit();
         return response;
     }
@@ -108,7 +116,8 @@ public class ExerciseConfigService {
     ) {
         ExerciseConfig config = getRequired(exerciseConfigId, userId);
         config.setTargetRestSeconds(RestTimeValidator.validateOptional(request.targetRestSeconds()));
-        ExerciseConfigDTO response = repository.save(config).toDTO();
+        ExerciseConfig saved = repository.save(config);
+        ExerciseConfigDTO response = exerciseConfigMapper.toDTO(saved);
         analysisCacheEvictor.evictAnalysisCachesAfterCommit();
         return response;
     }
@@ -131,7 +140,7 @@ public class ExerciseConfigService {
 
         repository.saveAll(configs);
         analysisCacheEvictor.evictAnalysisCachesAfterCommit();
-        return target.toDTO();
+        return exerciseConfigMapper.toDTO(target);
     }
 
     private ExerciseConfig getRequired(UUID exerciseConfigId, UUID userId) {

@@ -8,6 +8,7 @@ import com.louisfiges.workout.dto.responses.insights.ReadinessHistoryPointDTO;
 import com.louisfiges.workout.dto.responses.insights.ReadinessHistoryResponseDTO;
 import com.louisfiges.workout.exception.exceptions.BadRequestException;
 import com.louisfiges.workout.repository.ReadinessCheckInRepository;
+import com.louisfiges.workout.service.mapper.ReadinessCheckInMapper;
 import com.louisfiges.workout.util.PaginationUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,9 +23,11 @@ import java.util.UUID;
 public class ReadinessService {
 
     private final ReadinessCheckInRepository readinessCheckInRepository;
+    private final ReadinessCheckInMapper readinessCheckInMapper;
 
-    public ReadinessService(ReadinessCheckInRepository readinessCheckInRepository) {
+    public ReadinessService(ReadinessCheckInRepository readinessCheckInRepository, ReadinessCheckInMapper readinessCheckInMapper) {
         this.readinessCheckInRepository = readinessCheckInRepository;
+        this.readinessCheckInMapper = readinessCheckInMapper;
     }
 
     @Transactional
@@ -47,7 +50,7 @@ public class ReadinessService {
                 request.sorenessLevel(),
                 request.confidenceLevel()
         ));
-        return toDto(saved);
+        return readinessCheckInMapper.toDTO(saved);
     }
 
     public ReadinessHistoryResponseDTO getHistory(UUID userId, int days) {
@@ -131,27 +134,6 @@ public class ReadinessService {
         if (value < 1 || value > 5) {
             throw new BadRequestException(fieldName + " must be between 1 and 5");
         }
-    }
-
-    private ReadinessCheckInDTO toDto(ReadinessCheckIn checkIn) {
-        return new ReadinessCheckInDTO(
-                checkIn.getId(),
-                checkIn.getSleepQuality(),
-                checkIn.getStressLevel(),
-                checkIn.getSorenessLevel(),
-                checkIn.getConfidenceLevel(),
-                calculateScore(checkIn),
-                checkIn.getCreatedAt()
-        );
-    }
-
-    private short calculateScore(ReadinessCheckIn checkIn) {
-        return calculateScore(
-                checkIn.getSleepQuality(),
-                checkIn.getStressLevel(),
-                checkIn.getSorenessLevel(),
-                checkIn.getConfidenceLevel()
-        );
     }
 
     private short calculateScore(

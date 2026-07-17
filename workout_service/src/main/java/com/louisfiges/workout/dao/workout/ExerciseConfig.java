@@ -8,16 +8,13 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.Instant;
 import java.util.UUID;
 
-import com.louisfiges.workout.dto.ExerciseConfigDTO;
-import com.louisfiges.workout.dto.DtoConvertible;
-
 /**
  * ExerciseConfig is the configuration of an ExerciseDefinition existing within the workout template
  */
 
 @Entity
 @Table(name = "exercise_configs")
-public class ExerciseConfig implements DtoConvertible<ExerciseConfigDTO> {
+public class ExerciseConfig {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -83,20 +80,6 @@ public class ExerciseConfig implements DtoConvertible<ExerciseConfigDTO> {
         this.primaryBenchmark = primaryBenchmark == null ? PrimaryBenchmark.WORKING_SETS : primaryBenchmark;
         this.targetRestSeconds = targetRestSeconds;
         this.focus = focus;
-    }
-
-    public ExerciseConfigDTO toDTO() {
-
-        return new ExerciseConfigDTO(
-                exerciseConfigId,
-                exerciseDefinition.toDTO(),
-                goalSets,
-                goalReps,
-                progressionMode,
-                primaryBenchmark,
-                targetRestSeconds,
-                focus
-        );
     }
 
     public UUID getExerciseConfigId() { return exerciseConfigId; }

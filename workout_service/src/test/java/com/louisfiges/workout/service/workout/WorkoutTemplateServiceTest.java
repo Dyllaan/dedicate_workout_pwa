@@ -9,6 +9,9 @@ import com.louisfiges.workout.dto.request.WorkoutTemplateRequest;
 import com.louisfiges.workout.repository.WorkoutTemplateRepository;
 import com.louisfiges.workout.heatmap.MappingSource;
 import com.louisfiges.workout.service.analysis.AnalysisCacheEvictor;
+import com.louisfiges.workout.service.mapper.ExerciseConfigMapper;
+import com.louisfiges.workout.service.mapper.ExerciseDefinitionMapper;
+import com.louisfiges.workout.service.mapper.WorkoutTemplateMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,13 +40,17 @@ class WorkoutTemplateServiceTest {
     @Mock
     private AnalysisCacheEvictor analysisCacheEvictor;
 
+    private final WorkoutTemplateMapper workoutTemplateMapper =
+            new WorkoutTemplateMapper(new ExerciseConfigMapper(new ExerciseDefinitionMapper()));
+
     @Test
     @DisplayName("flows exercise config request values into ExerciseConfig without any liftRole dependency")
     void flowsExerciseConfigValuesIntoTheEntity() {
         WorkoutTemplateService service = new WorkoutTemplateService(
                 workoutTemplateRepository,
                 exerciseDefinitionService,
-                analysisCacheEvictor
+                analysisCacheEvictor,
+                workoutTemplateMapper
         );
         UUID userId = UUID.randomUUID();
         UUID definitionId = UUID.randomUUID();

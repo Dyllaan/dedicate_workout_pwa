@@ -2,8 +2,6 @@ package com.louisfiges.workout.dao.periodisation;
 
 import com.louisfiges.workout.analysis.types.ProgressionStrategy;
 import com.louisfiges.workout.periodisation.BlockType;
-import com.louisfiges.workout.dto.DtoConvertible;
-import com.louisfiges.workout.dto.responses.BlockDTO;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -15,7 +13,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "blocks")
-public class Block implements DtoConvertible<BlockDTO> {
+public class Block {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -78,24 +76,6 @@ public class Block implements DtoConvertible<BlockDTO> {
         this.repRangeMax = repRangeMax;
         this.blockOrder = blockOrder;
         this.startDate = startDate;
-    }
-
-    @Override
-    public BlockDTO toDTO() {
-        return new BlockDTO(
-            id,
-            name,
-            blockType,
-            progressionStrategy,
-            durationWeeks,
-            targetRpeMin,
-            targetRpeMax,
-            repRangeMin,
-            repRangeMax,
-            blockOrder,
-            startDate,
-            weeks.stream().map(Week::toDTO).toList()
-        );
     }
 
     public UUID getId() { return id; }

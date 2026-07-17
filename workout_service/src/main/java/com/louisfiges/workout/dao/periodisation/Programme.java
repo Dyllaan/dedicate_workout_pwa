@@ -1,8 +1,5 @@
 package com.louisfiges.workout.dao.periodisation;
 
-import com.louisfiges.workout.dto.DtoConvertible;
-import com.louisfiges.workout.dto.responses.BlockDTO;
-import com.louisfiges.workout.dto.responses.ProgrammeDTO;
 import com.louisfiges.workout.periodisation.ProgrammePresetType;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Fetch;
@@ -11,15 +8,13 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Table(name = "programmes")
-public class Programme implements DtoConvertible<ProgrammeDTO> {
+public class Programme {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -55,31 +50,6 @@ public class Programme implements DtoConvertible<ProgrammeDTO> {
     private boolean archived;
 
     public Programme() {
-    }
-
-    @Override
-    public ProgrammeDTO toDTO() {
-        List<BlockDTO> blockDTOs = blocks.stream()
-                .map(Block::toDTO)
-                .toList();
-
-        LocalDateTime createdDateTime = createdAt != null
-                ? LocalDateTime.ofInstant(createdAt, ZoneId.systemDefault())
-                : LocalDateTime.now();
-
-        LocalDateTime startDateTime = startDate != null
-                ? LocalDateTime.ofInstant(startDate, ZoneId.systemDefault())
-                : LocalDateTime.now();
-
-        return new ProgrammeDTO(
-                id,
-                createdDateTime,
-                blockDTOs,
-                startDateTime,
-                active,
-                presetType,
-                archived
-        );
     }
 
     public UUID getId() {

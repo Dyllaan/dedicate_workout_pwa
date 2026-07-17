@@ -41,6 +41,7 @@ import com.louisfiges.workout.repository.WorkoutEntryRepository;
 import com.louisfiges.workout.repository.WorkoutTemplateRepository;
 import com.louisfiges.workout.repository.ExerciseDefinitionUsageSummaryRow;
 import com.louisfiges.workout.service.analysis.AnalysisCacheEvictor;
+import com.louisfiges.workout.service.mapper.ExerciseDefinitionMapper;
 import com.louisfiges.workout.util.PaginationUtils;
 
 import org.springframework.data.domain.PageRequest;
@@ -86,6 +87,7 @@ public class ExerciseDefinitionService {
     private final WorkoutEntryRepository workoutEntryRepository;
     private final ProgrammeRepository programmeRepository;
     private final AnalysisCacheEvictor analysisCacheEvictor;
+    private final ExerciseDefinitionMapper exerciseDefinitionMapper;
 
     public ExerciseDefinitionService(
             ExerciseDefinitionRepository exerciseDefinitionRepository,
@@ -95,7 +97,8 @@ public class ExerciseDefinitionService {
             WorkoutTemplateRepository workoutTemplateRepository,
             WorkoutEntryRepository workoutEntryRepository,
             ProgrammeRepository programmeRepository,
-            AnalysisCacheEvictor analysisCacheEvictor
+            AnalysisCacheEvictor analysisCacheEvictor,
+            ExerciseDefinitionMapper exerciseDefinitionMapper
     ) {
         this.exerciseDefinitionRepository = exerciseDefinitionRepository;
         this.exerciseConfigRepository = exerciseConfigRepository;
@@ -105,13 +108,14 @@ public class ExerciseDefinitionService {
         this.workoutEntryRepository = workoutEntryRepository;
         this.programmeRepository = programmeRepository;
         this.analysisCacheEvictor = analysisCacheEvictor;
+        this.exerciseDefinitionMapper = exerciseDefinitionMapper;
     }
 
     @Transactional(readOnly = true)
     public List<ExerciseDefinitionDTO> list(UUID userId) {
         return exerciseDefinitionRepository.findByUserIdOrderByExerciseNameAscVariantAsc(userId)
                 .stream()
-                .map(ExerciseDefinition::toDTO)
+                .map(exerciseDefinitionMapper::toDTO)
                 .toList();
     }
 
@@ -135,7 +139,7 @@ public class ExerciseDefinitionService {
                         pageable
                 );
         return PagedResponse.from(
-                definitions.map(ExerciseDefinition::toDTO)
+                definitions.map(exerciseDefinitionMapper::toDTO)
         );
     }
 
@@ -147,7 +151,8 @@ public class ExerciseDefinitionService {
 
     @Transactional(readOnly = true)
     public ExerciseDefinitionDTO getById(UUID userId, UUID definitionId) {
-        return getRequired(userId, definitionId).toDTO();
+        ExerciseDefinition definition = getRequired(userId, definitionId);
+        return exerciseDefinitionMapper.toDTO(definition);
     }
 
     @Transactional(readOnly = true)
@@ -294,7 +299,7 @@ public class ExerciseDefinitionService {
         definition.setNormalizedVariant(normalize(definition.getVariant()));
         exerciseDefinitionRepository.save(definition);
         analysisCacheEvictor.evictAnalysisCachesAfterCommit();
-        return definition.toDTO();
+        return exerciseDefinitionMapper.toDTO(definition);
     }
 
     public ExerciseDefinition resolveForUser(
@@ -1099,7 +1104,7 @@ public class ExerciseDefinitionService {
     public List<ExerciseDefinitionDTO> listDuplicates(UUID userId) {
         return exerciseDefinitionRepository.findDuplicatesByUserId(userId)
                 .stream()
-                .map(ExerciseDefinition::toDTO)
+                .map(exerciseDefinitionMapper::toDTO)
                 .toList();
     }
 }

@@ -17,6 +17,7 @@ import com.louisfiges.workout.repository.ProgrammeRepository;
 import com.louisfiges.workout.util.GenerateWeeks;
 import com.louisfiges.workout.util.PaginationUtils;
 import com.louisfiges.workout.service.analysis.AnalysisCacheEvictor;
+import com.louisfiges.workout.service.mapper.ProgrammeMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,17 +36,20 @@ public class ProgrammeService {
     private final ProgrammeRepository programmeRepository;
     private final BlockRepository blockRepository;
     private final AnalysisCacheEvictor analysisCacheEvictor;
+    private final ProgrammeMapper programmeMapper;
 
     public ProgrammeService(
             SplitService splitService,
             ProgrammeRepository programmeRepository,
             BlockRepository blockRepository,
-            AnalysisCacheEvictor analysisCacheEvictor
+            AnalysisCacheEvictor analysisCacheEvictor,
+            ProgrammeMapper programmeMapper
     ) {
         this.splitService = splitService;
         this.programmeRepository = programmeRepository;
         this.blockRepository = blockRepository;
         this.analysisCacheEvictor = analysisCacheEvictor;
+        this.programmeMapper = programmeMapper;
     }
 
     public ProgrammeDTO createProgramme(CreateProgrammeRequest request, UUID userId) {
@@ -74,7 +78,7 @@ public class ProgrammeService {
         }
 
         analysisCacheEvictor.evictAnalysisCachesAfterCommit();
-        return saved.toDTO();
+        return programmeMapper.toDTO(saved);
     }
 
     public ProgrammeDTO setProgrammeActive(UUID programmeId, boolean active, UUID userId) {
@@ -83,7 +87,8 @@ public class ProgrammeService {
             programmeRepository.deactivateAllBySplitId(programme.getSplit().getId());
         }
         programme.setActive(active);
-        ProgrammeDTO response = programmeRepository.save(programme).toDTO();
+        Programme savedProgramme = programmeRepository.save(programme);
+        ProgrammeDTO response = programmeMapper.toDTO(savedProgramme);
         analysisCacheEvictor.evictAnalysisCachesAfterCommit();
         return response;
     }
@@ -91,9 +96,9 @@ public class ProgrammeService {
     public ProgrammeDTO addBlockToProgramme(UUID programmeId, CreateBlockRequest request, UUID userId) {
         Programme programme = findOwnedProgramme(programmeId, userId);
         createAndSaveBlock(programme, request);
-        ProgrammeDTO response = programmeRepository.findById(programmeId)
-                .orElseThrow(() -> new ResourceNotFoundException("Programme not found"))
-                .toDTO();
+        Programme reloaded = programmeRepository.findById(programmeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Programme not found"));
+        ProgrammeDTO response = programmeMapper.toDTO(reloaded);
         analysisCacheEvictor.evictAnalysisCachesAfterCommit();
         return response;
     }
@@ -116,7 +121,8 @@ public class ProgrammeService {
             cursor = cursor.plusSeconds(block.getDurationWeeks() * 7L * 24 * 60 * 60);
         }
 
-        ProgrammeDTO response = programmeRepository.save(programme).toDTO();
+        Programme savedProgramme = programmeRepository.save(programme);
+        ProgrammeDTO response = programmeMapper.toDTO(savedProgramme);
         analysisCacheEvictor.evictAnalysisCachesAfterCommit();
         return response;
     }
@@ -127,7 +133,8 @@ public class ProgrammeService {
             throw new BadRequestException("Active programmes cannot be archived");
         }
         programme.setArchived(true);
-        ProgrammeDTO response = programmeRepository.save(programme).toDTO();
+        Programme savedProg = programmeRepository.save(programme);
+        ProgrammeDTO response = programmeMapper.toDTO(savedProg);
         analysisCacheEvictor.evictAnalysisCachesAfterCommit();
         return response;
     }
@@ -144,14 +151,14 @@ public class ProgrammeService {
     public List<ProgrammeDTO> getAllByUserForSplit(UUID userId, UUID splitId) {
         return programmeRepository.findByUserIdAndSplitId(userId, splitId)
                 .stream()
-                .map(Programme::toDTO)
+                .map(programmeMapper::toDTO)
                 .toList();
     }
 
     public PagedResponse<ProgrammeDTO> getAllByUserForSplit(UUID userId, UUID splitId, int page, int size) {
         return PagedResponse.from(
                 programmeRepository.findPageByUserIdAndSplitId(userId, splitId, PaginationUtils.toPageable(page, size))
-                        .map(Programme::toDTO)
+                        .map(programmeMapper::toDTO)
         );
     }
 

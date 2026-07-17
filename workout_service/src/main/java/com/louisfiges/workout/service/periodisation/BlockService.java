@@ -6,6 +6,7 @@ import com.louisfiges.workout.dto.responses.BlockDTO;
 import com.louisfiges.workout.periodisation.PeriodisationValidationMessages;
 import com.louisfiges.workout.repository.BlockRepository;
 import com.louisfiges.workout.service.analysis.AnalysisCacheEvictor;
+import com.louisfiges.workout.service.mapper.BlockMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -20,17 +21,21 @@ public class BlockService {
 
     private final BlockRepository blockRepository;
     private final AnalysisCacheEvictor analysisCacheEvictor;
+    private final BlockMapper blockMapper;
 
     public BlockService(
             BlockRepository blockRepository,
-            AnalysisCacheEvictor analysisCacheEvictor
+            AnalysisCacheEvictor analysisCacheEvictor,
+            BlockMapper blockMapper
     ) {
         this.blockRepository = blockRepository;
         this.analysisCacheEvictor = analysisCacheEvictor;
+        this.blockMapper = blockMapper;
     }
 
     public BlockDTO getById(UUID blockId, UUID userId) {
-        return findBlock(blockId, userId).toDTO();
+        Block block = findBlock(blockId, userId);
+        return blockMapper.toDTO(block);
     }
 
     public BlockDTO setStartDate(UUID blockId, String startDate, UUID userId) {
@@ -38,7 +43,8 @@ public class BlockService {
         assertProgrammeMutable(block);
         try {
             block.setStartDate(Instant.parse(startDate));
-            BlockDTO response = blockRepository.save(block).toDTO();
+            Block savedBlock = blockRepository.save(block);
+            BlockDTO response = blockMapper.toDTO(savedBlock);
             analysisCacheEvictor.evictAnalysisCachesAfterCommit();
             return response;
         } catch (Exception e) {
@@ -59,7 +65,8 @@ public class BlockService {
         block.setRepRangeMax(request.repRangeMax());
         block.setBlockOrder(request.blockOrder());
         block.setStartDate(request.startDate());
-        BlockDTO response = blockRepository.save(block).toDTO();
+        Block savedBlock = blockRepository.save(block);
+        BlockDTO response = blockMapper.toDTO(savedBlock);
         analysisCacheEvictor.evictAnalysisCachesAfterCommit();
         return response;
     }

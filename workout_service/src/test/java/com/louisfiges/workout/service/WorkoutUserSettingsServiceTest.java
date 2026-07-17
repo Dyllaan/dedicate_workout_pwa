@@ -6,6 +6,7 @@ import com.louisfiges.workout.dto.responses.WorkoutUserSettingsDTO;
 import com.louisfiges.workout.exception.exceptions.BadRequestException;
 import com.louisfiges.workout.repository.WorkoutUserSettingsRepository;
 import com.louisfiges.workout.service.core.WorkoutUserSettingsService;
+import com.louisfiges.workout.service.mapper.WorkoutUserSettingsMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,12 +31,14 @@ class WorkoutUserSettingsServiceTest {
     @Mock
     private WorkoutUserSettingsRepository repository;
 
+    private final WorkoutUserSettingsMapper workoutUserSettingsMapper = new WorkoutUserSettingsMapper();
+
     private WorkoutUserSettingsService service;
     private UUID userId;
 
     @BeforeEach
     void setUp() {
-        service = new WorkoutUserSettingsService(repository);
+        service = new WorkoutUserSettingsService(repository, workoutUserSettingsMapper);
         userId = UUID.randomUUID();
     }
 

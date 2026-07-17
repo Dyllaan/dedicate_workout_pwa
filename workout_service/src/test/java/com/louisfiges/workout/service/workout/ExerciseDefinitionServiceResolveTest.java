@@ -14,6 +14,7 @@ import com.louisfiges.workout.repository.ProgrammeRepository;
 import com.louisfiges.workout.repository.WorkoutEntryRepository;
 import com.louisfiges.workout.repository.WorkoutTemplateRepository;
 import com.louisfiges.workout.service.analysis.AnalysisCacheEvictor;
+import com.louisfiges.workout.service.mapper.ExerciseDefinitionMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -192,7 +193,8 @@ class ExerciseDefinitionServiceResolveTest {
                 mock(WorkoutTemplateRepository.class),
                 mock(WorkoutEntryRepository.class),
                 mock(ProgrammeRepository.class),
-                mock(AnalysisCacheEvictor.class)
+                mock(AnalysisCacheEvictor.class),
+                mock(ExerciseDefinitionMapper.class)
         );
     }
 

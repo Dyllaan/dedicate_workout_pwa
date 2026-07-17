@@ -1,8 +1,5 @@
 package com.louisfiges.workout.dao.workout;
 
-import com.louisfiges.workout.dto.DtoConvertible;
-import com.louisfiges.workout.dto.responses.WorkoutEntryDTO;
-import com.louisfiges.workout.dto.responses.ExerciseEntryDTO;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -10,15 +7,13 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Table(name = "workout_entries")
-public class WorkoutEntry implements DtoConvertible<WorkoutEntryDTO> {
+public class WorkoutEntry {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -58,19 +53,6 @@ public class WorkoutEntry implements DtoConvertible<WorkoutEntryDTO> {
         this.userId = userId;
         this.exercises = exercises;
         this.notes = notes;
-    }
-
-    @Override
-    public WorkoutEntryDTO toDTO() {
-        List<ExerciseEntryDTO> exerciseDTOs = exercises.stream()
-                .map(ExerciseEntry::toDTO)
-                .toList();
-
-        LocalDateTime createdDateTime = createdAt != null
-                ? LocalDateTime.ofInstant(createdAt, ZoneId.systemDefault())
-                : LocalDateTime.now();
-
-        return new WorkoutEntryDTO(id, template.toDTO(), exerciseDTOs, notes, createdDateTime);
     }
 
     public UUID getId() { return id; }

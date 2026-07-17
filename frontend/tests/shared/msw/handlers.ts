@@ -1,7 +1,7 @@
 import { http, HttpResponse } from "msw";
-import type { DashboardSummary, ExerciseDefinition, Split, WorkoutEntry, WorkoutTemplate } from "@/types/Workout";
-import type { Programme } from "@/types/Periodisation";
-import type { BodyweightLog } from "@/types/Bodyweight";
+import type { DashboardSummary, ExerciseDefinition, Split, WorkoutEntry, WorkoutTemplate } from "@/features/workout/types/Workout";
+import type { Programme } from "@/features/periodisation/types/Periodisation";
+import type { BodyweightLog } from "@/features/bodyweight/types/Bodyweight";
 import type {
   BlockSummary,
   DashboardTrainingInsights,
@@ -12,7 +12,7 @@ import type {
   ReadinessCheckIn,
   SmartCoachDismissal,
   WorkoutTemplateTrainingInsights,
-} from "@/types/Insights";
+} from "@/features/insights/types/Insights";
 import type {
   AnalysisCockpitSummary,
   PowerliftingSummary,
@@ -20,16 +20,16 @@ import type {
   ProgressChartQueryResponse,
   ProgressSeriesCatalogItem,
   ProgressSeriesDiagnostics,
-} from "@/types/Progress";
+} from "@/features/progress/types/Progress";
 import type {
   ExerciseInfoCatalogItem,
   MuscleHeatmapResponse,
   ResolvedExerciseHeatmap,
   WeeklyMuscleVolumeResponse,
-} from "@/types/Heatmap";
-import type { User } from "@/types/User";
-import type { StartupSplit } from "@/types/Startup";
-import { calculatePowerToWeightRatios, findBodyweightLogForDate } from "@/utils/powerToWeightRatio";
+} from "@/features/heatmap/types/Heatmap";
+import type { User } from "@/features/auth/types/User";
+import type { StartupSplit } from "@/features/startup/types/Startup";
+import { calculatePowerToWeightRatios, findBodyweightLogForDate } from "@/features/workout/entries/utils/powerToWeightRatio";
 import {
   buildApiError,
   buildAnalysisCockpitSummary,

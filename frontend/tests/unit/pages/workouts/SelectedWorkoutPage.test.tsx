@@ -7,15 +7,15 @@ import SelectedWorkoutPage from "@/pages/workouts/SelectedWorkoutPage";
 
 const workoutContextMock = vi.fn();
 
-vi.mock("@/hooks/forms/context/useWorkoutContext", () => ({
+vi.mock("@/features/workout/hooks/useWorkoutContext", () => ({
   default: () => workoutContextMock(),
 }));
 
-vi.mock("@/pages/workouts/panels/SelectedWorkoutOverviewPanel", () => ({
+vi.mock("@/features/workout/components/panels/SelectedWorkoutOverviewPanel", () => ({
   default: () => <div data-testid="overview-panel" />,
 }));
 
-vi.mock("@/pages/workouts/panels/WorkoutEntriesPanel.tsx", () => ({
+vi.mock("@/features/workout/components/panels/WorkoutEntriesPanel", () => ({
   default: () => <div data-testid="entries-panel" />,
 }));
 

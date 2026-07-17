@@ -9,20 +9,20 @@ import InsightsPage from "@/pages/insights/InsightsPage";
 const insightsOverviewMock = vi.fn();
 const readinessHistoryMock = vi.fn();
 
-vi.mock("@/hooks/workout/useTrainingInsights.ts", () => ({
+vi.mock("@/features/insights/hooks/useTrainingInsights", () => ({
   useInsightsOverview: () => insightsOverviewMock(),
   useReadinessHistory: (...args: unknown[]) => readinessHistoryMock(...args),
 }));
 
-vi.mock("@/components/insights/InsightsOverviewPanel.tsx", () => ({
+vi.mock("@/features/insights/components/InsightsOverviewPanel", () => ({
   InsightsOverviewPanel: () => <div data-testid="overview-panel" />,
 }));
 
-vi.mock("@/components/insights/InsightsVolumePanel.tsx", () => ({
+vi.mock("@/features/insights/components/InsightsVolumePanel", () => ({
   default: () => <div data-testid="volume-panel" />,
 }));
 
-vi.mock("@/components/insights/ProgressPage.tsx", () => ({
+vi.mock("@/features/progress/components/ProgressPanel", () => ({
   default: () => <div data-testid="lift-page" />,
 }));
 

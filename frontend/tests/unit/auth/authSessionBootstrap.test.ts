@@ -17,7 +17,7 @@ vi.mock("@/api/api", async () => {
 });
 
 import { describe, expect, it, beforeEach } from "vitest";
-import { bootstrapSession } from "@/components/auth/authSessionBootstrap";
+import { bootstrapSession } from "@/features/auth/services/authSessionBootstrap";
 
 function buildJwt(sub: string) {
   const header = Buffer.from(JSON.stringify({ alg: "HS256", typ: "JWT" })).toString("base64url");

@@ -7,7 +7,6 @@ import com.louisfiges.workout.periodisation.PeriodisationValidationMessages;
 import com.louisfiges.workout.repository.BlockRepository;
 import com.louisfiges.workout.service.analysis.AnalysisCacheEvictor;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -22,7 +21,6 @@ public class BlockService {
     private final BlockRepository blockRepository;
     private final AnalysisCacheEvictor analysisCacheEvictor;
 
-    @Autowired
     public BlockService(
             BlockRepository blockRepository,
             AnalysisCacheEvictor analysisCacheEvictor

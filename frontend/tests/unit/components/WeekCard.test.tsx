@@ -1,6 +1,6 @@
 import { fireEvent, screen, waitFor } from "@testing-library/react";
-import { WeekCard } from "@/components/block/WeekCard";
-import type { Week } from "@/types/Periodisation";
+import { WeekCard } from "@/features/periodisation/week/components/WeekCard";
+import type { Week } from "@/features/periodisation/types/Periodisation";
 import { renderWithProviders } from "tests/setup/test-utils";
 
 describe("WeekCard", () => {

@@ -20,11 +20,13 @@ const globalThresholds = {
 
 const criticalFiles = {
   "src/api/api.ts": { lines: 84, functions: 75, statements: 84, branches: 68 },
-  "src/components/auth/auth.tsx": { lines: 55, functions: 55, statements: 55, branches: 50 },
+  "src/features/auth/hooks/useAuth.tsx": { lines: 55, functions: 55, statements: 55, branches: 50 },
   "src/hooks/useLocalStorage.tsx": { lines: 100, functions: 100, statements: 100, branches: 95 },
-  "src/hooks/periodisation/useSplits.ts": { lines: 90, functions: 83, statements: 90, branches: 75 },
-  "src/hooks/periodisation/useProgramme.ts": { lines: 90, functions: 100, statements: 90, branches: 75 },
-  "src/hooks/workout/useProgressAnalytics.ts": { lines: 0, functions: 0, statements: 0, branches: 0 },
+  "src/features/periodisation/splits/hooks/useSplits.ts": { lines: 90, functions: 83, statements: 90, branches: 75 },
+  "src/features/periodisation/programme/hooks/useProgramme.ts": { lines: 90, functions: 100, statements: 90, branches: 75 },
+  "src/features/progress/hooks/useProgressAnalytics.ts": { lines: 80, functions: 100, statements: 80, branches: 50 },
+  "src/api/authRequestPaths.ts": { lines: 80, functions: 80, statements: 80, branches: 70 },
+  "src/api/queryKeys.ts": { lines: 55, functions: 54, statements: 55, branches: 32 },
 };
 
 const failures = [];

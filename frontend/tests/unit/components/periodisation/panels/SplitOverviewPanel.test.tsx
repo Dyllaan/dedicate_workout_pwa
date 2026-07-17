@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import SplitOverviewPanel from "@/components/periodisation/panels/SplitOverviewPanel";
+import SplitOverviewPanel from "@/features/periodisation/components/panels/SplitOverviewPanel";
 
 const mockGetSplitById = vi.fn();
 const mockUseSplit = vi.fn();
@@ -9,7 +9,7 @@ const mockHandleSelectSplit = vi.fn();
 const mockHandleDeleteSplit = vi.fn();
 const mockHandleUpdateSplitFrequencies = vi.fn();
 
-vi.mock("@/hooks/periodisation/useSplits", () => ({
+vi.mock("@/features/periodisation/splits/hooks/useSplits", () => ({
   default: () => ({
     activeSplit: null,
     getSplitById: mockGetSplitById,
@@ -17,7 +17,7 @@ vi.mock("@/hooks/periodisation/useSplits", () => ({
   useSplit: (...args: unknown[]) => mockUseSplit(...args),
 }));
 
-vi.mock("@/hooks/periodisation/usePeriodisationActions", () => ({
+vi.mock("@/features/periodisation/hooks/usePeriodisationActions", () => ({
   default: () => ({
     handleSelectSplit: mockHandleSelectSplit,
     handleDeleteSplit: mockHandleDeleteSplit,
@@ -25,7 +25,7 @@ vi.mock("@/hooks/periodisation/usePeriodisationActions", () => ({
   }),
 }));
 
-vi.mock("@/components/layout/Section", () => ({
+vi.mock("@/components/layout/section/Section", () => ({
   default: ({ children }: { children: ReactNode }) => <section>{children}</section>,
 }));
 

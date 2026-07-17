@@ -4,7 +4,7 @@ const { navigateMock } = vi.hoisted(() => ({
 
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import Back from "@/components/layout/section/Back";
+import Back from "@/components/layout/app/Back";
 import { renderWithProviders } from "tests/setup/test-utils";
 
 vi.mock("react-router-dom", async () => {

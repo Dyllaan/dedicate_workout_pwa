@@ -10,12 +10,12 @@ vi.mock("react-router-dom", async () => {
   };
 });
 
-vi.mock("@/hooks/workout/useDashboardSummary", () => ({
+vi.mock("@/features/dashboard/hooks/useDashboardSummary", () => ({
   useDashboardSummary: () => dashboardSummaryMock(),
 }));
 
 import { screen } from "@testing-library/react";
-import NextWorkoutCard from "@/components/dash/NextWorkoutCard";
+import NextWorkoutCard from "@/features/dashboard/components/NextWorkoutCard";
 import { buildDashboardSummary } from "tests/shared/builders";
 import { renderWithProviders } from "tests/setup/test-utils";
 

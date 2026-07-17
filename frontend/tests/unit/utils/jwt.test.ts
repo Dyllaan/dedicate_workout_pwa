@@ -1,4 +1,4 @@
-import { decodeJwt } from "@/utils/auth/jwt";
+import { decodeJwt } from "@/features/auth/utils/jwt";
 
 describe("decodeJwt", () => {
   it("decodes base64url JWT payloads safely", () => {

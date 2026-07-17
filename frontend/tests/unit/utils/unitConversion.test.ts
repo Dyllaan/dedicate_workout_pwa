@@ -5,7 +5,7 @@ import {
   formatWeight,
   weightStep,
   KG_TO_LBS,
-} from "@/utils/unitConversion";
+} from "@/features/preferences/unit/utils/unitConversion";
 
 describe("toDisplayWeight", () => {
   it("returns kg unchanged", () => {

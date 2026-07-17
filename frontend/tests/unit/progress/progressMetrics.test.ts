@@ -3,7 +3,7 @@ import {
   getExerciseNames,
   getExerciseProgressStats,
   getTopExercise,
-} from "@/features/progress/progressMetrics";
+} from "@/features/progress/config/progressMetrics";
 import { buildWorkoutEntry, buildWorkoutTemplate } from "tests/shared/builders";
 
 describe("progressMetrics", () => {

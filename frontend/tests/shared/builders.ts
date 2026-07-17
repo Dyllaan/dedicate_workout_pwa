@@ -4,15 +4,15 @@ import type {
   Split,
   WorkoutEntry,
   WorkoutTemplate,
-} from "@/types/Workout";
-import type { Block, Programme } from "@/types/Periodisation";
-import type { StartupSplit } from "@/types/Startup";
+} from "@/features/workout/types/Workout";
+import type { Block, Programme } from "@/features/periodisation/types/Periodisation";
+import type { StartupSplit } from "@/features/startup/types/Startup";
 import type {
   DashboardTrainingInsights,
   ExerciseTrainingInsight,
   SmartCoachDismissal,
   WorkoutTemplateTrainingInsights,
-} from "@/types/Insights";
+} from "@/features/insights/types/Insights";
 import type {
   AnalysisCockpitSummary,
   PowerliftingSummary,
@@ -20,7 +20,7 @@ import type {
   ProgressChartQueryResponse,
   ProgressSeriesCatalogItem,
   ProgressSeriesDiagnostics,
-} from "@/types/Progress";
+} from "@/features/progress/types/Progress";
 import type {
   ExerciseInfoCatalogItem,
   MappingSource,
@@ -28,9 +28,9 @@ import type {
   MuscleHeatmapResponse,
   ResolvedExerciseHeatmap,
   WeeklyMuscleVolumeResponse,
-} from "@/types/Heatmap";
-import type { User } from "@/types/User";
-import type { BodyweightLog } from "@/types/Bodyweight";
+} from "@/features/heatmap/types/Heatmap";
+import type { User } from "@/features/auth/types/User";
+import type { BodyweightLog } from "@/features/bodyweight/types/Bodyweight";
 
 let sequence = 0;
 

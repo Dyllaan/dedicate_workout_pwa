@@ -3,7 +3,7 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import { MemoryRouter, useLocation } from "react-router-dom";
 import { describe, expect, it } from "vitest";
 import type { ExerciseFormData } from "@/features/workout/entries/types/workoutEntryFormTypes";
-import { useWorkoutEntryTabs } from "@/pages/workouts/entries/useWorkoutEntryTabs";
+import { useWorkoutEntryTabs } from "@/features/workout/entries/hooks/useWorkoutEntryTabs";
 
 const EMPTY_SET: ExerciseFormData["sets"][number] = {
   reps: "",

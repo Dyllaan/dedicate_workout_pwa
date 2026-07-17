@@ -3,15 +3,15 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { useForm, useWatch } from "react-hook-form";
 import { Dumbbell } from "lucide-react";
 import { describe, expect, it, vi } from "vitest";
-import { WorkoutEditorView, type WorkoutEditorViewProps } from "@/features/workout/WorkoutEditorView";
+import { WorkoutEditorView, type WorkoutEditorViewProps } from "@/features/workout/templates/components/WorkoutEditorView";
 import type {
   WorkoutEditorExerciseValues,
   WorkoutEditorValues,
-} from "@/hooks/forms/useWorkoutEditorForm";
-import type { WorkoutEditorTab } from "@/features/workout/hooks/useWorkoutEditor";
-import { createExerciseIdentityDraft, isCustomExerciseIdentity } from "@/types/exerciseIdentity";
+} from "@/features/workout/templates/hooks/useWorkoutEditorForm";
+import type { WorkoutEditorTab } from "@/features/workout/templates/hooks/useWorkoutEditor";
+import { createExerciseIdentityDraft, isCustomExerciseIdentity } from "@/features/workout/entries/types/ExerciseIdentity";
 
-vi.mock("@/components/workout/ExerciseCatalogPicker", () => ({
+vi.mock("@/features/workout/components/ExerciseCatalogPicker", () => ({
   default: ({
     onSelect,
     onUseTypedQuery,

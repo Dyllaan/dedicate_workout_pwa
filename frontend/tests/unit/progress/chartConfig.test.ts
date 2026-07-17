@@ -1,4 +1,4 @@
-import { loadChartConfig, saveChartConfig } from "@/hooks/progress/chartConfig";
+import { loadChartConfig, saveChartConfig } from "@/features/progress/config/chartConfig";
 
 beforeEach(() => {
   localStorage.clear();

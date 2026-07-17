@@ -1,9 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import { createExerciseIdentityDraft } from "@/types/exerciseIdentity";
-import { WorkoutEntryExerciseDetail } from "@/components/workout/entries/panels/WorkoutEntryExerciseDetail";
+import { createExerciseIdentityDraft } from "@/features/workout/entries/types/ExerciseIdentity";
+import { WorkoutEntryExerciseDetail } from "@/features/workout/entries/components/panels/WorkoutEntryExerciseDetail";
 
-vi.mock("@/components/workout/entries/panels/LogSetsPanel", () => ({
+vi.mock("@/features/workout/entries/components/panels/LogSetsPanel", () => ({
   LogSetsPanel: (props: Record<string, unknown>) => {
     return <div data-testid="log-sets-panel">{JSON.stringify(props)}</div>;
   },

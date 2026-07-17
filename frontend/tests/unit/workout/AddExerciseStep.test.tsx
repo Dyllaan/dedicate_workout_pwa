@@ -1,8 +1,8 @@
 import { fireEvent, screen } from "@testing-library/react";
-import AddExerciseStep from "@/components/workout/entries/AddExerciseStep";
+import AddExerciseStep from "@/features/workout/entries/components/panels/AddExerciseStep";
 import { Stepper } from "@/components/ui/stepper";
 import type { WorkoutEntryExerciseDraft } from "@/features/workout/entries/types/workoutEntryFormTypes";
-import { createExerciseIdentityDraft } from "@/types/exerciseIdentity";
+import { createExerciseIdentityDraft } from "@/features/workout/entries/types/ExerciseIdentity";
 import { buildBlock } from "tests/shared/builders";
 import { renderWithProviders } from "tests/setup/test-utils";
 

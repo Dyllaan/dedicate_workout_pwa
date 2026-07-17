@@ -14,23 +14,23 @@ vi.mock("react-router-dom", async () => {
   };
 });
 
-vi.mock("@/components/auth/forms/LoginForm", () => ({
+vi.mock("@/features/auth/components/forms/LoginForm", () => ({
   default: () => <div>Login form</div>,
 }));
 
-vi.mock("@/components/auth/forms/RegisterForm", () => ({
+vi.mock("@/features/auth/components/forms/RegisterForm", () => ({
   default: () => <div>Register form</div>,
 }));
 
-vi.mock("@/components/auth/forms/MfaForm", () => ({
+vi.mock("@/features/auth/components/forms/MfaForm", () => ({
   default: () => <div>MFA form</div>,
 }));
 
-vi.mock("@/components/auth/dialog/AuthRequirementsDialog", () => ({
+vi.mock("@/features/auth/components/dialog/AuthRequirementsDialog", () => ({
   default: () => null,
 }));
 
-vi.mock("@/components/health/ServiceVersions", () => ({
+vi.mock("@/features/health/components/ServiceVersions", () => ({
   ServiceVersions: () => null,
 }));
 

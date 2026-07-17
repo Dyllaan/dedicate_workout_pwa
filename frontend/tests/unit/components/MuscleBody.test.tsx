@@ -7,7 +7,7 @@ vi.mock("react-muscle-highlighter", () => ({
 }));
 
 import { screen } from "@testing-library/react";
-import MuscleBody from "@/components/workout/heatmap/MuscleBody";
+import MuscleBody from "@/features/heatmap/components/MuscleBody";
 import { renderWithProviders } from "tests/setup/test-utils";
 
 describe("MuscleBody", () => {

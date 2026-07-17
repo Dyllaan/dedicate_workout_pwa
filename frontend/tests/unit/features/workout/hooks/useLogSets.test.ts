@@ -1,15 +1,15 @@
 import { renderHook, act, waitFor } from "@testing-library/react";
-import { useLogSets } from "@/features/workout/hooks/useLogSets";
-import type { UseLogSetsInput } from "@/features/workout/hooks/useLogSets";
+import { useLogSets } from "@/features/workout/entries/hooks/useLogSets";
+import type { UseLogSetsInput } from "@/features/workout/entries/hooks/useLogSets";
 import type { WorkoutEntryExerciseDraft, SetFormData } from "@/features/workout/entries/types/workoutEntryFormTypes";
-import { createExerciseIdentityDraft } from "@/types/exerciseIdentity";
+import { createExerciseIdentityDraft } from "@/features/workout/entries/types/ExerciseIdentity";
 
 const { mockUseTopSetAutotune, mockUseAutotuneOutcomeMutation } = vi.hoisted(() => ({
   mockUseTopSetAutotune: vi.fn(),
   mockUseAutotuneOutcomeMutation: vi.fn(),
 }));
 
-vi.mock("@/hooks/useUnitPreference", () => ({
+vi.mock("@/features/preferences/unit/hooks/useUnitPreference", () => ({
   useUnitPreference: () => ({
     unit: "kg",
     toDisplay: (v: number) => v,
@@ -18,7 +18,7 @@ vi.mock("@/hooks/useUnitPreference", () => ({
   }),
 }));
 
-vi.mock("@/hooks/workout/useTrainingInsights", () => ({
+vi.mock("@/features/insights/hooks/useTrainingInsights", () => ({
   useTopSetAutotune: (...args: unknown[]) => mockUseTopSetAutotune(...args),
   useAutotuneOutcomeMutation: () => mockUseAutotuneOutcomeMutation(),
 }));

@@ -15,8 +15,6 @@ import com.louisfiges.workout.repository.WorkoutEntryRepository;
 import com.louisfiges.workout.service.analysis.AnalysisCacheEvictor;
 import com.louisfiges.workout.util.PaginationUtils;
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +30,6 @@ public class SplitService {
     private final WorkoutEntryRepository workoutEntryRepository;
     private final AnalysisCacheEvictor analysisCacheEvictor;
 
-    @Autowired
     public SplitService(
             SplitRepository splitRepository,
             WorkoutTemplateService workoutTemplateService,

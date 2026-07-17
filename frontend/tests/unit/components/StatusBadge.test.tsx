@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 
 import StatusBadge from "@/components/ui/status-badge";
-import type { TrainingState } from "@/types/Insights";
+import type { TrainingState } from "@/features/insights/types/Insights";
 
 describe("StatusBadge", () => {
   it.each<[TrainingState, string, string]>([

@@ -3,7 +3,7 @@ import { act, renderHook } from "@testing-library/react";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { workoutApi } from "@/api/api";
 import { queryKeys } from "@/api/queryKeys";
-import { useCreateReadinessCheckIn } from "@/hooks/workout/useTrainingInsights";
+import { useCreateReadinessCheckIn } from "@/features/insights/hooks/useTrainingInsights";
 import { createTestQueryClient } from "tests/setup/test-utils";
 
 describe("useCreateReadinessCheckIn", () => {

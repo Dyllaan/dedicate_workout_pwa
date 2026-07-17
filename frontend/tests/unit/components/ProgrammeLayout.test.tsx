@@ -1,7 +1,7 @@
 import { screen } from "@testing-library/react";
 import { Route, Routes } from "react-router-dom";
 import { useOutletContext } from "react-router-dom";
-import ProgrammeLayout from "@/components/outlet/ProgrammeLayout";
+import ProgrammeLayout from "@/features/periodisation/programme/components/ProgrammeLayout";
 import { buildProgramme, buildSplit, buildWorkoutTemplate } from "tests/shared/builders";
 import { renderWithProviders } from "tests/setup/test-utils";
 
@@ -11,21 +11,21 @@ const workoutTemplatesMock = vi.fn();
 const blocksMock = vi.fn();
 const splitMock = vi.fn();
 
-vi.mock("@/hooks/periodisation/useSplits", () => ({
+vi.mock("@/features/periodisation/splits/hooks/useSplits", () => ({
   default: () => splitsMock(),
   useSplit: (...args: unknown[]) => splitMock(...args),
 }));
 
-vi.mock("@/hooks/periodisation/useProgramme", () => ({
+vi.mock("@/features/periodisation/programme/hooks/useProgramme", () => ({
   default: (...args: unknown[]) => programmeMock(...args),
 }));
 
-vi.mock("@/hooks/workout/useWorkoutTemplates", () => ({
+vi.mock("@/features/workout/templates/hooks/useWorkoutTemplates", () => ({
   default: () => workoutTemplatesMock(),
   useAllWorkoutTemplates: () => workoutTemplatesMock(),
 }));
 
-vi.mock("@/hooks/periodisation/useBlocks", () => ({
+vi.mock("@/features/periodisation/blocks/hooks/useBlocks", () => ({
   default: () => blocksMock(),
 }));
 

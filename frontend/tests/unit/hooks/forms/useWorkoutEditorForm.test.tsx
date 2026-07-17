@@ -2,8 +2,8 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import useWorkoutEditorForm, {
   createEmptyWorkoutEditorValues,
-} from "@/hooks/forms/useWorkoutEditorForm";
-import { createExerciseIdentityDraft } from "@/types/exerciseIdentity";
+} from "@/features/workout/templates/hooks/useWorkoutEditorForm";
+import { createExerciseIdentityDraft } from "@/features/workout/entries/types/ExerciseIdentity";
 import { getStringValidationMessage } from "@/utils/validator";
 
 describe("useWorkoutEditorForm", () => {

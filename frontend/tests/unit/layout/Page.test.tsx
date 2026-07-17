@@ -1,7 +1,7 @@
 import { Dumbbell, HelpCircle } from "lucide-react";
 import { screen } from "@testing-library/react";
 
-import Page from "@/components/layout/section/Page";
+import Page from "@/components/layout/frames/Page";
 import { renderWithProviders } from "tests/setup/test-utils";
 
 describe("Page", () => {

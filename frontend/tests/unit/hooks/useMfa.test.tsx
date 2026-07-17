@@ -1,6 +1,6 @@
 import { act, render, renderHook, screen, waitFor } from "@testing-library/react";
-import { AuthContext } from "@/components/auth/auth";
-import { useMfa } from "@/hooks/useMfa";
+import { AuthContext } from "@/features/auth/hooks/useAuth";
+import { useMfa } from "@/features/auth/hooks/useMfa";
 import { authApi } from "@/api/api";
 import { buildUser } from "tests/shared/builders";
 import { createAuthContextValue } from "tests/setup/test-utils";

@@ -1,7 +1,7 @@
 import { fireEvent, screen } from "@testing-library/react";
 
-import CustomiseSheet from "@/components/progress/CustomiseSheet";
-import type { ProgressChartPresetRequest, ProgressSeriesCatalogItem } from "@/types/Progress";
+import CustomiseSheet from "@/features/progress/components/CustomiseSheet";
+import type { ProgressChartPresetRequest, ProgressSeriesCatalogItem } from "@/features/progress/types/Progress";
 import { renderWithProviders } from "tests/setup/test-utils";
 
 const draft: ProgressChartPresetRequest = {

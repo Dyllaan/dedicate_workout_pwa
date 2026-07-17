@@ -1,8 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it } from "vitest";
-import ProgrammeTimeline from "@/components/programme/ProgrammeTimeline";
-import type { Block, Programme } from "@/types/Periodisation";
+import ProgrammeTimeline from "@/features/periodisation/programme/components/ProgrammeTimeline";
+import type { Block, Programme } from "@/features/periodisation/types/Periodisation";
 
 function makeBlock(id: string, order: number): Block {
   return {

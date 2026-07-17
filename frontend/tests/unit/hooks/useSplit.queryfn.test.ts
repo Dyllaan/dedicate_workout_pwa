@@ -18,7 +18,7 @@ vi.mock("@tanstack/react-query", () => ({
 }));
 
 import { renderHook } from "@testing-library/react";
-import { useSplit } from @/features/periodisation/splits/hooks/useSplits";
+import { useSplit } from "@/features/periodisation/splits/hooks/useSplits";
 
 describe("useSplit query function guard", () => {
   it("disables the split query when no split id is provided", () => {

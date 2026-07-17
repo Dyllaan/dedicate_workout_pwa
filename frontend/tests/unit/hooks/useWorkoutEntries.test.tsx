@@ -3,7 +3,7 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { workoutApi } from "@/api/api";
 import { queryKeys } from "@/api/queryKeys";
-import useWorkoutEntries, { useWorkoutEntryMutations } from "@/hooks/workout/useWorkoutEntries";
+import useWorkoutEntries, { useWorkoutEntryMutations } from "@/features/workout/entries/hooks/useWorkoutEntries";
 import { buildWorkoutEntry, buildWorkoutTemplate } from "tests/shared/builders";
 import { createTestQueryClient } from "tests/setup/test-utils";
 

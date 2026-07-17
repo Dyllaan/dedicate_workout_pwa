@@ -14,14 +14,14 @@ vi.mock("react-router", async () => {
   };
 });
 
-vi.mock("@/hooks/workout/useWorkoutTemplates", () => ({
+vi.mock("@/features/workout/templates/hooks/useWorkoutTemplates", () => ({
   default: () => ({
     sortedWorkouts: [],
     isLoading: false,
   }),
 }));
 
-vi.mock("@/components/dash/NextWorkoutCard.tsx", () => ({
+vi.mock("@/features/dashboard/components/NextWorkoutCard", () => ({
   default: () => <div data-testid="next-workout-card" />,
 }));
 

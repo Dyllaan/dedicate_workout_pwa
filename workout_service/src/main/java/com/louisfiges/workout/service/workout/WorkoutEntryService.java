@@ -115,7 +115,7 @@ public class WorkoutEntryService {
         WorkoutEntry saved = workoutEntryRepository.save(
                 new WorkoutEntry(template, userId, buildExerciseEntries(request.exercises(), userId), request.notes())
         );
-        if (request.readiness() != null && readinessService != null) {
+        if (request.readiness() != null) {
             readinessService.createCheckIn(userId, saved.getId(), request.readiness());
         }
         analysisCacheEvictor.evictAnalysisCachesAfterCommit();

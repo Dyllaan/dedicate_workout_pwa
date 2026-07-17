@@ -1,6 +1,6 @@
 const invalidateQueriesMock = vi.fn();
 
-vi.mock("@/hooks/useServices", () => ({
+vi.mock("@/features/health/hooks/useServices", () => ({
   useServices: () => [
     { id: "auth", label: "auth", health: "UP", version: "1.2.3" },
     { id: "workout", label: "workout", health: "CHECKING", version: null },
@@ -19,7 +19,7 @@ vi.mock("@tanstack/react-query", async () => {
 });
 
 import { fireEvent, screen } from "@testing-library/react";
-import { ServiceVersions } from "@/components/health/ServiceVersions";
+import { ServiceVersions } from "@/features/health/components/ServiceVersions";
 import { renderWithProviders } from "tests/setup/test-utils";
 
 describe("ServiceVersions", () => {

@@ -1,16 +1,16 @@
 import { renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import { useExerciseDefinitionDuplicateGroups } from "@/hooks/workout/useExerciseDefinitionDuplicates";
+import { useExerciseDefinitionDuplicateGroups } from "@/features/workout/exercise-definitions/hooks/useExerciseDefinitionDuplicates";
 
 const exerciseDefinitionsMock = vi.fn();
 const workoutEntriesMock = vi.fn();
 
-vi.mock("@/hooks/workout/useExerciseDefinitions", () => ({
+vi.mock("@/features/workout/exercise-definitions/hooks/useExerciseDefinitions", () => ({
   useAllExerciseDefinitions: () => exerciseDefinitionsMock(),
 }));
 
-vi.mock("@/hooks/workout/useWorkoutEntries", () => ({
+vi.mock("@/features/workout/entries/hooks/useWorkoutEntries", () => ({
   useAllWorkoutEntries: () => workoutEntriesMock(),
 }));
 

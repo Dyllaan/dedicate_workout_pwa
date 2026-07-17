@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
-import type { WorkoutEntry } from "@/types/Workout";
+import type { WorkoutEntry } from "@/features/workout/types/Workout";
 import {
   buildFinishEntrySummary,
   calculateBestSetE1rm,
   calculateVolume,
-} from "@/utils/workoutEntryHelpers";
+} from "@/features/workout/entries/utils/workoutEntryHelpers";
 
 function makeWorkoutEntry(overrides: Partial<WorkoutEntry> = {}): WorkoutEntry {
   return {

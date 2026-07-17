@@ -1,13 +1,13 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import { createExerciseIdentityDraft } from "@/types/exerciseIdentity";
-import { LogSetsView } from "@/components/workout/entries/panels/LogSetsView";
+import { createExerciseIdentityDraft } from "@/features/workout/entries/types/ExerciseIdentity";
+import { LogSetsView } from "@/features/workout/entries/components/panels/LogSetsView";
 
-vi.mock("@/components/dash/MiniLiftSummaryCard", () => ({
+vi.mock("@/features/workout/entries/components/MiniLiftSummaryCard", () => ({
   default: () => <div>Lift summary card</div>,
 }));
 
-vi.mock("@/components/workout/entries/1rm/ResultsDrawer", () => ({
+vi.mock("@/features/workout/entries/components/1rm/ResultsDrawer", () => ({
   default: () => null,
 }));
 

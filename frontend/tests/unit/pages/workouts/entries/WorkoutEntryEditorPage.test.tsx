@@ -72,8 +72,8 @@ const {
 }));
 
 import { fireEvent, screen, waitFor } from "@testing-library/react";
-import WorkoutEntryEditorPage from "@/pages/workouts/entries/WorkoutEntryEditorPage";
-import { createExerciseIdentityDraft } from "@/types/exerciseIdentity";
+import WorkoutEntryEditorPage from "@/pages/workouts/WorkoutEntryEditorPage";
+import { createExerciseIdentityDraft } from "@/features/workout/entries/types/ExerciseIdentity";
 import { renderWithProviders } from "tests/setup/test-utils";
 
 vi.mock("react-router-dom", async () => {
@@ -85,7 +85,7 @@ vi.mock("react-router-dom", async () => {
   };
 });
 
-vi.mock("@/hooks/forms/context/useWorkoutContext", () => ({
+vi.mock("@/features/workout/hooks/useWorkoutContext", () => ({
   __esModule: true,
   default: () => ({
     workoutTemplate: workoutTemplateMock,
@@ -94,7 +94,7 @@ vi.mock("@/hooks/forms/context/useWorkoutContext", () => ({
   }),
 }));
 
-vi.mock("@/hooks/forms/useWorkoutEntryForm", () => ({
+vi.mock("@/features/workout/entries/hooks/useWorkoutEntryForm", () => ({
   useWorkoutEntryForm: () => ({
     exerciseData: [],
     readinessForm: {
@@ -130,14 +130,14 @@ vi.mock("@/hooks/forms/useWorkoutEntryForm", () => ({
   }),
 }));
 
-vi.mock("@/hooks/workout/useResolveExerciseDefinition", () => ({
+vi.mock("@/features/workout/exercise-definitions/hooks/useResolveExerciseDefinition", () => ({
   useResolveExerciseDefinition: () => ({
     mutateAsync: resolveExerciseDefinitionMock,
     isPending: false,
   }),
 }));
 
-vi.mock("@/pages/workouts/entries/useWorkoutEntryTabs", () => ({
+vi.mock("@/features/workout/entries/hooks/useWorkoutEntryTabs", () => ({
   useWorkoutEntryTabs: () => ({
     activeTab: activeTabMock.value,
     activeExercise: activeExerciseMock,
@@ -150,29 +150,29 @@ vi.mock("@/pages/workouts/entries/useWorkoutEntryTabs", () => ({
   }),
 }));
 
-vi.mock("@/hooks/forms/useCurrentWeek", () => ({
+vi.mock("@/features/periodisation/week/components/useCurrentWeek", () => ({
   useCurrentWeek: () => ({ context: null }),
 }));
 
-vi.mock("@/hooks/workout/useWorkoutSettings", () => ({
+vi.mock("@/features/workout/hooks/useWorkoutSettings", () => ({
   useWorkoutSettings: () => ({
     settings: { defaultRestSeconds: 120 },
   }),
 }));
 
-vi.mock("@/hooks/workout/useTrainingInsights", () => ({
+vi.mock("@/features/insights/hooks/useTrainingInsights", () => ({
   useLiftSummaryWithEnabled: () => ({
     data: liftSummaryMock,
     isLoading: false,
   }),
 }));
 
-vi.mock("@/components/workout/entries/panels/WorkoutEntryShell", () => ({
+vi.mock("@/features/workout/entries/components/panels/WorkoutEntryShell", () => ({
   __esModule: true,
   default: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
 
-vi.mock("@/components/workout/entries/AddExerciseStep", () => ({
+vi.mock("@/features/workout/entries/components/panels/AddExerciseStep", () => ({
   __esModule: true,
   default: ({
     onAddSuggested,
@@ -197,7 +197,7 @@ vi.mock("@/components/workout/entries/AddExerciseStep", () => ({
   ),
 }));
 
-vi.mock("@/components/workout/ExerciseDefinitionChoiceDialog", () => ({
+vi.mock("@/features/workout/components/ExerciseDefinitionChoiceDialog", () => ({
   __esModule: true,
   default: ({
     open,
@@ -220,19 +220,19 @@ vi.mock("@/components/workout/ExerciseDefinitionChoiceDialog", () => ({
     ) : null,
 }));
 
-vi.mock("@/components/workout/entries/panels/WorkoutEntryExerciseDetail", () => ({
+vi.mock("@/features/workout/entries/components/panels/WorkoutEntryExerciseDetail", () => ({
   WorkoutEntryExerciseDetail: (props: Record<string, unknown>) => {
     workoutEntryDetailPropsMock(props);
     return null;
   },
 }));
 
-vi.mock("@/components/workout/entries/FinishEntryPanel", () => ({
+vi.mock("@/features/workout/entries/components/panels/FinishEntryPanel", () => ({
   __esModule: true,
   default: () => null,
 }));
 
-vi.mock("@/components/workout/entries/panels/WorkoutEntryReadinessPanel", () => ({
+vi.mock("@/features/workout/entries/components/panels/WorkoutEntryReadinessPanel", () => ({
   __esModule: true,
   default: () => null,
 }));

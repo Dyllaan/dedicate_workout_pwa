@@ -17,8 +17,6 @@ import com.louisfiges.workout.repository.ProgrammeRepository;
 import com.louisfiges.workout.util.GenerateWeeks;
 import com.louisfiges.workout.util.PaginationUtils;
 import com.louisfiges.workout.service.analysis.AnalysisCacheEvictor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,7 +36,6 @@ public class ProgrammeService {
     private final BlockRepository blockRepository;
     private final AnalysisCacheEvictor analysisCacheEvictor;
 
-    @Autowired
     public ProgrammeService(
             SplitService splitService,
             ProgrammeRepository programmeRepository,

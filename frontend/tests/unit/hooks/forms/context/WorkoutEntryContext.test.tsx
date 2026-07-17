@@ -3,8 +3,8 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { workoutApi } from "@/api/api";
 import { queryKeys } from "@/api/queryKeys";
-import { WorkoutEntryProvider } from "@/hooks/forms/context/WorkoutEntryContext";
-import useWorkoutEntryContext from "@/hooks/forms/context/useWorkoutEntryContext";
+import { WorkoutEntryProvider } from "@/features/workout/entries/components/WorkoutEntryContext";
+import useWorkoutEntryContext from "@/features/workout/entries/hooks/useWorkoutEntryContext";
 import { buildWorkoutEntry } from "tests/shared/builders";
 import { createTestQueryClient } from "tests/setup/test-utils";
 

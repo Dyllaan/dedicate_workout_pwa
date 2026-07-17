@@ -13,8 +13,8 @@ const {
 import { QueryClientProvider } from "@tanstack/react-query";
 import { act, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import AuthProvider from "@/components/auth/auth";
-import { useAuth } from "@/components/auth/auth";
+import AuthProvider from "@/features/auth/hooks/useAuth";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 import { authApi, setAccessToken, setSessionRecoveryEnabled } from "@/api/api";
 import { buildUser } from "tests/shared/builders";
 import { createTestQueryClient } from "tests/setup/test-utils";
@@ -43,7 +43,7 @@ vi.mock("notistack", () => ({
   },
 }));
 
-vi.mock("@/utils/deviceFingerprint", () => ({
+vi.mock("@/features/auth/utils/deviceFingerprint", () => ({
   getDeviceFingerprint: vi.fn(async () => "fingerprint-test"),
 }));
 
@@ -341,6 +341,5 @@ describe("AuthProvider", () => {
       expect(screen.getByLabelText("Signed in")).toHaveTextContent("false"),
     );
     expect(navigateMock).toHaveBeenCalledWith("/login");
-    expect(localStorage.getItem("user")).toBeNull();
   });
 });

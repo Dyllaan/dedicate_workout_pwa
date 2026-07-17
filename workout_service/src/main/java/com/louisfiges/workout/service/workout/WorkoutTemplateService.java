@@ -15,7 +15,6 @@ import com.louisfiges.workout.exception.exceptions.ResourceNotFoundException;
 import com.louisfiges.workout.service.analysis.AnalysisCacheEvictor;
 import com.louisfiges.workout.validation.RestTimeValidator;
 import com.louisfiges.workout.util.PaginationUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +29,6 @@ public class WorkoutTemplateService {
     private final ExerciseDefinitionService exerciseDefinitionService;
     private final AnalysisCacheEvictor analysisCacheEvictor;
 
-    @Autowired
     public WorkoutTemplateService(
             WorkoutTemplateRepository workoutTemplateRepository,
             ExerciseDefinitionService exerciseDefinitionService,

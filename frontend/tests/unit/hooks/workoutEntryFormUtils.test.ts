@@ -1,11 +1,11 @@
-import { buildWorkoutEntryPayload } from "@/hooks/forms/workoutEntryPayload";
-import { clearWorkoutEntryDraft, loadWorkoutEntryDraft, saveWorkoutEntryDraft } from "@/hooks/forms/workoutEntryDraft";
+import buildWorkoutEntryPayload from "@/features/workout/entries/utils/buildWorkoutEntryPayload";
+import { clearWorkoutEntryDraft, loadWorkoutEntryDraft, saveWorkoutEntryDraft } from "@/features/workout/entries/types/workoutEntryDraft";
 import {
   buildSeededExerciseDraft,
   getRemainingSuggestions,
-} from "@/hooks/forms/workoutEntrySuggestions";
+} from "@/features/workout/entries/utils/workoutEntrySuggestions";
 import type { WorkoutEntryExerciseDraft } from "@/features/workout/entries/types/workoutEntryFormTypes";
-import { createExerciseIdentityDraft } from "@/types/exerciseIdentity";
+import { createExerciseIdentityDraft } from "@/features/workout/entries/types/ExerciseIdentity";
 import { buildWorkoutEntry, buildWorkoutTemplate } from "tests/shared/builders";
 
 describe("workout entry form helpers", () => {

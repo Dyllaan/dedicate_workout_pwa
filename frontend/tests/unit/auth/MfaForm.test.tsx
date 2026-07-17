@@ -1,5 +1,5 @@
 import { fireEvent, screen, waitFor } from "@testing-library/react";
-import MfaForm from "@/components/auth/forms/MfaForm";
+import MfaForm from "@/features/auth/components/forms/MfaForm";
 import { createAuthContextValue, renderWithProviders } from "tests/setup/test-utils";
 
 describe("MfaForm", () => {

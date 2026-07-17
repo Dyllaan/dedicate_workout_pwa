@@ -1,5 +1,5 @@
 import { act, renderHook } from "@testing-library/react";
-import { useRestTimer } from "@/features/workout/hooks/useRestTimer";
+import { useRestTimer } from "@/features/workout/entries/hooks/useRestTimer";
 import type { SetFormData } from "@/features/workout/entries/types/workoutEntryFormTypes";
 
 describe("useRestTimer", () => {

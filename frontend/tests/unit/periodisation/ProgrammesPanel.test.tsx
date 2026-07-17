@@ -1,5 +1,5 @@
 import { screen } from "@testing-library/react";
-import ProgrammesPanel from "@/components/periodisation/panels/ProgrammesPanel";
+import ProgrammesPanel from "@/features/periodisation/components/panels/ProgrammesPanel";
 import { buildProgramme, buildSplit } from "tests/shared/builders";
 import { renderWithProviders } from "tests/setup/test-utils";
 

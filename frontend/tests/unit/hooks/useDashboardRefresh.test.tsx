@@ -6,7 +6,7 @@ import {
   invalidateDashboardData,
   refreshDashboardData,
   useDashboardRefresh,
-} from "@/hooks/workout/useDashboardRefresh";
+} from "@/features/dashboard/hooks/useDashboardRefresh";
 import { createTestQueryClient } from "tests/setup/test-utils";
 
 describe("dashboard refresh utilities", () => {

@@ -1,5 +1,5 @@
 import { fireEvent, screen, waitFor } from "@testing-library/react";
-import SplitOrder from "@/components/splits/creation/SplitOrder";
+import SplitOrder from "@/features/periodisation/splits/components/splits/creation/SplitOrder";
 import { buildWorkoutTemplate } from "tests/shared/builders";
 import { renderWithProviders } from "tests/setup/test-utils";
 

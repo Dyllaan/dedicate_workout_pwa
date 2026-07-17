@@ -14,14 +14,14 @@ vi.mock("notistack", async () => {
 
 const mfaMock = vi.fn();
 
-vi.mock("@/hooks/useMfa", () => ({
+vi.mock("@/features/auth/hooks/useMfa", () => ({
   useMfa: () => mfaMock(),
 }));
 
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import MfaDisableDialog from "@/components/auth/dialog/mfa/MfaDisableDialog";
-import MfaSetupDialog from "@/components/auth/dialog/mfa/MfaSetupDialog";
+import MfaDisableDialog from "@/features/auth/components/dialog/mfa/MfaDisableDialog";
+import MfaSetupDialog from "@/features/auth/components/dialog/mfa/MfaSetupDialog";
 import { createAuthContextValue, renderWithProviders } from "tests/setup/test-utils";
 
 describe("MFA dialogs", () => {

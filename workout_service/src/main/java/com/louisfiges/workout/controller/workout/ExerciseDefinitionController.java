@@ -6,7 +6,6 @@ import com.louisfiges.workout.dto.responses.ExerciseDefinitionDTO;
 import com.louisfiges.workout.dto.responses.ExerciseDefinitionCollapseResponseDTO;
 import com.louisfiges.workout.dto.responses.ExerciseDefinitionResolveResponseDTO;
 import com.louisfiges.workout.dto.responses.PagedResponse;
-import com.louisfiges.workout.dto.responses.exercisehistory.ExerciseHistoryResponseDTO;
 import com.louisfiges.workout.dto.responses.heatmap.MuscleHeatmapResponseDTO;
 import com.louisfiges.workout.service.workout.ExerciseDefinitionService;
 

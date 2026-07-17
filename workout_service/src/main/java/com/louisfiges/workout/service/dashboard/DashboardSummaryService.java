@@ -8,6 +8,7 @@ import com.louisfiges.workout.dto.responses.dashboard.DashboardActiveSplitDTO;
 import com.louisfiges.workout.dto.responses.dashboard.DashboardNextWorkoutDTO;
 import com.louisfiges.workout.dto.responses.dashboard.DashboardPreviewExerciseDTO;
 import com.louisfiges.workout.dto.responses.dashboard.DashboardSummaryDTO;
+import com.louisfiges.workout.dto.responses.dashboard.DashboardWeeklyWorkoutProgressDTO;
 import com.louisfiges.workout.repository.ProgrammeRepository;
 import com.louisfiges.workout.repository.SplitRepository;
 import com.louisfiges.workout.repository.WorkoutEntryRepository;
@@ -17,6 +18,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -24,7 +30,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -60,12 +68,23 @@ public class DashboardSummaryService {
         boolean hasLoggedWorkout = workoutEntryRepository.existsByUserId(userId);
         boolean hasCreatedProgramme = programmeRepository.existsBySplitUserId(userId);
 
+        int lifetimeWorkoutCount = (int) workoutEntryRepository.countByUserId(userId);
+
+        Integer daysSinceLastWorkout = workoutEntryRepository.findTopByUserIdOrderByCreatedAtDesc(userId)
+                .map(entry -> (int) ChronoUnit.DAYS.between(
+                        entry.getCreatedAt().atZone(ZoneOffset.UTC).toLocalDate(),
+                        LocalDate.now(ZoneOffset.UTC)))
+                .orElse(null);
+
+        DashboardWeeklyWorkoutProgressDTO weeklyProgress = activeSplit
+                .map(split -> buildWeeklyProgress(userId, split))
+                .orElse(null);
+
         List<WorkoutEntry> recentHistory = workoutEntryRepository.findDetailedHistoryByUserId(
                 userId,
                 PageRequest.of(0, NEXT_WORKOUT_HISTORY_LIMIT)
         );
 
-        // Resolve next workout: Try active split sequence first; fall back to random template if empty.
         Optional<DashboardNextWorkoutDTO> nextWorkoutDTO = Optional.empty();
         if (activeSplit.isPresent()) {
             nextWorkoutDTO = buildNextWorkoutFromSplit(activeSplit.get(), recentHistory);
@@ -80,8 +99,42 @@ public class DashboardSummaryService {
                 nextWorkoutDTO.orElse(null),
                 liftSummaryService.getOverallLiftSummary(userId).orElse(null),
                 hasLoggedWorkout,
-                hasCreatedProgramme
+                hasCreatedProgramme,
+                lifetimeWorkoutCount,
+                daysSinceLastWorkout,
+                weeklyProgress
         );
+    }
+
+    private DashboardWeeklyWorkoutProgressDTO buildWeeklyProgress(UUID userId, Split split) {
+        LocalDate today = LocalDate.now(ZoneOffset.UTC);
+        LocalDate monday = today.with(DayOfWeek.MONDAY);
+        LocalDate sunday = today.with(DayOfWeek.SUNDAY);
+
+        Instant weekStart = monday.atStartOfDay(ZoneOffset.UTC).toInstant();
+        Instant weekEnd = sunday.atTime(23, 59, 59, 999_999_999).atZone(ZoneOffset.UTC).toInstant();
+
+        Set<UUID> splitTemplateIds = split.getAssignments().stream()
+                .map(assignment -> assignment.getWorkoutTemplate().getId())
+                .collect(Collectors.toSet());
+
+        List<WorkoutEntry> weekEntries = workoutEntryRepository.findByUserIdAndCreatedAtBetween(
+                userId, weekStart, weekEnd);
+
+        int completedThisWeek = (int) weekEntries.stream()
+                .filter(entry -> entry.getTemplate() != null
+                        && splitTemplateIds.contains(entry.getTemplate().getId()))
+                .count();
+
+        int targetThisWeek = split.getAssignments().stream()
+                .mapToInt(assignment -> assignment.getSessionsPerWeek())
+                .sum();
+
+        int remainingWorkouts = Math.max(0, targetThisWeek - completedThisWeek);
+        int daysRemaining = DayOfWeek.SUNDAY.getValue() - today.getDayOfWeek().getValue() + 1;
+
+        return new DashboardWeeklyWorkoutProgressDTO(
+                completedThisWeek, targetThisWeek, remainingWorkouts, daysRemaining);
     }
 
     private Optional<DashboardNextWorkoutDTO> buildNextWorkoutFromSplit(Split split, List<WorkoutEntry> history) {

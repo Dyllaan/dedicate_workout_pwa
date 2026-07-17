@@ -7,7 +7,7 @@ vi.mock("@/features/periodisation/programme/hooks/useProgramme", () => ({
 }));
 
 import { screen } from "@testing-library/react";
-import TrainingStatusBanner from "@/features/dashboard/components/TrainingStatusBanner";
+import TrainingStatusBanner from "@/features/dashboard/components/summary/TrainingStatusBanner";
 import { buildBlock, buildProgramme, buildSplit } from "tests/shared/builders";
 import { renderWithProviders } from "tests/setup/test-utils";
 

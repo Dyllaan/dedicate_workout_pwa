@@ -32,15 +32,15 @@ vi.mock("@/components/theme/ThemeToggle", () => ({
   ThemeToggle: () => <div>Theme toggle</div>,
 }));
 
-vi.mock("@/features/dashboard/components/TrainingStatusBanner", () => ({
+vi.mock("@/features/dashboard/components/summary/TrainingStatusBanner", () => ({
   default: ({ splitId }: { splitId: string }) => <div>Training banner {splitId}</div>,
 }));
 
-vi.mock("@/features/dashboard/components/NextWorkoutCard", () => ({
+vi.mock("@/features/dashboard/components/summary/NextWorkoutCard", () => ({
   default: () => <div>Next workout card</div>,
 }));
 
-vi.mock("@/features/dashboard/components/LiftSummaryCard", () => ({
+vi.mock("@/features/dashboard/components/summary/LiftSummaryCard", () => ({
   default: () => <div>Lift summary card</div>,
 }));
 
@@ -72,8 +72,8 @@ describe("DashboardPage", () => {
 
     renderWithProviders(<DashboardPage />);
 
-    expect(screen.getByText("Loading your training summary.")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Create Workout/i })).toBeInTheDocument();
+    expect(document.querySelector('[data-slot="skeleton"]')).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Create Workout/i })).not.toBeInTheDocument();
   });
 
   it("renders the signed-in dashboard shell and opens onboarding", async () => {
@@ -92,7 +92,6 @@ describe("DashboardPage", () => {
     renderWithProviders(<DashboardPage />);
 
     expect(screen.getByText(/Morning/)).toHaveTextContent("Morning Louis.");
-    expect(screen.getByText("Active split: Upper Lower Split.")).toBeInTheDocument();
     expect(screen.getByText("Next workout card")).toBeInTheDocument();
     expect(screen.getByText(`Training banner ${split.id}`)).toBeInTheDocument();
     expect(screen.getByText("Lift summary card")).toBeInTheDocument();
@@ -131,6 +130,7 @@ describe("DashboardPage", () => {
     renderWithProviders(<DashboardPage />);
 
     expect(screen.getByText(/Evening/)).toHaveTextContent("Evening Louis.");
-    expect(screen.getByText("No active split yet. Set one in periodisation to tailor the dashboard.")).toBeInTheDocument();
+    expect(screen.getByText("Next workout card")).toBeInTheDocument();
+    expect(screen.getByText("Lift summary card")).toBeInTheDocument();
   });
 });

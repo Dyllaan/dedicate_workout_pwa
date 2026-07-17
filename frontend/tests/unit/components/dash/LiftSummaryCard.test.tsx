@@ -1,7 +1,7 @@
 import { screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { renderWithProviders } from "tests/setup/test-utils";
-import LiftSummaryCard from "@/features/dashboard/components/LiftSummaryCard";
+import LiftSummaryCard from "@/features/dashboard/components/summary/LiftSummaryCard";
 
 vi.mock("@/features/preferences/unit/hooks/useUnitPreference", () => ({
   useUnitPreference: () => ({

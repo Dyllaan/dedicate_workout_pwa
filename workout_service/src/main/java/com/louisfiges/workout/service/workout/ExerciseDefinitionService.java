@@ -41,6 +41,7 @@ import com.louisfiges.workout.repository.WorkoutEntryRepository;
 import com.louisfiges.workout.repository.WorkoutTemplateRepository;
 import com.louisfiges.workout.repository.ExerciseDefinitionUsageSummaryRow;
 import com.louisfiges.workout.service.analysis.AnalysisCacheEvictor;
+import com.louisfiges.workout.util.PaginationUtils;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -121,18 +122,17 @@ public class ExerciseDefinitionService {
 
     @Transactional(readOnly = true)
     public PagedResponse<ExerciseDefinitionDTO> list(UUID userId, int page, int size, String query) {
-        int safePage = Math.max(0, page);
-        int safeSize = Math.clamp(size, 1, 25);
         String safeQuery = query == null ? null : query.trim();
+        var pageable = PaginationUtils.toPageable(page, size);
         var definitions = safeQuery == null || safeQuery.isBlank()
                 ? exerciseDefinitionRepository.findByUserIdOrderByExerciseNameAscVariantAsc(
                         userId,
-                        PageRequest.of(safePage, safeSize)
+                        pageable
                 )
                 : exerciseDefinitionRepository.findByUserIdAndQuery(
                         userId,
                         safeQuery,
-                        PageRequest.of(safePage, safeSize)
+                        pageable
                 );
         return PagedResponse.from(
                 definitions.map(ExerciseDefinition::toDTO)

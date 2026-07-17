@@ -14,7 +14,7 @@ import com.louisfiges.workout.exception.exceptions.BadRequestException;
 import com.louisfiges.workout.exception.exceptions.ResourceNotFoundException;
 import com.louisfiges.workout.service.analysis.AnalysisCacheEvictor;
 import com.louisfiges.workout.validation.RestTimeValidator;
-import org.springframework.data.domain.PageRequest;
+import com.louisfiges.workout.util.PaginationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,10 +51,8 @@ public class WorkoutTemplateService {
 
     @Transactional(readOnly = true)
     public PagedResponse<WorkoutTemplateDTO> getAllByUser(UUID userId, int page, int size) {
-        int safePage = Math.max(0, page);
-        int safeSize = Math.min(Math.max(1, size), 25);
         return PagedResponse.from(
-                workoutTemplateRepository.findByUserId(userId, PageRequest.of(safePage, safeSize))
+                workoutTemplateRepository.findByUserId(userId, PaginationUtils.toPageable(page, size))
                         .map(WorkoutTemplate::toDTO)
         );
     }
@@ -69,10 +67,8 @@ public class WorkoutTemplateService {
 
     @Transactional(readOnly = true)
     public PagedResponse<WorkoutTemplateDTO> getByCategory(UUID userId, String category, int page, int size) {
-        int safePage = Math.max(0, page);
-        int safeSize = Math.min(Math.max(1, size), 25);
         return PagedResponse.from(
-                workoutTemplateRepository.findByUserIdAndCategory(userId, category, PageRequest.of(safePage, safeSize))
+                workoutTemplateRepository.findByUserIdAndCategory(userId, category, PaginationUtils.toPageable(page, size))
                         .map(WorkoutTemplate::toDTO)
         );
     }

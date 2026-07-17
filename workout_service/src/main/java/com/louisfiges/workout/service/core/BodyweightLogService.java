@@ -6,6 +6,7 @@ import com.louisfiges.workout.dto.responses.PagedResponse;
 import com.louisfiges.workout.dto.responses.BodyweightLogDTO;
 import com.louisfiges.workout.exception.exceptions.ResourceNotFoundException;
 import com.louisfiges.workout.repository.BodyweightLogRepository;
+import com.louisfiges.workout.util.PaginationUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -32,10 +33,8 @@ public class BodyweightLogService {
     }
 
     public PagedResponse<BodyweightLogDTO> getAll(UUID userId, int page, int size) {
-        int safePage = Math.max(0, page);
-        int safeSize = Math.min(Math.max(1, size), 25);
         return PagedResponse.from(
-                bodyweightLogRepository.findPageByUserIdOrderByLoggedAtDesc(userId, PageRequest.of(safePage, safeSize))
+                bodyweightLogRepository.findPageByUserIdOrderByLoggedAtDesc(userId, PaginationUtils.toPageable(page, size))
                         .map(this::toDTO)
         );
     }

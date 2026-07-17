@@ -4,6 +4,7 @@ import com.louisfiges.workout.dao.workout.ExerciseInfo;
 import com.louisfiges.workout.dto.responses.PagedResponse;
 import com.louisfiges.workout.dto.responses.heatmap.ExerciseInfoCatalogItemDTO;
 import com.louisfiges.workout.repository.ExerciseInfoRepository;
+import com.louisfiges.workout.util.PaginationUtils;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,8 +40,8 @@ public class ExerciseInfoCatalogService {
     }
 
     public PagedResponse<ExerciseInfoCatalogItemDTO> searchCatalog(String query, int page, int size) {
-        int safePage = Math.max(0, page);
-        int safeSize = Math.min(Math.max(1, size), 25);
+        int safePage = PaginationUtils.safePage(page);
+        int safeSize = PaginationUtils.safeSize(size);
         List<ExerciseInfoCatalogItemDTO> results = searchCatalogInternal(query);
         int fromIndex = Math.min(results.size(), safePage * safeSize);
         int toIndex = Math.min(results.size(), fromIndex + safeSize);
@@ -55,8 +56,8 @@ public class ExerciseInfoCatalogService {
     }
 
     public PagedResponse<ExerciseInfoCatalogItemDTO> getQuickPicks(int page, int size) {
-        int safePage = Math.max(0, page);
-        int safeSize = Math.min(Math.max(1, size), 25);
+        int safePage = PaginationUtils.safePage(page);
+        int safeSize = PaginationUtils.safeSize(size);
         List<ExerciseInfoCatalogItemDTO> quickPicks = buildQuickPicks();
         int fromIndex = Math.min(quickPicks.size(), safePage * safeSize);
         int toIndex = Math.min(quickPicks.size(), fromIndex + safeSize);

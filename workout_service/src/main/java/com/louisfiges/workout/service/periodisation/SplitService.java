@@ -13,6 +13,7 @@ import com.louisfiges.workout.repository.SplitRepository;
 import com.louisfiges.workout.service.workout.WorkoutTemplateService;
 import com.louisfiges.workout.repository.WorkoutEntryRepository;
 import com.louisfiges.workout.service.analysis.AnalysisCacheEvictor;
+import com.louisfiges.workout.util.PaginationUtils;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,10 +54,8 @@ public class SplitService {
 
     @Transactional(readOnly = true)
     public PagedResponse<SplitDTO> getAllByUser(UUID userId, int page, int size) {
-        int safePage = Math.max(0, page);
-        int safeSize = Math.min(Math.max(1, size), 25);
         return PagedResponse.from(
-                splitRepository.findPageByUserIdWithWorkouts(userId, PageRequest.of(safePage, safeSize))
+                splitRepository.findPageByUserIdWithWorkouts(userId, PaginationUtils.toPageable(page, size))
                         .map(Split::toDTO)
         );
     }

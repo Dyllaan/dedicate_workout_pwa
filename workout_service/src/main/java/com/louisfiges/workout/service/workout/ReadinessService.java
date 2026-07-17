@@ -8,6 +8,7 @@ import com.louisfiges.workout.dto.responses.insights.ReadinessHistoryPointDTO;
 import com.louisfiges.workout.dto.responses.insights.ReadinessHistoryResponseDTO;
 import com.louisfiges.workout.exception.exceptions.BadRequestException;
 import com.louisfiges.workout.repository.ReadinessCheckInRepository;
+import com.louisfiges.workout.util.PaginationUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -87,8 +88,8 @@ public class ReadinessService {
     public ReadinessHistoryResponseDTO getHistory(UUID userId, int days, int page, int size) {
         int resolvedDays = Math.min(Math.max(days, 1), 30);
         Instant cutoff = Instant.now().minus(resolvedDays, ChronoUnit.DAYS);
-        int safePage = Math.max(0, page);
-        int safeSize = Math.min(Math.max(1, size), 25);
+        int safePage = PaginationUtils.safePage(page);
+        int safeSize = PaginationUtils.safeSize(size);
 
         List<ReadinessCheckInRepository.ReadinessHistoryRow> allRows = readinessCheckInRepository
                 .findHistoryByUserIdAndCreatedAtGreaterThanEqualOrderByCreatedAtDesc(userId, cutoff);

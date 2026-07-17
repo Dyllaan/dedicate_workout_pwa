@@ -15,6 +15,7 @@ import com.louisfiges.workout.periodisation.ProgrammePresetType;
 import com.louisfiges.workout.repository.BlockRepository;
 import com.louisfiges.workout.repository.ProgrammeRepository;
 import com.louisfiges.workout.util.GenerateWeeks;
+import com.louisfiges.workout.util.PaginationUtils;
 import com.louisfiges.workout.service.analysis.AnalysisCacheEvictor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -151,10 +152,8 @@ public class ProgrammeService {
     }
 
     public PagedResponse<ProgrammeDTO> getAllByUserForSplit(UUID userId, UUID splitId, int page, int size) {
-        int safePage = Math.max(0, page);
-        int safeSize = Math.min(Math.max(1, size), 25);
         return PagedResponse.from(
-                programmeRepository.findPageByUserIdAndSplitId(userId, splitId, PageRequest.of(safePage, safeSize))
+                programmeRepository.findPageByUserIdAndSplitId(userId, splitId, PaginationUtils.toPageable(page, size))
                         .map(Programme::toDTO)
         );
     }

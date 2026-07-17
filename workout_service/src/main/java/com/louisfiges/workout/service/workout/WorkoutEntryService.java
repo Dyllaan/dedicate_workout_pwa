@@ -15,6 +15,7 @@ import com.louisfiges.workout.repository.WorkoutEntryRepository;
 import com.louisfiges.workout.repository.WorkoutTemplateRepository;
 import com.louisfiges.workout.service.analysis.AnalysisCacheEvictor;
 import com.louisfiges.workout.validation.RestTimeValidator;
+import com.louisfiges.workout.util.PaginationUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,18 +67,17 @@ public class WorkoutEntryService {
 
     @Transactional(readOnly = true)
     public PagedResponse<WorkoutEntryDTO> getAllByUser(UUID userId, UUID workoutTemplateId, int page, int size) {
-        int safePage = Math.max(0, page);
-        int safeSize = Math.min(Math.max(1, size), 25);
+        var pageable = PaginationUtils.toPageable(page, size);
         if (workoutTemplateId != null) {
             return PagedResponse.from(
                     workoutEntryRepository.findDetailedHistoryPageByTemplateIdAndUserId(
-                            workoutTemplateId, userId, PageRequest.of(safePage, safeSize)
+                            workoutTemplateId, userId, pageable
                     ).map(WorkoutEntry::toDTO)
             );
         }
         return PagedResponse.from(
                 workoutEntryRepository.findDetailedHistoryPageByUserId(
-                        userId, PageRequest.of(safePage, safeSize)
+                        userId, pageable
                 ).map(WorkoutEntry::toDTO)
         );
     }
@@ -94,11 +94,9 @@ public class WorkoutEntryService {
     public PagedResponse<WorkoutEntryDTO> getByDateRange(UUID userId, LocalDate startDate, LocalDate endDate, int page, int size) {
         Instant start = startDate.atStartOfDay().toInstant(ZoneOffset.UTC);
         Instant end = endDate.plusDays(1L).atStartOfDay().minusNanos(1L).toInstant(ZoneOffset.UTC);
-        int safePage = Math.max(0, page);
-        int safeSize = Math.min(Math.max(1, size), 25);
         return PagedResponse.from(
                 workoutEntryRepository.findDetailedHistoryPageByUserIdAndCreatedAtBetween(
-                        userId, start, end, PageRequest.of(safePage, safeSize)
+                        userId, start, end, PaginationUtils.toPageable(page, size)
                 ).map(WorkoutEntry::toDTO)
         );
     }
@@ -153,10 +151,8 @@ public class WorkoutEntryService {
 
     @Transactional(readOnly = true)
     public PagedResponse<WorkoutEntryDTO> getRecentEntries(UUID userId, int page, int size) {
-        int safePage = Math.max(0, page);
-        int safeSize = Math.clamp(size, 1, 25);
         return PagedResponse.from(
-                workoutEntryRepository.findHistoryPageByUserId(userId, PageRequest.of(safePage, safeSize))
+                workoutEntryRepository.findHistoryPageByUserId(userId, PaginationUtils.toPageable(page, size))
                         .map(WorkoutEntry::toDTO)
         );
     }

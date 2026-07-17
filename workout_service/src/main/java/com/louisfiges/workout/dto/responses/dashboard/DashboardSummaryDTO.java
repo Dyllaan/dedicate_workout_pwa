@@ -7,6 +7,9 @@ public record DashboardSummaryDTO(
         DashboardNextWorkoutDTO nextWorkout,
         DashboardTopLiftDTO topLift,
         boolean hasLoggedWorkout,
-        boolean hasCreatedProgramme
+        boolean hasCreatedProgramme,
+        int lifetimeWorkoutCount,
+        Integer daysSinceLastWorkout,
+        DashboardWeeklyWorkoutProgressDTO weeklyProgress
 ) {
 }

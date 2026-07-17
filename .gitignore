@@ -22,3 +22,6 @@ ops/seed/.env
 /workout_service/docs
 /.idea
 /dev-db-dump
+/dump
+/workout_service/.idea
+/workout_service/.idea

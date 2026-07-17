@@ -300,6 +300,8 @@ public interface WorkoutEntryRepository extends JpaRepository<WorkoutEntry, UUID
     // has the user logged any workout
     boolean existsByUserId(UUID userId);
 
+    long countByUserId(UUID userId);
+
     void deleteByIdAndUserId(UUID id, UUID userId);
 
     // find most recent by user id

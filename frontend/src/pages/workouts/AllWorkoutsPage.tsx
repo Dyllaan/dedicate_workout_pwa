@@ -6,7 +6,7 @@ import { DashCardRow } from "@/components/layout/card/DashCardRow";
 import { useUrlPagination } from "@/hooks/useUrlPagination";
 import {ICONS} from "@/config/iconConfig.ts";
 import PaginatedContainer from "@/components/layout/frames/PaginatedContainer";
-import NextWorkoutCard from "@/features/dashboard/components/NextWorkoutCard.tsx";
+import NextWorkoutCard from "@/features/dashboard/components/summary/NextWorkoutCard";
 import CreateWorkoutButton from "@/features/workout/templates/components/CreateWorkoutButton.tsx";
 
 export default function AllWorkoutsPage() {

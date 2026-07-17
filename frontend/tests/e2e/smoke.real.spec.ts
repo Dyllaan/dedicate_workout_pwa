@@ -22,15 +22,7 @@ async function waitForInsightsPageReady(page: Page) {
 
 async function waitForChartsLibraryReady(page: Page) {
   await dismissCookieNoticeIfPresent(page);
-  const chartShell = page.getByTestId("exercise-chart-shell");
-
-  if (await chartShell.isVisible().catch(() => false)) {
-    return;
-  }
-
-  const viewChartButton = page.getByRole("button", { name: /View chart$/ }).first();
-  await viewChartButton.click();
-  await expect(chartShell).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Lift detail", level: 1 })).toBeVisible();
 }
 
 test.setTimeout(120_000);
@@ -143,6 +135,6 @@ test("@smoke register, seed, and verify core flows against the real stack", asyn
 
   await page.goto(`${baseURL}/insights`);
   await waitForInsightsPageReady(page);
-  await page.goto(`${baseURL}/insights/charts`);
+  await page.goto(`${baseURL}/insights?tab=lift`);
   await waitForChartsLibraryReady(page);
 });

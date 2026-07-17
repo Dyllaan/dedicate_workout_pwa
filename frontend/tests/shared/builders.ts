@@ -279,6 +279,15 @@ export function buildDashboardSummary(
       previousEstimatedOneRepMaxKg: 121.3,
       previousTopSetPerformedAt: "2026-05-10T08:00:00.000Z",
     },
+    hasLoggedWorkout: true,
+    hasCreatedProgramme: true,
+    lifetimeWorkoutCount: 42,
+    weeklyProgress: {
+      completedThisWeek: 3,
+      targetThisWeek: 5,
+      remainingWorkouts: 2,
+      daysRemaining: 3,
+    },
     ...overrides,
   };
 }

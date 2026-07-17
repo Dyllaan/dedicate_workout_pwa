@@ -15,7 +15,7 @@ vi.mock("@/features/dashboard/hooks/useDashboardSummary", () => ({
 }));
 
 import { screen } from "@testing-library/react";
-import NextWorkoutCard from "@/features/dashboard/components/NextWorkoutCard";
+import NextWorkoutCard from "@/features/dashboard/components/summary/NextWorkoutCard";
 import { buildDashboardSummary } from "tests/shared/builders";
 import { renderWithProviders } from "tests/setup/test-utils";
 

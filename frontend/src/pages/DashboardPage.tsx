@@ -1,18 +1,16 @@
 import { useState } from "react";
 import { HelpCircle, RefreshCw} from "lucide-react";
 import { useAuth } from "@/features/auth/hooks/useAuth";
-import { useDashboardSummary } from "@/features/dashboard/hooks/useDashboardSummary";
 import { useDashboardRefresh } from "@/features/dashboard/hooks/useDashboardRefresh";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
-import TrainingStatusBanner from "@/features/dashboard/components/TrainingStatusBanner";
-import NextWorkoutCard from "@/features/dashboard/components/NextWorkoutCard";
 import OnboardingDialog from "@/features/onboarding/components/OnboardingDialog";
 import Page from "@/components/layout/frames/Page";
 import { cn } from "@/lib/utils";
 import { Tooltip } from "@/components/ui/tooltip";
 import TipCarousel from "@/features/dashboard/components/TipCarousel.tsx";
-import LiftSummaryCard from "@/features/dashboard/components/LiftSummaryCard.tsx";
-import CreateWorkoutButton from "@/features/workout/templates/components/CreateWorkoutButton";
+import DashboardSummaryContainer from "@/features/dashboard/components/summary/DashboardSummaryContainer";
+import { formatCurrentDate } from "@/utils/date";
+import { useDashboardSummary } from "@/features/dashboard/hooks/useDashboardSummary";
 
 function getGreeting(): string {
   const hour = new Date().getHours();
@@ -21,37 +19,23 @@ function getGreeting(): string {
   return "Evening";
 }
 
-function formatDate(): string {
-  return new Date().toLocaleDateString("en-GB", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-  });
-}
-
 export default function DashboardPage() {
   const { user } = useAuth();
-  const { data: dashboardSummary, isLoading } = useDashboardSummary();
   const { refreshDashboard, isRefreshing } = useDashboardRefresh();
-  const [showOnboarding, setShowOnboarding] = useState(false);
+  const { data: dashboardSummary, isLoading } = useDashboardSummary();
   const activeSplit = dashboardSummary?.activeSplit ?? null;
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   return (
     <Page
-      eyebrow={formatDate()}
+      eyebrow={formatCurrentDate()}
       title={
         <>
           {getGreeting()}
           {user?.username && <span className="text-primary"> {user.username}</span>}.
         </>
       }
-      subtitle={
-        isLoading
-          ? "Loading your training summary."
-          : activeSplit
-            ? `Active split: ${activeSplit.name}.`
-            : "No active split yet. Set one in periodisation to tailor the dashboard."
-      }
+      subtitle={dashboardSummary?.daysSinceLastWorkout ? `Last workout: ${dashboardSummary.daysSinceLastWorkout} days ago.` : undefined}
       actions={
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1">
@@ -85,9 +69,7 @@ export default function DashboardPage() {
         open={showOnboarding}
         onOpenChange={setShowOnboarding}
       />
-      {dashboardSummary && dashboardSummary.nextWorkout ? <NextWorkoutCard /> : <CreateWorkoutButton />}
-      <TrainingStatusBanner splitId={activeSplit?.id} />
-      <LiftSummaryCard liftSummary={dashboardSummary?.topLift} />
+      <DashboardSummaryContainer activeSplit={activeSplit} dashboardSummary={dashboardSummary} isLoading={isLoading} />
       <TipCarousel />
     </Page>
   );

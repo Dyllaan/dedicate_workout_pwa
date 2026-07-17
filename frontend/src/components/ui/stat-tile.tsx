@@ -10,6 +10,7 @@ type StatTileProps = {
     className?: string;
     labelClassName?: string;
     valueClassName?: string;
+    tint?: string;
 };
 
 export default function StatTile({
@@ -20,6 +21,7 @@ export default function StatTile({
                                      className,
                                      labelClassName,
                                      valueClassName,
+                                     tint,
                                  }: StatTileProps) {
     const disabled = value === undefined || value === null;
 
@@ -30,8 +32,11 @@ export default function StatTile({
                 className
             )}
         >
-            {/* Top Row: Label and Icon */}
-            <div className="flex items-start justify-between gap-2 mb-3">
+            {tint && (
+                <div className={cn("absolute inset-0 rounded-2xl pointer-events-none opacity-5", tint)} />
+            )}
+
+            <div className="relative flex items-start justify-between gap-2 mb-3">
                 <span
                     className={cn(
                         "text-xs font-medium text-muted-foreground tracking-normal truncate max-w-[80%]",
@@ -47,8 +52,7 @@ export default function StatTile({
                 ) : null}
             </div>
 
-            {/* Bottom Row: Main Value */}
-            <div className="flex items-baseline">
+            <div className="relative flex items-baseline">
                 <span
                     className={cn(
                         "text-2xl sm:text-3xl font-semibold tracking-tight text-foreground tabular-nums",
@@ -61,7 +65,7 @@ export default function StatTile({
             </div>
 
             {supportingText ? (
-                <div className={cn("mt-1 text-xs leading-tight text-muted-foreground", disabled && "text-muted-foreground/40")}>
+                <div className={cn("relative mt-1 text-xs leading-tight text-muted-foreground", disabled && "text-muted-foreground/40")}>
                     {supportingText}
                 </div>
             ) : null}

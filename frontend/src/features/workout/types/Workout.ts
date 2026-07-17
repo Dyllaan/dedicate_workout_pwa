@@ -249,6 +249,13 @@ type DashboardSummaryTopLift = {
   previousTopSetPerformedAt?: string | null;
 };
 
+type DashboardWeeklyWorkoutProgress = {
+  completedThisWeek: number;
+  targetThisWeek: number;
+  remainingWorkouts: number;
+  daysRemaining: number;
+}
+
 type DashboardSummary = {
   workoutTemplateCount: number;
   splitCount: number;
@@ -257,6 +264,10 @@ type DashboardSummary = {
   topLift?: DashboardSummaryTopLift | null;
   hasLoggedWorkout: boolean;
   hasCreatedProgramme: boolean;
+  lifetimeWorkoutCount: number;
+  daysSinceLastWorkout?: number | null;
+  weeklyProgress: DashboardWeeklyWorkoutProgress;
+
 };
 
 type Split = {
@@ -326,4 +337,6 @@ export type {
   ExerciseDefinitionResolveMatch,
   ExerciseDefinitionResolveResponse,
   DashboardSummaryTopLift,
+  DashboardSummaryActiveSplit,
+  DashboardWeeklyWorkoutProgress,
 };

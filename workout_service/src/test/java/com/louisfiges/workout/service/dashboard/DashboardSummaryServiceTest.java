@@ -12,6 +12,7 @@ import com.louisfiges.workout.dao.workout.SetEntry;
 import com.louisfiges.workout.dao.workout.WorkoutEntry;
 import com.louisfiges.workout.dao.workout.WorkoutTemplate;
 import com.louisfiges.workout.dto.responses.dashboard.DashboardSummaryDTO;
+import com.louisfiges.workout.dto.responses.dashboard.DashboardWeeklyWorkoutProgressDTO;
 import com.louisfiges.workout.repository.*;
 import com.louisfiges.workout.service.analysis.LiftSummaryService;
 import org.junit.jupiter.api.DisplayName;
@@ -70,6 +71,11 @@ class DashboardSummaryServiceTest {
         when(workoutTemplateRepository.countByUserId(eq(userId))).thenReturn(2L);
         when(splitRepository.countByUserId(eq(userId))).thenReturn(1L);
         when(splitRepository.findActiveByUserIdWithWorkouts(eq(userId))).thenReturn(Optional.of(split));
+        when(workoutEntryRepository.countByUserId(eq(userId))).thenReturn(3L);
+        when(workoutEntryRepository.findTopByUserIdOrderByCreatedAtDesc(eq(userId)))
+                .thenReturn(Optional.of(recentPullEntry));
+        when(workoutEntryRepository.findByUserIdAndCreatedAtBetween(eq(userId), any(), any()))
+                .thenReturn(List.of(benchEntry2, recentPullEntry));
         when(workoutEntryRepository.findDetailedHistoryByUserId(eq(userId), any(Pageable.class)))
                 .thenReturn(List.of(recentPullEntry, benchEntry2, benchEntry1));
         when(workoutEntryRepository.findDetailedHistoryByUserIdAndCreatedAtBetween(eq(userId), any(), any()))
@@ -103,6 +109,12 @@ class DashboardSummaryServiceTest {
         assertThat(summary.topLift().variant()).isEqualTo("Barbell");
         assertThat(summary.topLift().personalBestKg()).isEqualTo(120.0);
         assertThat(summary.topLift().improvementKg()).isEqualTo(20.0);
+        assertThat(summary.lifetimeWorkoutCount()).isEqualTo(3);
+        assertThat(summary.daysSinceLastWorkout()).isNotNull();
+        assertThat(summary.weeklyProgress()).isNotNull();
+        assertThat(summary.weeklyProgress().targetThisWeek()).isEqualTo(2);
+        assertThat(summary.weeklyProgress().completedThisWeek()).isEqualTo(2);
+        assertThat(summary.weeklyProgress().remainingWorkouts()).isEqualTo(0);
     }
 
     @Test
@@ -139,6 +151,11 @@ class DashboardSummaryServiceTest {
         when(workoutTemplateRepository.countByUserId(eq(userId))).thenReturn(2L);
         when(splitRepository.countByUserId(eq(userId))).thenReturn(1L);
         when(splitRepository.findActiveByUserIdWithWorkouts(eq(userId))).thenReturn(Optional.of(split));
+        when(workoutEntryRepository.countByUserId(eq(userId))).thenReturn(3L);
+        when(workoutEntryRepository.findTopByUserIdOrderByCreatedAtDesc(eq(userId)))
+                .thenReturn(Optional.of(secondDefinitionEntry));
+        when(workoutEntryRepository.findByUserIdAndCreatedAtBetween(eq(userId), any(), any()))
+                .thenReturn(List.of());
         when(workoutEntryRepository.findDetailedHistoryByUserId(eq(userId), any(Pageable.class)))
                 .thenReturn(List.of(secondDefinitionEntry, firstDefinitionEntry2, firstDefinitionEntry1));
         when(workoutEntryRepository.findDetailedHistoryByUserIdAndCreatedAtBetween(eq(userId), any(), any()))
@@ -183,6 +200,9 @@ class DashboardSummaryServiceTest {
         // Mock no split context
         when(splitRepository.countByUserId(eq(userId))).thenReturn(0L);
         when(splitRepository.findActiveByUserIdWithWorkouts(eq(userId))).thenReturn(Optional.empty());
+        when(workoutEntryRepository.countByUserId(eq(userId))).thenReturn(0L);
+        when(workoutEntryRepository.findTopByUserIdOrderByCreatedAtDesc(eq(userId)))
+                .thenReturn(Optional.empty());
         when(workoutTemplateRepository.countByUserId(eq(userId))).thenReturn(1L);
 
         // Mock returning the standalone template for the user query
@@ -210,6 +230,9 @@ class DashboardSummaryServiceTest {
         assertThat(summary.nextWorkout().name()).isEqualTo("Leg Day");
         assertThat(summary.nextWorkout().previewExercises()).hasSize(1);
         assertThat(summary.nextWorkout().previewExercises().get(0).exerciseName()).isEqualTo("Squat");
+        assertThat(summary.lifetimeWorkoutCount()).isEqualTo(0);
+        assertThat(summary.daysSinceLastWorkout()).isNull();
+        assertThat(summary.weeklyProgress()).isNull();
     }
 
     private WorkoutTemplate workoutTemplate(UUID id, String name, String category, String exerciseName, int goalSets) {

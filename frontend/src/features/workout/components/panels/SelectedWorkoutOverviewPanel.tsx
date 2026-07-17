@@ -5,7 +5,7 @@ import { useUnitPreference } from "@/features/preferences/unit/hooks/useUnitPref
 import StatGrid from "@/components/ui/StatGrid";
 import type { WorkoutStartupSummary } from "@/features/startup/types/Startup";
 import Panel from "@/components/layout/frames/Panel";
-import LiftSummaryCard from "@/features/dashboard/components/LiftSummaryCard";
+import LiftSummaryCard from "@/features/dashboard/components/summary/LiftSummaryCard";
 import { useLiftSummary } from "@/features/insights/hooks/useTrainingInsights";
 import {PrimaryAction} from "@/components/layout/card/PrimaryAction.tsx";
 

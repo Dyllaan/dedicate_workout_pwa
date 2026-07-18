@@ -297,6 +297,20 @@ public interface WorkoutEntryRepository extends JpaRepository<WorkoutEntry, UUID
             @Param("limit") int limit
     );
 
+    @EntityGraph(attributePaths = {"template", "exercises", "exercises.sets", "exercises.exerciseDefinition"})
+    @Query("""
+    SELECT DISTINCT we
+    FROM WorkoutEntry we
+    JOIN we.exercises ee
+    WHERE we.userId = :userId
+      AND ee.exerciseDefinition.id = :exerciseDefinitionId
+    ORDER BY we.createdAt DESC
+    """)
+    List<WorkoutEntry> findAllByUserIdAndExerciseDefinitionId(
+            @Param("userId") UUID userId,
+            @Param("exerciseDefinitionId") UUID exerciseDefinitionId
+    );
+
     // has the user logged any workout
     boolean existsByUserId(UUID userId);
 

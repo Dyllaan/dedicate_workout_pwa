@@ -92,12 +92,33 @@ type ExerciseEntry = {
   sets: SetEntry[];
 };
 
+type WorkoutInol = {
+  id: string;
+  exerciseName: string;
+  inolScore: number;
+  reference1RmKg: number;
+  carryForward: boolean;
+};
+
+type WorkoutEntryInol = {
+  total: number;
+  perExercise: WorkoutInol[];
+};
+
+type WeeklyInol = {
+  totalInol: number;
+  weekStart: string;
+  zone: "VERY_LOW" | "LOW" | "MODERATE" | "HIGH" | "VERY_HIGH";
+  perExercise: { exerciseName: string; totalInol: number }[];
+};
+
 type WorkoutEntry = {
   id: string;
   template: WorkoutTemplate;
   exercises: ExerciseEntry[];
   notes?: string;
   createdAt: string;
+  inol?: WorkoutEntryInol;
 };
 
 type WorkoutFrequencyRequest = {
@@ -308,6 +329,9 @@ type CreateSplitRequest = SplitRequest;
 type UpdateSplitRequest = SplitRequest;
 
 export type {
+  WorkoutInol,
+  WorkoutEntryInol,
+  WeeklyInol,
   WorkoutTemplate,
   ExerciseConfig,
   WorkoutEntry,

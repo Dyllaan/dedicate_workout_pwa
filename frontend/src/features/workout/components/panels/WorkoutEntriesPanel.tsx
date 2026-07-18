@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { enqueueSnackbar } from "notistack";
-import { Calendar, Dumbbell, TrendingUp, ChartArea, SlidersHorizontal } from "lucide-react";
+import { Calendar, Dumbbell, TrendingUp, ChartArea, SlidersHorizontal, Activity } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
 import useWorkoutEntries from "@/features/workout/entries/hooks/useWorkoutEntries";
 import EmptyState from "@/components/layout/feedback/EmptyState.tsx";
@@ -26,6 +26,16 @@ function getWorkoutStats(entry: WorkoutEntry) {
   const totalSets = entry.exercises.reduce((sum, ex) => sum + ex.sets.length, 0);
   const totalVolume = entry.exercises.reduce((sum, ex) => sum + calculateVolume(ex.sets), 0);
   return { totalExercises, totalSets, totalVolume };
+}
+
+function getTotalInol(entry: WorkoutEntry): number | null {
+  return entry.inol?.total ?? null;
+}
+
+function getExerciseInol(entry: WorkoutEntry, exerciseName: string): number | null {
+  if (!entry.inol) return null;
+  const found = entry.inol.perExercise.find((e) => e.exerciseName === exerciseName);
+  return found ? found.inolScore : null;
 }
 
 export default function WorkoutEntriesPanel({ workoutTemplateId }: WorkoutEntriesPanelProps) {
@@ -77,13 +87,18 @@ export default function WorkoutEntriesPanel({ workoutTemplateId }: WorkoutEntrie
                         actions={<EntriesDropdown entryId={entry.id} workoutId={workoutTemplateId} deleteEntry={deleteEntry} />}
                     >
 
-                      <StatGrid cols={2}>
+                      <StatGrid cols={3}>
                         <StatTile
                             icon={ChartArea}
                             label="Volume"
                             value={stats.totalVolume > 0 ? format(stats.totalVolume) : "-"}
                         />
                         <StatTile icon={SlidersHorizontal} label="Avg RPE" value={getAvgRpeForEntry(entry).toFixed(1)} />
+                        <StatTile
+                            icon={Activity}
+                            label="INOL"
+                            value={getTotalInol(entry)?.toFixed(2) ?? "-"}
+                        />
                       </StatGrid>
 
                       <div className="space-y-3 divide-y">
@@ -118,6 +133,17 @@ export default function WorkoutEntriesPanel({ workoutTemplateId }: WorkoutEntrie
                                             <span className="font-semibold text-foreground">{format(volume)}</span>
                                           </div>
                                           <div className="text-xs text-muted-foreground">volume</div>
+                                        </div>
+                                    )}
+                                    {getExerciseInol(entry, exerciseEntry.loggedExerciseName ?? exerciseEntry.exerciseName) != null && (
+                                        <div className="text-right">
+                                          <div className="flex items-center justify-end gap-1 text-xs text-muted-foreground">
+                                            <Activity className="h-3 w-3" />
+                                            <span className="font-semibold text-foreground">
+                                              {getExerciseInol(entry, exerciseEntry.loggedExerciseName ?? exerciseEntry.exerciseName)?.toFixed(2)}
+                                            </span>
+                                          </div>
+                                          <div className="text-xs text-muted-foreground">INOL</div>
                                         </div>
                                     )}
                                   </div>

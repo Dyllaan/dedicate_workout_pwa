@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowDownRight, ArrowUpRight, BarChart3, ChevronDown, Dumbbell, LineChart, Minus, Sparkles, Target, TrendingUp } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, BarChart3, ChevronDown, Dumbbell, LineChart, Minus, Sparkles, TrendingUp } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 
 import SimpleBarChart from "@/components/charts/SimpleBarChart.tsx";
@@ -81,17 +81,26 @@ export default function ProgressPanel() {
     useWeightFormatting,
     seriesRows,
   } = useChart(progressQuery.chartData, chartUnit);
+  const historySessions = historyQuery.sessions;
+
+  const heroTiles = useMemo(() => [
+    { label: "Best", value: historyQuery.bestKg > 0 ? format(historyQuery.bestKg) : "—" },
+    { label: "Latest", value: historySessions.length > 0 && historySessions[0].topWeightKg > 0 ? format(historySessions[0].topWeightKg) : "—" },
+    { label: "Sessions", value: historyQuery.sessionCount },
+  ], [historyQuery.bestKg, historyQuery.sessionCount, historySessions, format]);
+
   const historyChartData = useMemo(
     () =>
-      historyQuery.sessions
+      historySessions
         .slice()
         .reverse()
         .map((session) => ({
           ...session,
           formattedDate: formatShortDateTime(session.performedAt),
         })),
-    [historyQuery.sessions],
+    [historySessions],
   );
+  
 
   useEffect(() => {
     if (optionsQuery.options.length === 0) {
@@ -148,6 +157,7 @@ export default function ProgressPanel() {
       </SelectContent>
     </Select>
   );
+  
 
   if (optionsQuery.isLoading && optionsQuery.options.length === 0) {
     return (
@@ -202,13 +212,6 @@ export default function ProgressPanel() {
   }
 
   const recommendation = recommendationQuery.data ?? null;
-  const historySessions = historyQuery.sessions;
-
-  const heroTiles = useMemo(() => [
-    { label: "Best", value: historyQuery.bestKg > 0 ? format(historyQuery.bestKg) : "—" },
-    { label: "Latest", value: historySessions.length > 0 && historySessions[0].topWeightKg > 0 ? format(historySessions[0].topWeightKg) : "—" },
-    { label: "Sessions", value: historyQuery.sessionCount },
-  ], [historyQuery.bestKg, historyQuery.sessionCount, historySessions, format]);
 
   return (
     <Page

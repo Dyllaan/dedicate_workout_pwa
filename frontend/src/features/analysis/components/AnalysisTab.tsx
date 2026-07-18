@@ -213,6 +213,25 @@ export default function AnalysisTab() {
 
   const recommendationQuery = useTemplateAnalysisRecommendation(activeTemplateId, analysisRange);
 
+  const heroTiles = useMemo(() => [
+    {
+      label: "Suggested",
+      value: recommendationQuery.data?.suggestion.suggestedWeightKg != null
+        ? format(recommendationQuery.data.suggestion.suggestedWeightKg)
+        : "—",
+    },
+    {
+      label: "Trend",
+      value: recommendationQuery.data?.trend.direction
+        ? formatStatusToken(recommendationQuery.data.trend.direction)
+        : "—",
+    },
+    {
+      label: "Sessions",
+      value: recommendationQuery.data?.trend.comparableObservationCount ?? "—",
+    },
+  ], [recommendationQuery.data, format]);
+
   const handleExerciseChange = (exerciseDefinitionId: string) => {
     const nextParams = new URLSearchParams(searchParams);
     nextParams.set("tab", "analysis");
@@ -290,24 +309,6 @@ export default function AnalysisTab() {
       actualWeight: point.weight,
     }));
 
-  const heroTiles = useMemo(() => [
-    {
-      label: "Suggested",
-      value: recommendationQuery.data?.suggestion.suggestedWeightKg != null
-        ? format(recommendationQuery.data.suggestion.suggestedWeightKg)
-        : "—",
-    },
-    {
-      label: "Trend",
-      value: recommendationQuery.data?.trend.direction
-        ? formatStatusToken(recommendationQuery.data.trend.direction)
-        : "—",
-    },
-    {
-      label: "Sessions",
-      value: recommendationQuery.data?.trend.comparableObservationCount ?? "—",
-    },
-  ], [recommendationQuery.data, format]);
   return (
     <Panel icon={ICONS.exercise} title={activeOption.exerciseName} subtitle={activeOption?.variant ?? ""} data-testid="analysis-tab">
       <Section

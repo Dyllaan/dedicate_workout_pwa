@@ -1,14 +1,30 @@
-# Task 4 Report — Backend Controller Tests for by-exercise Endpoint
+# Task 4 Report: InolCalculator Service
 
-## Steps completed
+## Status: COMPLETE
 
-1. ✅ Read the existing test file at `workout_service/src/test/java/com/louisfiges/workout/controller/core/WorkoutEntryControllerTest.java`
-2. ✅ Added two test methods:
-   - `getByExercise()` — verifies `GET /workout-entries/by-exercise?exerciseDefinitionId=...` calls `service.getAllByExerciseDefinition()` and returns 200
-   - `getByExerciseUnauthenticated()` — verifies the same endpoint returns 401 without a JWT
-3. ✅ Ran `gradlew.bat test --tests "*WorkoutEntryControllerTest"` — **BUILD SUCCESSFUL** (4 tests total)
-4. ✅ Committed
+- **Commit:** d0fb5c0 — `feat: add InolCalculator service with tests`
+- **Files created:**
+  - `workout_service/src/main/java/com/louisfiges/workout/service/analysis/InolCalculator.java`
+  - `workout_service/src/test/java/com/louisfiges/workout/service/analysis/InolCalculatorTest.java`
 
-## Result
+## Test Summary
 
-All 4 controller tests pass (2 existing + 2 new). The build is green.
+3 tests, all passing (`BUILD SUCCESSFUL`):
+
+| Test | Result |
+|------|--------|
+| `computesInolWhenOneRmAvailable` — computes INOL and persists when 1RM is available | PASS |
+| `skipsWhenNoOneRm` — skips exercise when no reference 1RM is found | PASS |
+| `skipsWhenNoDefinition` — skips exercise without exercise definition | PASS |
+
+## Implementation Notes
+
+- Followed the task brief algorithm exactly: median of 3 1RM formulas, INOL = reps / (100 - intensity%), clamped [1, 99]
+- Uses `BlockAwareOneRmService.resolveOneRm()` (Task 2) and `WorkoutInolRepository.save()` (Task 3)
+- Package-private `computeExerciseInol()` method for testability
+- `block_id` set to null per spec; `carryForward` sourced from `OneRmResult`
+- **Adaptation:** Test uses `ReflectionTestUtils.setField()` to set entity IDs since `ExerciseDefinition` and `WorkoutTemplate` lack public `setId()` setters
+
+## Concerns
+
+None.

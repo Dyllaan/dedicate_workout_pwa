@@ -1,0 +1,388 @@
+﻿
+# Review package: d0fb5c0..757f4e3
+
+## Commits
+757f4e3 feat: wire InolCalculator into WorkoutEntryService save flow
+
+## Files changed
+ .../workout/dto/responses/WorkoutEntryDTO.java     |  3 ++-
+ .../workout/dto/responses/WorkoutEntryInolDTO.java |  8 ++++++
+ .../workout/dto/responses/WorkoutInolDTO.java      | 11 ++++++++
+ .../workout/service/mapper/WorkoutEntryMapper.java | 31 ++++++++++++++++++++--
+ .../service/workout/WorkoutEntryService.java       |  8 +++++-
+ .../core/WorkoutEntryControllerTest.java           |  6 +++--
+ .../service/workout/WorkoutEntryServiceTest.java   | 23 ++++++++++++----
+ 7 files changed, 79 insertions(+), 11 deletions(-)
+
+## Diff
+diff --git a/workout_service/src/main/java/com/louisfiges/workout/dto/responses/WorkoutEntryDTO.java b/workout_service/src/main/java/com/louisfiges/workout/dto/responses/WorkoutEntryDTO.java
+index 4c92116..05de850 100644
+--- a/workout_service/src/main/java/com/louisfiges/workout/dto/responses/WorkoutEntryDTO.java
++++ b/workout_service/src/main/java/com/louisfiges/workout/dto/responses/WorkoutEntryDTO.java
+@@ -4,12 +4,13 @@ import com.louisfiges.workout.dto.responses.interfaces.DTO;
+ 
+ import java.time.LocalDateTime;
+ import java.util.List;
+ import java.util.UUID;
+ 
+ public record WorkoutEntryDTO(
+         UUID id,
+         WorkoutTemplateDTO template,
+         List<ExerciseEntryDTO> exercises,
+         String notes,
+-        LocalDateTime createdAt
++        LocalDateTime createdAt,
++        WorkoutEntryInolDTO inol
+ ) implements DTO {}
+\ No newline at end of file
+diff --git a/workout_service/src/main/java/com/louisfiges/workout/dto/responses/WorkoutEntryInolDTO.java b/workout_service/src/main/java/com/louisfiges/workout/dto/responses/WorkoutEntryInolDTO.java
+new file mode 100644
+index 0000000..157cf61
+--- /dev/null
++++ b/workout_service/src/main/java/com/louisfiges/workout/dto/responses/WorkoutEntryInolDTO.java
+@@ -0,0 +1,8 @@
++package com.louisfiges.workout.dto.responses;
++
++import java.util.List;
++
++public record WorkoutEntryInolDTO(
++        double total,
++        List<WorkoutInolDTO> perExercise
++) {}
+diff --git a/workout_service/src/main/java/com/louisfiges/workout/dto/responses/WorkoutInolDTO.java b/workout_service/src/main/java/com/louisfiges/workout/dto/responses/WorkoutInolDTO.java
+new file mode 100644
+index 0000000..6c91865
+--- /dev/null
++++ b/workout_service/src/main/java/com/louisfiges/workout/dto/responses/WorkoutInolDTO.java
+@@ -0,0 +1,11 @@
++package com.louisfiges.workout.dto.responses;
++
++import java.util.UUID;
++
++public record WorkoutInolDTO(
++        UUID id,
++        String exerciseName,
++        double inolScore,
++        double reference1RmKg,
++        boolean carryForward
++) {}
+diff --git a/workout_service/src/main/java/com/louisfiges/workout/service/mapper/WorkoutEntryMapper.java b/workout_service/src/main/java/com/louisfiges/workout/service/mapper/WorkoutEntryMapper.java
+index a62b2d1..3c586fa 100644
+--- a/workout_service/src/main/java/com/louisfiges/workout/service/mapper/WorkoutEntryMapper.java
++++ b/workout_service/src/main/java/com/louisfiges/workout/service/mapper/WorkoutEntryMapper.java
+@@ -1,35 +1,62 @@
+ package com.louisfiges.workout.service.mapper;
+ 
+ import com.louisfiges.workout.dao.workout.ExerciseEntry;
+ import com.louisfiges.workout.dao.workout.WorkoutEntry;
++import com.louisfiges.workout.dao.workout.WorkoutInol;
+ import com.louisfiges.workout.dto.responses.ExerciseEntryDTO;
+ import com.louisfiges.workout.dto.responses.WorkoutEntryDTO;
++import com.louisfiges.workout.dto.responses.WorkoutEntryInolDTO;
++import com.louisfiges.workout.dto.responses.WorkoutInolDTO;
++import com.louisfiges.workout.repository.WorkoutInolRepository;
+ import org.springframework.stereotype.Component;
+ 
+ import java.time.LocalDateTime;
+ import java.time.ZoneId;
++import java.util.ArrayList;
+ import java.util.List;
+ 
+ @Component
+ public class WorkoutEntryMapper {
+ 
+     private final ExerciseEntryMapper exerciseEntryMapper;
+     private final WorkoutTemplateMapper workoutTemplateMapper;
++    private final WorkoutInolRepository inolRepository;
+ 
+-    public WorkoutEntryMapper(ExerciseEntryMapper exerciseEntryMapper, WorkoutTemplateMapper workoutTemplateMapper) {
++    public WorkoutEntryMapper(ExerciseEntryMapper exerciseEntryMapper, WorkoutTemplateMapper workoutTemplateMapper,
++                              WorkoutInolRepository inolRepository) {
+         this.exerciseEntryMapper = exerciseEntryMapper;
+         this.workoutTemplateMapper = workoutTemplateMapper;
++        this.inolRepository = inolRepository;
+     }
+ 
+     public WorkoutEntryDTO toDTO(WorkoutEntry entity) {
+         List<ExerciseEntryDTO> exerciseDTOs = entity.getExercises().stream()
+                 .map(exerciseEntryMapper::toDTO)
+                 .toList();
+ 
+         LocalDateTime createdDateTime = entity.getCreatedAt() != null
+                 ? LocalDateTime.ofInstant(entity.getCreatedAt(), ZoneId.systemDefault())
+                 : LocalDateTime.now();
+ 
+-        return new WorkoutEntryDTO(entity.getId(), workoutTemplateMapper.toDTO(entity.getTemplate()), exerciseDTOs, entity.getNotes(), createdDateTime);
++        List<WorkoutInol> inolRows = inolRepository.findByWorkoutEntryId(entity.getId());
++        WorkoutEntryInolDTO inolDTO = null;
++        if (!inolRows.isEmpty()) {
++            double total = 0;
++            List<WorkoutInolDTO> items = new ArrayList<>();
++            for (WorkoutInol wi : inolRows) {
++                total += wi.getInolScore();
++                items.add(new WorkoutInolDTO(
++                        wi.getId(),
++                        wi.getExerciseName(),
++                        wi.getInolScore(),
++                        wi.getReference1rmKg(),
++                        wi.getCarryForward()
++                ));
++            }
++            inolDTO = new WorkoutEntryInolDTO(total, items);
++        }
++
++        return new WorkoutEntryDTO(entity.getId(), workoutTemplateMapper.toDTO(entity.getTemplate()),
++                exerciseDTOs, entity.getNotes(), createdDateTime, inolDTO);
+     }
+ }
+diff --git a/workout_service/src/main/java/com/louisfiges/workout/service/workout/WorkoutEntryService.java b/workout_service/src/main/java/com/louisfiges/workout/service/workout/WorkoutEntryService.java
+index edf1e33..e0a6957 100644
+--- a/workout_service/src/main/java/com/louisfiges/workout/service/workout/WorkoutEntryService.java
++++ b/workout_service/src/main/java/com/louisfiges/workout/service/workout/WorkoutEntryService.java
+@@ -7,20 +7,21 @@ import com.louisfiges.workout.dao.workout.WorkoutEntry;
+ import com.louisfiges.workout.dao.workout.WorkoutTemplate;
+ import com.louisfiges.workout.dto.request.insights.ReadinessCheckInRequestDTO;
+ import com.louisfiges.workout.dto.responses.PagedResponse;
+ import com.louisfiges.workout.dto.responses.WorkoutEntryDTO;
+ import com.louisfiges.workout.dto.request.ExerciseEntryRequest;
+ import com.louisfiges.workout.dto.request.WorkoutEntryRequest;
+ import com.louisfiges.workout.exception.exceptions.ResourceNotFoundException;
+ import com.louisfiges.workout.repository.WorkoutEntryRepository;
+ import com.louisfiges.workout.repository.WorkoutTemplateRepository;
+ import com.louisfiges.workout.service.analysis.AnalysisCacheEvictor;
++import com.louisfiges.workout.service.analysis.InolCalculator;
+ import com.louisfiges.workout.service.mapper.WorkoutEntryMapper;
+ import com.louisfiges.workout.validation.RestTimeValidator;
+ import com.louisfiges.workout.util.PaginationUtils;
+ import org.springframework.data.domain.PageRequest;
+ import org.springframework.stereotype.Service;
+ import org.springframework.transaction.annotation.Transactional;
+ 
+ import java.time.Instant;
+ import java.time.LocalDate;
+ import java.time.ZoneOffset;
+@@ -31,34 +32,37 @@ import java.util.stream.Collectors;
+ 
+ @Service
+ public class WorkoutEntryService {
+ 
+     private final WorkoutEntryRepository workoutEntryRepository;
+     private final WorkoutTemplateRepository workoutTemplateRepository;
+     private final ExerciseDefinitionService exerciseDefinitionService;
+     private final ReadinessService readinessService;
+     private final AnalysisCacheEvictor analysisCacheEvictor;
+     private final WorkoutEntryMapper workoutEntryMapper;
++    private final InolCalculator inolCalculator;
+ 
+     public WorkoutEntryService(
+             WorkoutEntryRepository workoutEntryRepository,
+             WorkoutTemplateRepository workoutTemplateRepository,
+             ExerciseDefinitionService exerciseDefinitionService,
+             ReadinessService readinessService,
+             AnalysisCacheEvictor analysisCacheEvictor,
+-            WorkoutEntryMapper workoutEntryMapper) {
++            WorkoutEntryMapper workoutEntryMapper,
++            InolCalculator inolCalculator) {
+         this.workoutEntryRepository = workoutEntryRepository;
+         this.workoutTemplateRepository = workoutTemplateRepository;
+         this.exerciseDefinitionService = exerciseDefinitionService;
+         this.readinessService = readinessService;
+         this.analysisCacheEvictor = analysisCacheEvictor;
+         this.workoutEntryMapper = workoutEntryMapper;
++        this.inolCalculator = inolCalculator;
+     }
+ 
+     @Transactional(readOnly = true)
+     public List<WorkoutEntryDTO> getAllByUser(UUID userId) {
+         return getAllByUser(userId, null);
+     }
+ 
+     @Transactional(readOnly = true)
+     public List<WorkoutEntryDTO> getAllByUser(UUID userId, UUID workoutTemplateId) {
+         if (workoutTemplateId != null) {
+@@ -122,34 +126,36 @@ public class WorkoutEntryService {
+     public WorkoutEntryDTO create(WorkoutEntryRequest request, UUID userId) {
+         WorkoutTemplate template = workoutTemplateRepository.findByIdAndUserId(request.workoutTemplateId(), userId)
+                 .orElseThrow(() -> new ResourceNotFoundException("Workout template not found"));
+         WorkoutEntry saved = workoutEntryRepository.save(
+                 new WorkoutEntry(template, userId, buildExerciseEntries(request.exercises(), userId), request.notes())
+         );
+         if (request.readiness() != null) {
+             readinessService.createCheckIn(userId, saved.getId(), request.readiness());
+         }
+         analysisCacheEvictor.evictAnalysisCachesAfterCommit();
++        inolCalculator.computeAndPersist(saved, userId);
+         return workoutEntryMapper.toDTO(saved);
+     }
+ 
+     @Transactional
+     public WorkoutEntryDTO update(UUID id, WorkoutEntryRequest request, UUID userId) {
+         WorkoutEntry entry = workoutEntryRepository.findDetailedByIdAndUserId(id, userId)
+                 .orElseThrow(() -> new ResourceNotFoundException("Workout entry not found"));
+         entry.getExercises().clear();
+         workoutEntryRepository.flush();
+         entry.getExercises().addAll(buildExerciseEntries(request.exercises(), userId));
+         entry.setNotes(request.notes());
+         WorkoutEntry savedEntry = workoutEntryRepository.save(entry);
+         WorkoutEntryDTO response = workoutEntryMapper.toDTO(savedEntry);
+         analysisCacheEvictor.evictAnalysisCachesAfterCommit();
++        inolCalculator.computeAndPersist(savedEntry, userId);
+         return response;
+     }
+ 
+     @Transactional
+     public void delete(UUID id, UUID userId) {
+         WorkoutEntry entry = workoutEntryRepository.findDetailedByIdAndUserId(id, userId)
+                 .orElseThrow(() -> new ResourceNotFoundException("Workout entry not found"));
+         workoutEntryRepository.delete(entry);
+         analysisCacheEvictor.evictAnalysisCachesAfterCommit();
+     }
+diff --git a/workout_service/src/test/java/com/louisfiges/workout/controller/core/WorkoutEntryControllerTest.java b/workout_service/src/test/java/com/louisfiges/workout/controller/core/WorkoutEntryControllerTest.java
+index cc7ad9f..8895dac 100644
+--- a/workout_service/src/test/java/com/louisfiges/workout/controller/core/WorkoutEntryControllerTest.java
++++ b/workout_service/src/test/java/com/louisfiges/workout/controller/core/WorkoutEntryControllerTest.java
+@@ -56,21 +56,22 @@ class WorkoutEntryControllerTest {
+     void getAllWithTemplateId() throws Exception {
+         UUID userId = UUID.randomUUID();
+         UUID templateId = UUID.randomUUID();
+         when(workoutEntryService.getAllByUser(eq(userId), eq(templateId), eq(0), eq(10)))
+                 .thenReturn(new PagedResponse<>(
+                         List.of(new WorkoutEntryDTO(
+                                 UUID.randomUUID(),
+                                 null,
+                                 Collections.emptyList(),
+                                 null,
+-                                LocalDateTime.now()
++                                LocalDateTime.now(),
++                                null
+                         )),
+                         0,
+                         10,
+                         1,
+                         1,
+                         false,
+                         false
+                 ));
+ 
+         mockMvc.perform(get("/workout-entries")
+@@ -88,21 +89,22 @@ class WorkoutEntryControllerTest {
+         UUID userId = UUID.randomUUID();
+         UUID exerciseDefinitionId = UUID.randomUUID();
+ 
+         when(workoutEntryService.getAllByExerciseDefinition(eq(userId), eq(exerciseDefinitionId)))
+                 .thenReturn(List.of(
+                         new WorkoutEntryDTO(
+                                 UUID.randomUUID(),
+                                 null,
+                                 Collections.emptyList(),
+                                 null,
+-                                LocalDateTime.now()
++                                LocalDateTime.now(),
++                                null
+                         )
+                 ));
+ 
+         mockMvc.perform(get("/workout-entries/by-exercise")
+                         .queryParam("exerciseDefinitionId", exerciseDefinitionId.toString())
+                         .with(jwt().jwt((token) -> token.subject(userId.toString())))
+                         .accept(MediaType.APPLICATION_JSON))
+                 .andExpect(status().isOk());
+ 
+         verify(workoutEntryService).getAllByExerciseDefinition(userId, exerciseDefinitionId);
+diff --git a/workout_service/src/test/java/com/louisfiges/workout/service/workout/WorkoutEntryServiceTest.java b/workout_service/src/test/java/com/louisfiges/workout/service/workout/WorkoutEntryServiceTest.java
+index 58d5f13..46fd6ac 100644
+--- a/workout_service/src/test/java/com/louisfiges/workout/service/workout/WorkoutEntryServiceTest.java
++++ b/workout_service/src/test/java/com/louisfiges/workout/service/workout/WorkoutEntryServiceTest.java
+@@ -3,37 +3,40 @@ package com.louisfiges.workout.service.workout;
+ import com.louisfiges.workout.analysis.SetRole;
+ import com.louisfiges.workout.dao.workout.ExerciseDefinition;
+ import com.louisfiges.workout.dao.workout.WorkoutEntry;
+ import com.louisfiges.workout.dao.workout.WorkoutTemplate;
+ import com.louisfiges.workout.dto.request.ExerciseEntryRequest;
+ import com.louisfiges.workout.dto.request.SetEntryRequest;
+ import com.louisfiges.workout.dto.request.WorkoutEntryRequest;
+ import com.louisfiges.workout.dto.request.insights.ReadinessCheckInRequestDTO;
+ import com.louisfiges.workout.dto.responses.insights.ReadinessCheckInDTO;
+ import com.louisfiges.workout.repository.WorkoutEntryRepository;
++import com.louisfiges.workout.repository.WorkoutInolRepository;
+ import com.louisfiges.workout.repository.WorkoutTemplateRepository;
+ import com.louisfiges.workout.service.analysis.AnalysisCacheEvictor;
++import com.louisfiges.workout.service.analysis.InolCalculator;
+ import com.louisfiges.workout.service.mapper.ExerciseConfigMapper;
+ import com.louisfiges.workout.service.mapper.ExerciseDefinitionMapper;
+ import com.louisfiges.workout.service.mapper.ExerciseEntryMapper;
+ import com.louisfiges.workout.service.mapper.SetEntryMapper;
+ import com.louisfiges.workout.service.mapper.WorkoutEntryMapper;
+ import com.louisfiges.workout.service.mapper.WorkoutTemplateMapper;
+ import org.junit.jupiter.api.BeforeEach;
+ import org.junit.jupiter.api.DisplayName;
+ import org.junit.jupiter.api.Test;
+ import org.junit.jupiter.api.extension.ExtendWith;
+ import org.mockito.Mock;
+ import org.mockito.junit.jupiter.MockitoExtension;
+ import org.springframework.test.util.ReflectionTestUtils;
+ 
+ import java.time.Instant;
++import java.util.Collections;
+ import java.util.List;
+ import java.util.Optional;
+ import java.util.UUID;
+ 
+ import static org.assertj.core.api.Assertions.assertThat;
+ import static org.mockito.ArgumentMatchers.any;
+ import static org.mockito.ArgumentMatchers.eq;
+ import static org.mockito.Mockito.verify;
+ import static org.mockito.Mockito.when;
+ 
+@@ -49,36 +52,46 @@ class WorkoutEntryServiceTest {
+ 
+     @Mock
+     private ExerciseDefinitionService exerciseDefinitionService;
+ 
+     @Mock
+     private ReadinessService readinessService;
+ 
+     @Mock
+     private AnalysisCacheEvictor analysisCacheEvictor;
+ 
+-    private final WorkoutEntryMapper workoutEntryMapper = new WorkoutEntryMapper(
+-            new ExerciseEntryMapper(new SetEntryMapper()),
+-            new WorkoutTemplateMapper(new ExerciseConfigMapper(new ExerciseDefinitionMapper()))
+-    );
++    @Mock
++    private WorkoutInolRepository inolRepository;
++
++    @Mock
++    private InolCalculator inolCalculator;
++
++    private WorkoutEntryMapper workoutEntryMapper;
+ 
+     private WorkoutEntryService service;
+ 
+     @BeforeEach
+     void setUp() {
++        workoutEntryMapper = new WorkoutEntryMapper(
++                new ExerciseEntryMapper(new SetEntryMapper()),
++                new WorkoutTemplateMapper(new ExerciseConfigMapper(new ExerciseDefinitionMapper())),
++                inolRepository
++        );
++        when(inolRepository.findByWorkoutEntryId(any())).thenReturn(Collections.emptyList());
+         service = new WorkoutEntryService(
+                 workoutEntryRepository,
+                 workoutTemplateRepository,
+                 exerciseDefinitionService,
+                 readinessService,
+                 analysisCacheEvictor,
+-                workoutEntryMapper
++                workoutEntryMapper,
++                inolCalculator
+         );
+     }
+ 
+     @Test
+     @DisplayName("attaches readiness to workout saves and preserves exercise definition identity in the response")
+     void createsWorkoutEntryWithReadiness() {
+         UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000001");
+         UUID templateId = UUID.fromString("00000000-0000-0000-0000-000000000010");
+         UUID entryId = UUID.fromString("00000000-0000-0000-0000-000000000020");
+         UUID definitionId = UUID.fromString("00000000-0000-0000-0000-000000000030");

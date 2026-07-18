@@ -1,35 +1,27 @@
-# Task 5 Report — Frontend `useExerciseHistory` refactor
+### Task 5 Report: Wire InolCalculator into WorkoutEntryService
 
-## Summary
-Refactored `useExerciseHistory` hook to call the new `/workout-entries/by-exercise` endpoint (plain `WorkoutEntry[]`), with `limit`/`startDate`/`endDate` as client-side filters. Updated tests accordingly.
+**Status**: Complete
 
-## Files changed
-- `frontend/src/features/workout/exercise-definitions/hooks/useExerciseHistory.ts`
-- `frontend/tests/unit/hooks/useExerciseHistory.test.tsx`
+**Commits**: `757f4e3` — `feat: wire InolCalculator into WorkoutEntryService save flow`
 
-## Hook changes
-| Before | After |
-|---|---|
-| Called `/workout-entries/recent` or `/workout-entries/date-range` | Calls `/workout-entries/by-exercise?exerciseDefinitionId=<id>` |
-| Used `buildPageParams`, `clampPageSize`, `PagedResponse` | Removed these imports |
-| Query key included `limit`, `startDate`, `endDate` | Query key simplified to `['exercise-history', targetExerciseDefinitionId]` |
-| `staleTime: 0` | `staleTime: 5 * 60 * 1000` |
-| `workoutEntries = Array.isArray(data) ? data : data?.items ?? []` | `workoutEntries` computed via `useMemo` with client-side filter/slice logic |
-| Filtering done server-side via pagination params | `limit` slices, `startDate`/`endDate` filter by `createdAt` comparison |
+**Files changed (7)**:
 
-## Test changes
-- Removed `pageResponse` helper (was wrapping data in `PagedResponse` shape)
-- Mock returns plain `WorkoutEntry[]` arrays directly
-- Added endpoint-verification test checking `workoutApi.get` was called with `"/workout-entries/by-exercise"` and `params: { exerciseDefinitionId: "definition-bench" }`
+| File | Action |
+|------|--------|
+| `WorkoutInolDTO.java` | Created — per-exercise INOL DTO record |
+| `WorkoutEntryInolDTO.java` | Created — aggregate INOL DTO with total + perExercise |
+| `WorkoutEntryDTO.java` | Modified — added `WorkoutEntryInolDTO inol` field |
+| `WorkoutEntryMapper.java` | Modified — injected `WorkoutInolRepository`, populates INOL in `toDTO()` |
+| `WorkoutEntryService.java` | Modified — injected `InolCalculator`, calls `computeAndPersist()` after create/update |
+| `WorkoutEntryControllerTest.java` | Modified — added `null` inol param to 2 `WorkoutEntryDTO` constructor calls |
+| `WorkoutEntryServiceTest.java` | Modified — added `@Mock` for `InolCalculator`/`WorkoutInolRepository`, moved mapper construction into `@BeforeEach` |
 
-## Test results
-```
-✓ tests/unit/hooks/useExerciseHistory.test.tsx (4 tests) 260ms
-Test Files  1 passed (1)
-     Tests  4 passed (4)
-```
+**Test summary**:
+- `WorkoutEntryServiceTest` — PASS
+- `WorkoutEntryControllerTest` — PASS (3/3)
+- `InolCalculatorTest` — PASS
+- 22 pre-existing failures remain (all `NoSuchBeanDefinitionException` / `IllegalStateException` Spring context load issues unrelated to this task)
 
-## Commit
-```
-eeed3ee refactor: useExerciseHistory calls new by-exercise endpoint, drops fragile recent-filter pattern
-```
+**Concerns**: None. The 22 pre-existing failures are all Spring context bootstrap issues (missing bean definitions in migration/integration tests) that predate this task. No regressions introduced.
+
+**Report path**: `C:\Users\louis\Documents\GitHub\dedicate_workout_pwa\.superpowers\sdd\task-5-report.md`

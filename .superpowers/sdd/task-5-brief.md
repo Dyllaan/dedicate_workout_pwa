@@ -1,65 +1,172 @@
-### Task 5: Frontend — Refactor `useExerciseHistory` hook
+### Task 5: Wire `InolCalculator` into `WorkoutEntryService`
 
 **Files:**
-- Modify: `frontend/src/features/workout/exercise-definitions/hooks/useExerciseHistory.ts`
-- Modify: `frontend/tests/unit/hooks/useExerciseHistory.test.tsx`
+- Modify: `workout_service/src/main/java/com/louisfiges/workout/service/workout/WorkoutEntryService.java`
+- Modify: `workout_service/src/main/java/com/louisfiges/workout/dto/responses/WorkoutEntryDTO.java`
+- Create: `workout_service/src/main/java/com/louisfiges/workout/dto/responses/WorkoutInolDTO.java`
+- Create: `workout_service/src/main/java/com/louisfiges/workout/dto/responses/WorkoutEntryInolDTO.java`
+- Modify: `workout_service/src/main/java/com/louisfiges/workout/service/mapper/WorkoutEntryMapper.java`
 
 **Interfaces:**
-- Consumes: `GET /workout-entries/by-exercise?exerciseDefinitionId=<UUID>` from Task 3
-- Produces: same `{ sessions, bestKg, sessionCount, isLoading, isError, error, refetch }` shape — unchanged
+- Consumes: `InolCalculator.computeAndPersist(WorkoutEntry, UUID)`
+- Produces: `WorkoutEntryDTO` with new `inol()` field
 
-- [ ] **Step 1: Update the failing test**
+---
 
-In `frontend/tests/unit/hooks/useExerciseHistory.test.tsx`, replace the mock to target the new endpoint and return an unpaged array.
+**Step 1: Create DTO records**
 
-The pageResponse helper (lines 28-36) should be removed since the new endpoint returns a plain array, not a `PagedResponse`.
+Create `WorkoutInolDTO.java`:
+```java
+package com.louisfiges.workout.dto.responses;
 
-The mock for the API call needs to change: instead of wrapping data in `pageResponse(...)`, return the array directly.
+import java.util.UUID;
 
-Also add a new test case at the end that verifies the endpoint URL:
-```ts
-it("calls the by-exercise endpoint with the exercise definition id", async () => {
-  ...
-  expect(workoutApi.get).toHaveBeenCalledWith(
-    "/workout-entries/by-exercise",
-    expect.objectContaining({
-      params: { exerciseDefinitionId: "definition-bench" },
-    })
-  );
-});
+public record WorkoutInolDTO(
+        UUID id,
+        String exerciseName,
+        double inolScore,
+        double reference1RmKg,
+        boolean carryForward
+) {}
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+Create `WorkoutEntryInolDTO.java`:
+```java
+package com.louisfiges.workout.dto.responses;
 
-```bash
-cd frontend && npx vitest run tests/unit/hooks/useExerciseHistory.test.tsx
+import java.util.List;
+
+public record WorkoutEntryInolDTO(
+        double total,
+        List<WorkoutInolDTO> perExercise
+) {}
 ```
 
-Expected: Tests FAIL — still calling old endpoint with pagination params
+**Step 2: Modify `WorkoutEntryDTO`**
 
-- [ ] **Step 3: Refactor the hook**
+Read `WorkoutEntryDTO.java` at `workout_service/src/main/java/com/louisfiges/workout/dto/responses/WorkoutEntryDTO.java`.
 
-Replace `frontend/src/features/workout/exercise-definitions/hooks/useExerciseHistory.ts` to:
-- Call the new endpoint `/workout-entries/by-exercise` with `{ params: { exerciseDefinitionId: targetExerciseDefinitionId } }`
-- Remove `buildPageParams`, `clampPageSize`, `PagedResponse` and `PaginationHelper` imports
-- Accept the response as a plain `WorkoutEntry[]` array
-- `limit`, `startDate`, `endDate` options become client-side filters on the retrieved data:
-  - `limit` — slice the results array
-  - `startDate`/`endDate` — filter by comparing `entry.createdAt` against date boundaries
-- Use `staleTime: 5 * 60 * 1000` instead of `staleTime: 0`
-- Simplify queryKey to `['exercise-history', targetExerciseDefinitionId]`
+Add `WorkoutEntryInolDTO inol` as the last record parameter (nullable — it's null when no INOL data exists):
 
-- [ ] **Step 4: Run tests to verify they pass**
-
-```bash
-cd frontend && npx vitest run tests/unit/hooks/useExerciseHistory.test.tsx
+```java
+public record WorkoutEntryDTO(
+        UUID id,
+        WorkoutTemplateDTO template,
+        List<ExerciseEntryDTO> exercises,
+        String notes,
+        LocalDateTime createdAt,
+        WorkoutEntryInolDTO inol
+) implements DTO {}
 ```
 
-Expected: All tests PASS
+IMPORTANT: Adding a field to a Java record changes the canonical constructor. Update ALL call sites that construct `WorkoutEntryDTO`. The existing call site is in `WorkoutEntryMapper.toDTO()` — you'll update it in Step 3.
 
-- [ ] **Step 5: Commit**
+There may also be tests that construct `WorkoutEntryDTO` directly — use the IDE to find them and update by adding `null` as the last parameter.
 
-```bash
-git add frontend/src/features/workout/exercise-definitions/hooks/useExerciseHistory.ts frontend/tests/unit/hooks/useExerciseHistory.test.tsx
-git commit -m "refactor: useExerciseHistory calls new by-exercise endpoint, drops fragile recent-filter pattern"
+**Step 3: Update `WorkoutEntryMapper`**
+
+Read `WorkoutEntryMapper.java` at `workout_service/src/main/java/com/louisfiges/workout/service/mapper/WorkoutEntryMapper.java`.
+
+Inject `WorkoutInolRepository`:
+```java
+private final WorkoutInolRepository inolRepository;
+
+public WorkoutEntryMapper(ExerciseEntryMapper exerciseEntryMapper, 
+                           WorkoutTemplateMapper workoutTemplateMapper,
+                           WorkoutInolRepository inolRepository) {
+    this.exerciseEntryMapper = exerciseEntryMapper;
+    this.workoutTemplateMapper = workoutTemplateMapper;
+    this.inolRepository = inolRepository;
+}
+```
+
+Update `toDTO()` method to populate INOL:
+```java
+public WorkoutEntryDTO toDTO(WorkoutEntry entity) {
+    List<ExerciseEntryDTO> exerciseDTOs = entity.getExercises().stream()
+            .map(exerciseEntryMapper::toDTO)
+            .toList();
+
+    LocalDateTime createdDateTime = entity.getCreatedAt() != null
+            ? LocalDateTime.ofInstant(entity.getCreatedAt(), ZoneId.systemDefault())
+            : LocalDateTime.now();
+
+    List<WorkoutInol> inolRows = inolRepository.findByWorkoutEntryId(entity.getId());
+    WorkoutEntryInolDTO inolDTO = null;
+    if (!inolRows.isEmpty()) {
+        double total = 0;
+        List<WorkoutInolDTO> items = new ArrayList<>();
+        for (WorkoutInol wi : inolRows) {
+            total += wi.getInolScore();
+            items.add(new WorkoutInolDTO(
+                    wi.getId(),
+                    wi.getExerciseName(),
+                    wi.getInolScore(),
+                    wi.getReference1rmKg(),
+                    wi.getCarryForward()
+            ));
+        }
+        inolDTO = new WorkoutEntryInolDTO(total, items);
+    }
+
+    return new WorkoutEntryDTO(entity.getId(), workoutTemplateMapper.toDTO(entity.getTemplate()), 
+            exerciseDTOs, entity.getNotes(), createdDateTime, inolDTO);
+}
+```
+
+Add imports:
+```java
+import com.louisfiges.workout.dao.workout.WorkoutInol;
+import com.louisfiges.workout.repository.WorkoutInolRepository;
+import java.util.ArrayList;
+```
+
+**Step 4: Wire `InolCalculator` into `WorkoutEntryService`**
+
+Read `WorkoutEntryService.java`.
+
+Inject `InolCalculator`:
+```java
+private final InolCalculator inolCalculator;
+
+public WorkoutEntryService(
+        WorkoutEntryRepository workoutEntryRepository,
+        WorkoutTemplateRepository workoutTemplateRepository,
+        ExerciseDefinitionService exerciseDefinitionService,
+        ReadinessService readinessService,
+        AnalysisCacheEvictor analysisCacheEvictor,
+        WorkoutEntryMapper workoutEntryMapper,
+        InolCalculator inolCalculator) {
+    ...
+    this.inolCalculator = inolCalculator;
+}
+```
+
+Call `inolCalculator.computeAndPersist()` after save in `create()` (line 131):
+```java
+analysisCacheEvictor.evictAnalysisCachesAfterCommit();
+inolCalculator.computeAndPersist(saved, userId);
+return workoutEntryMapper.toDTO(saved);
+```
+
+And in `update()` (line 146):
+```java
+WorkoutEntryDTO response = workoutEntryMapper.toDTO(savedEntry);
+analysisCacheEvictor.evictAnalysisCachesAfterCommit();
+inolCalculator.computeAndPersist(savedEntry, userId);
+return response;
+```
+
+**Step 5: Run all backend tests**
+
+```
+Set-Location workout_service; ./gradlew test
+```
+
+Fix any compilation errors (especially any other files constructing `WorkoutEntryDTO` that need the new parameter).
+
+**Step 6: Commit**
+
+```
+git add .; git commit -m "feat: wire InolCalculator into WorkoutEntryService save flow"
 ```

@@ -1,11 +1,19 @@
-# Task 9 Report — SummaryHero Component
+# Task 9 Report: WorkoutEntriesPanel INOL Display
 
-## Status: ✅ Complete
+## Status
+Complete
 
-## Steps
-1. **Created** `frontend/src/components/ui/SummaryHero.tsx` — renders a 3-column grid of compact StatTile components from a `tiles` prop array. Returns `null` for empty arrays.
-2. **Verified** `npx tsc --noEmit` — passed with no errors.
-3. **Committed** `de1d981` with message `feat: add SummaryHero component for 3-tile compact stat bar`.
+## Commit
+`f2cbc27` - `feat: display INOL in workout entries panel`
 
-## Files
-- Created: `frontend/src/components/ui/SummaryHero.tsx`
+## Changes Made
+- Added `Activity` icon to lucide-react imports
+- Added `getTotalInol` and `getExerciseInol` helper functions
+- Added INOL StatTile to the stat grid (changed cols from 2 to 3)
+- Added per-exercise INOL display next to volume in exercise entries
+
+## Typecheck Result
+Passed - `npx tsc --noEmit` returned no errors
+
+## Concerns
+None

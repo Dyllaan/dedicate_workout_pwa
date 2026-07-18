@@ -4,6 +4,7 @@ import LiftSummaryCard from "@/features/dashboard/components/summary/LiftSummary
 import CreateWorkoutButton from "@/features/workout/templates/components/CreateWorkoutButton";
 import { Skeleton } from "@/components/ui";
 import WeeklyWorkoutProgressCard from "./WeeklyWorkoutProgress";
+import WeeklyInolCard from "./WeeklyInolCard";
 import type { DashboardSummary, DashboardSummaryActiveSplit } from "@/features/workout/types/Workout";
 
 interface DashboardSummaryContainerProps {
@@ -29,6 +30,7 @@ export default function DashboardSummaryContainer({activeSplit, dashboardSummary
         {dashboardSummary && dashboardSummary.nextWorkout ? <NextWorkoutCard /> : <CreateWorkoutButton />}
         <TrainingStatusBanner splitId={activeSplit?.id} />
         {dashboardSummary?.weeklyProgress && <WeeklyWorkoutProgressCard lifetimeWorkoutCount={dashboardSummary.lifetimeWorkoutCount} weeklyProgress={dashboardSummary.weeklyProgress} />}
+        <WeeklyInolCard />
         <LiftSummaryCard liftSummary={dashboardSummary?.topLift} />
     </div>
   );

@@ -1,6 +1,8 @@
 package com.louisfiges.workout.controller.analysis;
 
 import com.louisfiges.workout.dto.responses.analysis.TemplateAnalysisRecommendationResponse;
+import com.louisfiges.workout.repository.WeekRepository;
+import com.louisfiges.workout.service.analysis.ForecastEngine;
 import com.louisfiges.workout.service.analysis.TemplateAnalysisRecommendationService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,6 +37,12 @@ class TemplateAnalysisControllerTest {
 
     @MockBean
     private TemplateAnalysisRecommendationService templateAnalysisRecommendationService;
+
+    @MockBean
+    private ForecastEngine forecastEngine;
+
+    @MockBean
+    private WeekRepository weekRepository;
 
     @Test
     void exposesConsolidatedRecommendationEndpoint() throws Exception {

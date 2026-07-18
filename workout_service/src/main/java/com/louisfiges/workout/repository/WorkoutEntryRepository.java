@@ -320,4 +320,18 @@ public interface WorkoutEntryRepository extends JpaRepository<WorkoutEntry, UUID
 
     // find most recent by user id
         Optional<WorkoutEntry> findTopByUserIdOrderByCreatedAtDesc(UUID userId);
+
+    @Query("SELECT se, we.createdAt FROM WorkoutEntry we " +
+           "JOIN we.exercises ee " +
+           "JOIN ee.sets se " +
+           "WHERE ee.exerciseDefinition.id = :exerciseDefId " +
+           "AND we.userId = :userId " +
+           "AND we.createdAt BETWEEN :blockStart AND :blockEnd " +
+           "ORDER BY (se.weight * (1 + se.reps / 30.0)) DESC")
+    List<Object[]> findBestSetsForExerciseInBlock(
+            @Param("exerciseDefId") UUID exerciseDefId,
+            @Param("userId") UUID userId,
+            @Param("blockStart") Instant blockStart,
+            @Param("blockEnd") Instant blockEnd,
+            Pageable pageable);
 }

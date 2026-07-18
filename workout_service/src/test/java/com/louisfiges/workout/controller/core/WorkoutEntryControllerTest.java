@@ -63,7 +63,8 @@ class WorkoutEntryControllerTest {
                                 null,
                                 Collections.emptyList(),
                                 null,
-                                LocalDateTime.now()
+                                LocalDateTime.now(),
+                                null
                         )),
                         0,
                         10,
@@ -95,7 +96,8 @@ class WorkoutEntryControllerTest {
                                 null,
                                 Collections.emptyList(),
                                 null,
-                                LocalDateTime.now()
+                                LocalDateTime.now(),
+                                null
                         )
                 ));
 

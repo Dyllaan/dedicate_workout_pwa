@@ -14,6 +14,7 @@ import com.louisfiges.workout.exception.exceptions.ResourceNotFoundException;
 import com.louisfiges.workout.repository.WorkoutEntryRepository;
 import com.louisfiges.workout.repository.WorkoutTemplateRepository;
 import com.louisfiges.workout.service.analysis.AnalysisCacheEvictor;
+import com.louisfiges.workout.service.analysis.InolCalculator;
 import com.louisfiges.workout.service.mapper.WorkoutEntryMapper;
 import com.louisfiges.workout.validation.RestTimeValidator;
 import com.louisfiges.workout.util.PaginationUtils;
@@ -38,6 +39,7 @@ public class WorkoutEntryService {
     private final ReadinessService readinessService;
     private final AnalysisCacheEvictor analysisCacheEvictor;
     private final WorkoutEntryMapper workoutEntryMapper;
+    private final InolCalculator inolCalculator;
 
     public WorkoutEntryService(
             WorkoutEntryRepository workoutEntryRepository,
@@ -45,13 +47,15 @@ public class WorkoutEntryService {
             ExerciseDefinitionService exerciseDefinitionService,
             ReadinessService readinessService,
             AnalysisCacheEvictor analysisCacheEvictor,
-            WorkoutEntryMapper workoutEntryMapper) {
+            WorkoutEntryMapper workoutEntryMapper,
+            InolCalculator inolCalculator) {
         this.workoutEntryRepository = workoutEntryRepository;
         this.workoutTemplateRepository = workoutTemplateRepository;
         this.exerciseDefinitionService = exerciseDefinitionService;
         this.readinessService = readinessService;
         this.analysisCacheEvictor = analysisCacheEvictor;
         this.workoutEntryMapper = workoutEntryMapper;
+        this.inolCalculator = inolCalculator;
     }
 
     @Transactional(readOnly = true)
@@ -129,6 +133,7 @@ public class WorkoutEntryService {
             readinessService.createCheckIn(userId, saved.getId(), request.readiness());
         }
         analysisCacheEvictor.evictAnalysisCachesAfterCommit();
+        inolCalculator.computeAndPersist(saved, userId);
         return workoutEntryMapper.toDTO(saved);
     }
 
@@ -143,6 +148,7 @@ public class WorkoutEntryService {
         WorkoutEntry savedEntry = workoutEntryRepository.save(entry);
         WorkoutEntryDTO response = workoutEntryMapper.toDTO(savedEntry);
         analysisCacheEvictor.evictAnalysisCachesAfterCommit();
+        inolCalculator.computeAndPersist(savedEntry, userId);
         return response;
     }
 

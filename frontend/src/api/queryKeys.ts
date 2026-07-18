@@ -83,6 +83,7 @@ export const queryKeys = {
       templateId == null
         ? ["analysis", "recommendation", limit ?? "", startDate ?? "", endDate ?? ""] as const
         : ["analysis", "recommendation", templateId, limit ?? "", startDate ?? "", endDate ?? ""] as const,
+    forecast: (weekId: string) => ["analysis", "forecast", weekId] as const,
   },
   readiness: {
     history: (days: number, page?: number, size?: number) =>

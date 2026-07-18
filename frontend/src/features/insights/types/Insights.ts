@@ -239,6 +239,31 @@ type AutotuneOutcomeRequest = {
   sessionCompletedAt?: string | null;
 };
 
+type ForecastInsight = {
+  exerciseDefinitionId: string;
+  exerciseName: string;
+  estimatedOneRmKg: number | null;
+  targetWeightKg: number | null;
+  targetReps: number;
+  targetRpe: number;
+  source: "CURRENT_BLOCK" | "PREVIOUS_BLOCK" | "NO_DATA";
+  bestSet: {
+    reps: number;
+    weightKg: number;
+    setDate: string;
+  } | null;
+};
+
+type WeekForecast = {
+  weekId: string;
+  blockId: string | null;
+  blockName: string | null;
+  weekNumber: number;
+  deload: boolean;
+  intensityPct: number;
+  insights: ForecastInsight[];
+};
+
 export type {
   InsightBlockContext,
   DashboardTrainingInsights,
@@ -255,4 +280,6 @@ export type {
   TopSetAutotuneRecommendation,
   AutotuneOutcomeAction,
   AutotuneOutcomeRequest,
+  ForecastInsight,
+  WeekForecast,
 };

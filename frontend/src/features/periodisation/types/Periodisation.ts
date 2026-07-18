@@ -19,6 +19,7 @@ type Week = {
   targetSetsPerExercise: number;
   rpeOverrideMin?: number | null;
   rpeOverrideMax?: number | null;
+  intensityPct?: number | null;
 };
 
 type Block = {

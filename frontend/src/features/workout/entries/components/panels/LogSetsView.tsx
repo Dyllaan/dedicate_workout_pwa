@@ -6,6 +6,7 @@ import {
   Plus,
   ChevronRight,
   Smile,
+  Copy,
 } from "lucide-react";
 import { useId } from "react";
 import type {
@@ -47,6 +48,7 @@ type LogSetsViewProps = {
   ) => void;
   addSet: (exerciseIdx: number) => void;
   removeSet: (exerciseIdx: number, setIdx: number) => void;
+  copyFromPrevious: (exerciseIdx: number, setIdx: number) => void;
   onNext: () => void;
   block: Block | null;
   isFocusedLift?: boolean;
@@ -87,6 +89,7 @@ export function LogSetsView(props: LogSetsViewProps) {
     stepValue,
     addSet,
     removeSet,
+    copyFromPrevious,
     onNext,
     block,
     isFocusedLift = false,
@@ -203,6 +206,17 @@ export function LogSetsView(props: LogSetsViewProps) {
                       Last: {set.lastReps != null ? `${set.lastReps}` : "-"} x{" "}
                       {set.lastWeight != null ? format(set.lastWeight) : "BW"}
                     </span>
+                  )}
+                  {setIdx > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => copyFromPrevious(exerciseIdx, setIdx)}
+                      className="rounded-md p-1 transition-colors hover:bg-muted"
+                      aria-label="Copy from previous set"
+                      title="Copy from previous set"
+                    >
+                      <Copy className="h-3.5 w-3.5 text-muted-foreground" />
+                    </button>
                   )}
                   <ExerciseOptionMenu
                     showRestore={hasLastSession}

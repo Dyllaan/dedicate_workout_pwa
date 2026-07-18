@@ -24,7 +24,7 @@ import FormPage from '@/components/layout/frames/FormPage';
 import { ICONS } from '@/config/iconConfig';
 import EmptyState from '@/components/layout/feedback/EmptyState';
 import { Button } from '@/components/ui/button';
-import {DashCardRow} from "@/components/layout/card/DashCardRow.tsx";
+import {DashCardRow, DashCardRowSkeleton} from "@/components/layout/card/DashCardRow.tsx";
 
 function makeDraft(type: BlockType): BlockDraft {
   const config = BLOCK_TYPE_CONFIG[type] ?? BLOCK_TYPE_FALLBACK;
@@ -330,8 +330,14 @@ export default function ProgrammeCustomPage() {
     }
   };
 
-  if (splitsLoading) {
-    return <Page title="Custom Programme" subtitle="Loading…" icon={ICONS.programme} subtitleIcon={CalendarDays} />;
+  if (splitsLoading && !split) {
+    return (
+      <Page title="Custom Programme" subtitle="Loading..." icon={ICONS.programme} subtitleIcon={CalendarDays}>
+        <DashCardRowSkeleton />
+        <DashCardRowSkeleton />
+        <DashCardRowSkeleton />
+      </Page>
+    );
   }
 
   return (

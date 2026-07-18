@@ -1,6 +1,5 @@
 package com.louisfiges.workout.service.analysis;
 
-import com.louisfiges.workout.analysis.StrengthCalculator;
 import com.louisfiges.workout.dao.periodisation.*;
 import com.louisfiges.workout.dao.workout.ExerciseConfig;
 import com.louisfiges.workout.dao.workout.ExerciseDefinition;
@@ -9,14 +8,12 @@ import com.louisfiges.workout.dao.workout.WorkoutTemplate;
 import com.louisfiges.workout.dto.responses.ForecastResponse;
 import com.louisfiges.workout.dto.responses.ForecastSource;
 import com.louisfiges.workout.periodisation.BlockType;
-import com.louisfiges.workout.repository.WorkoutEntryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageRequest;
 
 import java.lang.reflect.Field;
 import java.time.Instant;
@@ -35,13 +32,13 @@ class ForecastEngineTest {
     private static final UUID EXERCISE_DEF_ID = UUID.randomUUID();
 
     @Mock
-    private WorkoutEntryRepository workoutEntryRepository;
+    private BlockAwareOneRmService oneRmService;
 
     private ForecastEngine engine;
 
     @BeforeEach
     void setUp() {
-        engine = new ForecastEngine(workoutEntryRepository, new StrengthCalculator());
+        engine = new ForecastEngine(oneRmService);
     }
 
     @Test
@@ -68,6 +65,8 @@ class ForecastEngineTest {
         week.setTargetSetsPerExercise(4);
         week.setBlock(block);
 
+        when(oneRmService.resolveEffectiveDateRange(any(Block.class))).thenReturn(null);
+
         ForecastResponse response = engine.generateForecast(week, USER_ID);
         assertThat(response.insights()).allMatch(i -> i.source() == ForecastSource.NO_DATA);
     }
@@ -80,12 +79,14 @@ class ForecastEngineTest {
         week.setWeekNumber(1);
 
         SetEntry bestSet = new SetEntry(5, 100.0, 8.0, null);
-        List<Object[]> queryResult = Collections.singletonList(
-                new Object[]{bestSet, Instant.parse("2026-07-02T10:00:00Z")});
+        BlockAwareOneRmService.BlockDateRange blockRange = new BlockAwareOneRmService.BlockDateRange(
+                blockStart, blockStart.plusSeconds(4 * 7 * 24 * 3600L));
+        BlockAwareOneRmService.OneRmResult mockResult = new BlockAwareOneRmService.OneRmResult(
+                116.67, 112.5, 117.46, bestSet, Instant.parse("2026-07-02T10:00:00Z"), false);
 
-        when(workoutEntryRepository.findBestSetsForExerciseInBlock(
-                eq(EXERCISE_DEF_ID), eq(USER_ID), any(Instant.class), any(Instant.class), eq(PageRequest.of(0, 5))
-        )).thenReturn(queryResult);
+        when(oneRmService.resolveEffectiveDateRange(any(Block.class))).thenReturn(blockRange);
+        when(oneRmService.estimateOneRm(eq(EXERCISE_DEF_ID), eq(USER_ID), any(Instant.class), any(Instant.class), eq(false)))
+                .thenReturn(mockResult);
 
         ForecastResponse response = engine.generateForecast(week, USER_ID);
         ForecastResponse.ForecastInsight insight = response.insights().get(0);
@@ -102,11 +103,9 @@ class ForecastEngineTest {
     @Test
     @DisplayName("falls back to previous block when current block has no sets")
     void fallsBackToPreviousBlock() {
-        when(workoutEntryRepository.findBestSetsForExerciseInBlock(
-                eq(EXERCISE_DEF_ID), eq(USER_ID), any(Instant.class), any(Instant.class), eq(PageRequest.of(0, 5))
-        )).thenReturn(Collections.emptyList());
-
         Instant blockStart = Instant.parse("2026-07-01T00:00:00Z");
+        BlockAwareOneRmService.BlockDateRange blockRange = new BlockAwareOneRmService.BlockDateRange(
+                blockStart, blockStart.plusSeconds(4 * 7 * 24 * 3600L));
 
         Block previousBlock = createBaseBlock(Instant.parse("2026-06-01T00:00:00Z"), BlockType.HYPERTROPHY);
         previousBlock.setBlockOrder(0);
@@ -118,6 +117,13 @@ class ForecastEngineTest {
         programme.getBlocks().add(0, previousBlock);
 
         week.setWeekNumber(1);
+
+        when(oneRmService.resolveEffectiveDateRange(any(Block.class))).thenReturn(blockRange);
+        when(oneRmService.estimateOneRm(eq(EXERCISE_DEF_ID), eq(USER_ID), any(Instant.class), any(Instant.class), eq(false)))
+                .thenReturn(null);
+        when(oneRmService.findPreviousBlock(any(Block.class))).thenReturn(previousBlock);
+        when(oneRmService.estimateOneRm(eq(EXERCISE_DEF_ID), eq(USER_ID), any(Instant.class), any(Instant.class), eq(true)))
+                .thenReturn(null);
 
         ForecastResponse response = engine.generateForecast(week, USER_ID);
         assertThat(response.insights().get(0).source()).isEqualTo(ForecastSource.NO_DATA);
@@ -159,12 +165,14 @@ class ForecastEngineTest {
         week.setBlock(block);
 
         SetEntry bestSet = new SetEntry(5, 100.0, 8.0, null);
-        List<Object[]> queryResult = Collections.singletonList(
-                new Object[]{bestSet, Instant.parse("2026-07-02T10:00:00Z")});
+        BlockAwareOneRmService.BlockDateRange blockRange = new BlockAwareOneRmService.BlockDateRange(
+                blockStart, blockStart.plusSeconds(4 * 7 * 24 * 3600L));
+        BlockAwareOneRmService.OneRmResult mockResult = new BlockAwareOneRmService.OneRmResult(
+                116.67, 112.5, 117.46, bestSet, Instant.parse("2026-07-02T10:00:00Z"), false);
 
-        when(workoutEntryRepository.findBestSetsForExerciseInBlock(
-                eq(EXERCISE_DEF_ID), eq(USER_ID), any(Instant.class), any(Instant.class), eq(PageRequest.of(0, 5))
-        )).thenReturn(queryResult);
+        when(oneRmService.resolveEffectiveDateRange(any(Block.class))).thenReturn(blockRange);
+        when(oneRmService.estimateOneRm(eq(EXERCISE_DEF_ID), eq(USER_ID), any(Instant.class), any(Instant.class), eq(false)))
+                .thenReturn(mockResult);
 
         ForecastResponse response = engine.generateForecast(week, USER_ID);
         assertThat(response.insights()).hasSize(1);

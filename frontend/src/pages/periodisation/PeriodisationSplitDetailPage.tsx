@@ -15,6 +15,10 @@ import { resolveBlockTabSelection } from "@/features/periodisation/utils/periodi
 import { useUrlPagination } from "@/hooks/useUrlPagination";
 import TabShell from "@/components/tabs/TabShell";
 import { useProgrammeContext } from "@/features/periodisation/programme/hooks/useProgrammeContext";
+import { DashCardRowSkeleton } from "@/components/layout/card/DashCardRow";
+import { StatTileSkeleton } from "@/components/ui/StatGridSkeleton";
+import Panel from "@/components/layout/frames/Panel";
+import StatGrid from "@/components/ui/StatGrid";
 
 export default function PeriodisationSplitDetailPage() {
     const { splitId = "" } = useParams<{ splitId: string }>();
@@ -23,7 +27,7 @@ export default function PeriodisationSplitDetailPage() {
         pageParam: "programmesPage",
         sizeParam: "programmesSize",
     });
-    const { split, getActiveProgramme, programmes, isLoading: programmesLoading } = useProgrammeContext();
+    const { split, getActiveProgramme, programmes, isLoading: programmesLoading, isLoading } = useProgrammeContext();
     const { data: programmesPageData } = useProgrammePage(splitId, { page: programmesPage, size: programmesSize });
     const selectedProgrammeId = searchParams.get("programmeId");
     const selectedBlockId = searchParams.get("blockId");
@@ -103,6 +107,35 @@ export default function PeriodisationSplitDetailPage() {
         selectedBlockSelection.shouldSyncQuery,
         setSearchParams,
     ]);
+
+    if (isLoading && !split) {
+        return (
+            <Page
+                title="Loading..."
+                subtitle="Loading split details..."
+                icon={ICONS.split}
+            >
+                <TabShell
+                    tabs={[{ key: "programme-setup" as SplitDetailTab, label: "Setup" }]}
+                    activeTab={"programme-setup" as SplitDetailTab}
+                    ariaLabel="Split detail tabs"
+                    onTabChange={() => undefined}
+                    contentClassName="contents"
+                >
+                    <Panel>
+                        <StatGrid cols={3}>
+                            <StatTileSkeleton />
+                            <StatTileSkeleton />
+                            <StatTileSkeleton />
+                        </StatGrid>
+                        <DashCardRowSkeleton />
+                        <DashCardRowSkeleton />
+                        <DashCardRowSkeleton />
+                    </Panel>
+                </TabShell>
+            </Page>
+        );
+    }
 
     if (!split) {
         return (

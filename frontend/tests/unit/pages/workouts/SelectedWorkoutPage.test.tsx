@@ -60,11 +60,13 @@ describe("SelectedWorkoutPage", () => {
       route: "/workout/workout-1?tab=overview",
     });
 
-    expect(screen.getByText("Loading workout")).toBeInTheDocument();
+    expect(screen.getByText("Selected workout")).toBeInTheDocument();
+    expect(screen.getByText("Loading...")).toBeInTheDocument();
     expect(screen.getByRole("tab", { name: "Overview" })).toBeInTheDocument();
     expect(screen.getByRole("tab", { name: "Entries" })).toBeInTheDocument();
     expect(screen.getByRole("tab", { name: "Heatmap" })).toBeInTheDocument();
-    expect(screen.getByText("Fetching the workout overview, entries, and heatmap.")).toBeInTheDocument();
+    const skeletons = document.querySelectorAll('[data-slot="skeleton"]');
+    expect(skeletons.length).toBeGreaterThan(0);
   });
 
   it("shows the overview tab by default and updates the query string when switching tabs", async () => {

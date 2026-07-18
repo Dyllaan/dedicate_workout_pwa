@@ -81,7 +81,7 @@ export default function WorkoutVolumePanel() {
         xLabelKey="date"
         activeSeriesKey="tonnage"
         fillActiveSeries
-        height={240}
+        height={800}
         showDotsThreshold={0}
         valueFormatter={(value) => format(value)}
         series={[

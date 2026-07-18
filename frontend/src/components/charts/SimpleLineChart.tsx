@@ -298,7 +298,7 @@ export default function SimpleLineChart<T extends object>({
               x={CHART_MARGIN.left - 10}
               y={getY(tick) + 5}
               textAnchor="end"
-              className="fill-foreground text-[15px] font-semibold"
+              className="fill-foreground text-[24px] font-semibold"
               opacity={index === 0 ? "0.94" : "0.72"}
             >
               {valueFormatter(tick)}
@@ -333,7 +333,7 @@ export default function SimpleLineChart<T extends object>({
                 x={x}
                 y={height - 10}
                 textAnchor={textAnchor}
-                className="fill-muted-foreground text-[9px]"
+                className="fill-muted-foreground text-[16px] font-semibold"
                 opacity="0.78"
               >
                 {toLabel(normalizedData[index]?.[xLabelKey ?? xKey])}

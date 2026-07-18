@@ -208,8 +208,8 @@ function CreateWorkoutEntryContent({
     stepValue,
     addSet,
     removeSet,
+    copyFromPrevious,
     addCustomExercise,
-    handleSubmit,
     remainingSuggestions,
     removeExercise,
     moveExercise,
@@ -449,6 +449,7 @@ function CreateWorkoutEntryContent({
       stepValue={stepValue}
       addSet={addSet}
       removeSet={removeSet}
+      copyFromPrevious={copyFromPrevious}
       onBack={() => setActiveTab("view")}
       onDelete={handleRemoveExerciseById}
       onNext={handleNext}
@@ -614,6 +615,19 @@ function useWorkoutEntryEditState(workoutEntry: WorkoutEntry) {
         if (data.sets.length <= 1) return data;
         return { ...data, sets: data.sets.filter((_, idx) => idx !== setIdx) };
       });
+    },
+    [updateExercise],
+  );
+
+  const copyFromPrevious = useCallback(
+    (exerciseIdx: number, setIdx: number) => {
+      if (setIdx === 0) return;
+      updateExercise(exerciseIdx, (data) => ({
+        ...data,
+        sets: data.sets.map((set, idx) =>
+          idx === setIdx ? { ...data.sets[setIdx - 1] } : set
+        ),
+      }));
     },
     [updateExercise],
   );
@@ -1020,6 +1034,7 @@ function EditWorkoutEntryContent({
       stepValue={stepValue}
       addSet={addSet}
       removeSet={removeSet}
+      copyFromPrevious={copyFromPrevious}
       onBack={() => setActiveTab("view")}
       onDelete={handleRemoveExerciseById}
       onNext={handleNext}

@@ -2,7 +2,7 @@ import { ChevronRight, Plus, List } from "lucide-react";
 import useWorkout from "@/features/workout/templates/hooks/useWorkoutTemplates";
 import Page from "@/components/layout/frames/Page";
 import formatDate from "@/utils/date";
-import { DashCardRow } from "@/components/layout/card/DashCardRow";
+import { DashCardRow, DashCardRowSkeleton } from "@/components/layout/card/DashCardRow";
 import { useUrlPagination } from "@/hooks/useUrlPagination";
 import {ICONS} from "@/config/iconConfig.ts";
 import PaginatedContainer from "@/components/layout/frames/PaginatedContainer";
@@ -11,7 +11,23 @@ import CreateWorkoutButton from "@/features/workout/templates/components/CreateW
 
 export default function AllWorkoutsPage() {
     const { page, size, setPage } = useUrlPagination({ pageParam: "workoutsPage", sizeParam: "workoutsSize" });
-    const { sortedWorkouts, pageInfo } = useWorkout({ page, size });
+    const { sortedWorkouts, pageInfo, isLoading } = useWorkout({ page, size });
+
+    if (isLoading && sortedWorkouts.length === 0) {
+        return (
+            <Page title="All Workouts" icon={ICONS.workout} subtitle="Loading your workouts..." subtitleIcon={List}>
+                <PaginatedContainer onPageChange={setPage} currentPage={page} total={undefined} className="space-y-4">
+                    <NextWorkoutCard />
+                    <DashCardRowSkeleton />
+                    <DashCardRowSkeleton />
+                    <DashCardRowSkeleton />
+                    <DashCardRowSkeleton />
+                    <DashCardRowSkeleton />
+                    <DashCardRowSkeleton />
+                </PaginatedContainer>
+            </Page>
+        );
+    }
 
     return (
         <Page title="All Workouts" icon={ICONS.workout} subtitle="Browse all your workouts" subtitleIcon={List}>

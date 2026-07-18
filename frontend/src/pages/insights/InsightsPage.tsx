@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { BarChart3 } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 
@@ -15,6 +14,8 @@ import { Skeleton } from "@/components/ui/skeleton.tsx";
 import StatGrid from "@/components/ui/StatGrid.tsx";
 import ProgressPanel from "@/features/progress/components/ProgressPanel";
 import TabShell from "@/components/tabs/TabShell.tsx";
+import useDelayedLoading from "@/hooks/useDelayedLoading";
+import { StatTileSkeleton } from "@/components/ui/StatGridSkeleton";
 
 const SMART_COACH_TABS: TabItem<InsightsViewTab>[] = [
   { key: "overview", label: "Overview" },
@@ -24,22 +25,6 @@ const SMART_COACH_TABS: TabItem<InsightsViewTab>[] = [
 
 function isSmartCoachTab(value: string | null): value is InsightsViewTab {
   return value === "overview" || value === "volume" || value === "lift";
-}
-
-function useDelayedLoading(isLoading: boolean, delayMs = 180) {
-  const [showLoading, setShowLoading] = useState(false);
-
-  useEffect(() => {
-    if (!isLoading) {
-      setShowLoading(false);
-      return;
-    }
-
-    const timer = window.setTimeout(() => setShowLoading(true), delayMs);
-    return () => window.clearTimeout(timer);
-  }, [delayMs, isLoading]);
-
-  return showLoading;
 }
 
 export default function InsightsPage() {
@@ -88,15 +73,6 @@ export default function InsightsPage() {
   );
 }
 
-function LoadingStatTile({ label }: { label: string }) {
-  return (
-    <div className="rounded-2xl border border-border bg-card p-4">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">{label}</p>
-      <Skeleton className="mt-3 h-5 w-20" />
-    </div>
-  );
-}
-
 function LoadingSignalCard() {
   return (
     <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-4 sm:p-5">
@@ -130,10 +106,10 @@ function InsightsOverviewLoading() {
         subtitle="The current training picture in four tiles."
       >
         <StatGrid cols={4}>
-          <LoadingStatTile label="Workout templates" />
-          <LoadingStatTile label="Splits" />
-          <LoadingStatTile label="Active split" />
-          <LoadingStatTile label="Readiness avg" />
+          <StatTileSkeleton />
+          <StatTileSkeleton />
+          <StatTileSkeleton />
+          <StatTileSkeleton />
         </StatGrid>
       </Section>
 

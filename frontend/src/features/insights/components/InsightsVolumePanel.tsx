@@ -6,11 +6,10 @@ import CollapsiblePanel from "@/components/layout/section/CollapsiblePanel";
 import Panel from "@/components/layout/frames/Panel";
 import Section from "@/components/layout/section/Section";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useDashboardWeeklyMuscleVolume } from "@/features/insights/hooks/useTrainingInsights";
 import { MUSCLE_LABELS } from "@/features/heatmap/config/muscleMetadata";
 import { formatExerciseLabel, formatShortDateTime } from "../utils/insightsUtils";
-import { DashCardRow } from "@/components/layout/card/DashCardRow";
+import { DashCardRow, DashCardRowSkeleton } from "@/components/layout/card/DashCardRow";
 
 type TrackingStatus = "ON_TRACK" | "AHEAD" | "BEHIND" | "COMPLETED";
 
@@ -110,26 +109,21 @@ function MuscleBar({ muscle }: { muscle: WeeklyMuscleVolumeMuscle }) {
   );
 }
 
-function LoadingSkeleton() {
-  return (
-    <div className="space-y-3">
-      <Skeleton className="h-4 w-24 rounded-full" />
-      {Array.from({ length: 5 }).map((_, i) => (
-        <Skeleton key={i} className="h-8 rounded-lg" />
-      ))}
-    </div>
-  );
-}
-
 export default function InsightsVolumePanel() {
   const [targetWeekStart, setTargetWeekStart] = useState<string | undefined>();
   const { data, isLoading } = useDashboardWeeklyMuscleVolume(targetWeekStart); 
   const [showInactive, setShowInactive] = useState(false);
 
-  if (isLoading) {
+  if (isLoading && !data) {
     return (
-      <Section icon={Activity} title="Weekly training load" subtitle="Set balance across muscles this week.">
-        <LoadingSkeleton />
+      <Section icon={Activity} title="Weekly training load" subtitle="Loading set balance...">
+        <div className="space-y-0">
+          <DashCardRowSkeleton />
+          <DashCardRowSkeleton />
+          <DashCardRowSkeleton />
+          <DashCardRowSkeleton />
+          <DashCardRowSkeleton />
+        </div>
       </Section>
     );
   }

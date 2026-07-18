@@ -1,8 +1,6 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { unwrapApiResponse, workoutApi } from '@/api/api';
-import { buildPageParams, clampPageSize } from '@/api/utils/PaginationHelper';
-import type { PagedResponse } from '@/api/types/Pagination';
 import type { WorkoutEntry } from '@/features/workout/types/Workout';
 import type { SetEntry } from '@/features/workout/types/Workout';
 
@@ -26,27 +24,40 @@ export function useExerciseHistory(
   exerciseDefinitionId: string,
   options: ExerciseHistoryOptions = {},
 ) {
-  const limit = clampPageSize(options.limit);
+  const limit = options.limit;
   const startDate = options.startDate?.trim() || undefined;
   const endDate = options.endDate?.trim() || undefined;
   const targetExerciseDefinitionId = exerciseDefinitionId.trim();
 
   const { data, isLoading, isError, error, refetch } = useQuery({
-    queryKey: ['exercise-history', targetExerciseDefinitionId, limit, startDate ?? '', endDate ?? ''],
+    queryKey: ['exercise-history', targetExerciseDefinitionId],
     queryFn: async () => {
-      const params = startDate && endDate
-        ? buildPageParams(0, limit, { startDate, endDate })
-        : buildPageParams(0, limit);
-
-      const endpoint = startDate && endDate ? '/workout-entries/date-range' : '/workout-entries/recent';
-      const response = await workoutApi.get<PagedResponse<WorkoutEntry>>(endpoint, { params });
+      const response = await workoutApi.get<WorkoutEntry[]>("/workout-entries/by-exercise", {
+        params: { exerciseDefinitionId: targetExerciseDefinitionId },
+      });
       return unwrapApiResponse(response);
     },
     enabled: targetExerciseDefinitionId.length > 0,
-    staleTime: 0,
+    staleTime: 5 * 60 * 1000,
   });
 
-  const workoutEntries = Array.isArray(data) ? data : data?.items ?? [];
+  const workoutEntries = useMemo((): WorkoutEntry[] => {
+    let entries = data ?? [];
+
+    if (startDate) {
+      const start = new Date(startDate).getTime();
+      entries = entries.filter(e => new Date(e.createdAt).getTime() >= start);
+    }
+    if (endDate) {
+      const end = new Date(endDate).getTime();
+      entries = entries.filter(e => new Date(e.createdAt).getTime() <= end);
+    }
+    if (limit) {
+      entries = entries.slice(0, limit);
+    }
+
+    return entries;
+  }, [data, limit, startDate, endDate]);
 
   const sessions = useMemo((): ExerciseHistorySession[] => {
     const result: ExerciseHistorySession[] = [];

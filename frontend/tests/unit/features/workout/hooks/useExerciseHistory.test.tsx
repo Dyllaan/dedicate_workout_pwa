@@ -24,76 +24,63 @@ function createWrapper() {
   );
 }
 
-const emptyPage = {
-  items: [],
-  page: 0,
-  size: 10,
-  totalItems: 0,
-  totalPages: 0,
-  hasNext: false,
-  hasPrevious: false,
-};
-
 describe("useExerciseHistory", () => {
   beforeEach(() => {
     vi.mocked(workoutApi.get).mockResolvedValue({
       status: 200,
-      data: emptyPage,
+      data: [],
     } as never);
   });
 
-  it("requests recent workout entries by default and filters by exercise definition id", async () => {
+  it("calls the by-exercise endpoint and filters entries by exercise definition id", async () => {
     vi.mocked(workoutApi.get).mockResolvedValue({
       status: 200,
-      data: {
-        ...emptyPage,
-        items: [
-          {
-            id: "entry-1",
-            template: { id: "template-1", name: "Lower", category: "Legs", exercises: [], createdAt: "2026-04-24T00:00:00.000Z" },
-            createdAt: "2026-05-02T10:00:00.000Z",
-            exercises: [
-              {
-                id: "ex-1",
-                exerciseDefinitionId: "definition-squat",
-                exerciseName: "Squat",
-                variant: "Low Bar",
-                loggedExerciseName: "Squat",
-                loggedVariant: "Low Bar",
-                goalSets: 3,
-                sets: [{ id: "s1", reps: 5, weight: 120, rpe: 8 }],
-              },
-              {
-                id: "ex-2",
-                exerciseDefinitionId: "definition-bench",
-                exerciseName: "Bench Press",
-                variant: "Barbell",
-                loggedExerciseName: "Bench Press",
-                loggedVariant: "Barbell",
-                goalSets: 3,
-                sets: [{ id: "s2", reps: 5, weight: 100, rpe: 8 }],
-              },
-            ],
-          },
-          {
-            id: "entry-2",
-            template: { id: "template-2", name: "Upper", category: "Push", exercises: [], createdAt: "2026-04-24T00:00:00.000Z" },
-            createdAt: "2026-05-01T10:00:00.000Z",
-            exercises: [
-              {
-                id: "ex-3",
-                exerciseDefinitionId: "definition-bench",
-                exerciseName: "Bench Press",
-                variant: "Barbell",
-                loggedExerciseName: "Bench Press",
-                loggedVariant: "Barbell",
-                goalSets: 3,
-                sets: [{ id: "s3", reps: 3, weight: 110, rpe: 9 }],
-              },
-            ],
-          },
-        ],
-      },
+      data: [
+        {
+          id: "entry-1",
+          template: { id: "template-1", name: "Lower", category: "Legs", exercises: [], createdAt: "2026-04-24T00:00:00.000Z" },
+          createdAt: "2026-05-02T10:00:00.000Z",
+          exercises: [
+            {
+              id: "ex-1",
+              exerciseDefinitionId: "definition-squat",
+              exerciseName: "Squat",
+              variant: "Low Bar",
+              loggedExerciseName: "Squat",
+              loggedVariant: "Low Bar",
+              goalSets: 3,
+              sets: [{ id: "s1", reps: 5, weight: 120, rpe: 8 }],
+            },
+            {
+              id: "ex-2",
+              exerciseDefinitionId: "definition-bench",
+              exerciseName: "Bench Press",
+              variant: "Barbell",
+              loggedExerciseName: "Bench Press",
+              loggedVariant: "Barbell",
+              goalSets: 3,
+              sets: [{ id: "s2", reps: 5, weight: 100, rpe: 8 }],
+            },
+          ],
+        },
+        {
+          id: "entry-2",
+          template: { id: "template-2", name: "Upper", category: "Push", exercises: [], createdAt: "2026-04-24T00:00:00.000Z" },
+          createdAt: "2026-05-01T10:00:00.000Z",
+          exercises: [
+            {
+              id: "ex-3",
+              exerciseDefinitionId: "definition-bench",
+              exerciseName: "Bench Press",
+              variant: "Barbell",
+              loggedExerciseName: "Bench Press",
+              loggedVariant: "Barbell",
+              goalSets: 3,
+              sets: [{ id: "s3", reps: 3, weight: 110, rpe: 9 }],
+            },
+          ],
+        },
+      ],
     } as never);
 
     const { result } = renderHook(() => useExerciseHistory("definition-bench"), {
@@ -102,9 +89,9 @@ describe("useExerciseHistory", () => {
 
     await waitFor(() => expect(result.current.sessionCount).toBe(2));
     expect(workoutApi.get).toHaveBeenCalledWith(
-      "/workout-entries/recent",
+      "/workout-entries/by-exercise",
       expect.objectContaining({
-        params: expect.objectContaining({ page: 0, size: 10 }),
+        params: { exerciseDefinitionId: "definition-bench" },
       }),
     );
     expect(result.current.bestKg).toBe(110);
@@ -115,54 +102,27 @@ describe("useExerciseHistory", () => {
     expect(result.current.sessions[1].topWeightKg).toBe(110);
   });
 
-  it("uses the date-range endpoint when both dates are provided", async () => {
-    vi.mocked(workoutApi.get).mockResolvedValue({
-      status: 200,
-      data: emptyPage,
-    } as never);
-
-    renderHook(() => useExerciseHistory("definition-squat", { limit: 12, startDate: "2026-05-01", endDate: "2026-05-31" }), {
-      wrapper: createWrapper(),
-    });
-
-    await waitFor(() => expect(workoutApi.get).toHaveBeenCalled());
-    expect(workoutApi.get).toHaveBeenCalledWith(
-      "/workout-entries/date-range",
-      expect.objectContaining({
-        params: expect.objectContaining({
-          page: 0,
-          size: 12,
-          startDate: "2026-05-01",
-          endDate: "2026-05-31",
-        }),
-      }),
-    );
-  });
-
   it("ignores entries without the matching exercise definition id", async () => {
     vi.mocked(workoutApi.get).mockResolvedValue({
       status: 200,
-      data: {
-        ...emptyPage,
-        items: [
-          {
-            id: "entry-legacy",
-            template: { id: "template-3", name: "Legacy", category: "Upper", exercises: [], createdAt: "2026-04-24T00:00:00.000Z" },
-            createdAt: "2026-05-01T10:00:00.000Z",
-            exercises: [
-              {
-                id: "ex-legacy",
-                exerciseName: "Bench Press",
-                variant: "Barbell",
-                loggedExerciseName: "Bench Press",
-                loggedVariant: "Barbell",
-                goalSets: 3,
-                sets: [{ id: "s4", reps: 5, weight: 105, rpe: 8 }],
-              },
-            ],
-          },
-        ],
-      },
+      data: [
+        {
+          id: "entry-legacy",
+          template: { id: "template-3", name: "Legacy", category: "Upper", exercises: [], createdAt: "2026-04-24T00:00:00.000Z" },
+          createdAt: "2026-05-01T10:00:00.000Z",
+          exercises: [
+            {
+              id: "ex-legacy",
+              exerciseName: "Bench Press",
+              variant: "Barbell",
+              loggedExerciseName: "Bench Press",
+              loggedVariant: "Barbell",
+              goalSets: 3,
+              sets: [{ id: "s4", reps: 5, weight: 105, rpe: 8 }],
+            },
+          ],
+        },
+      ],
     } as never);
 
     const { result } = renderHook(() => useExerciseHistory("definition-bench"), {

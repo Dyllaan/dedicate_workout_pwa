@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { BrainCircuit, Gauge, LineChart, Sparkles, Target, TrendingUp } from "lucide-react";
+import { BrainCircuit, LineChart, Sparkles, TrendingUp } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 
 import SimpleLineChart from "@/components/charts/SimpleLineChart.tsx";

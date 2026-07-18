@@ -1,0 +1,110 @@
+package com.louisfiges.workout.service.analysis;
+
+import com.louisfiges.workout.dao.workout.ExerciseEntry;
+import com.louisfiges.workout.dao.workout.SetEntry;
+import com.louisfiges.workout.dao.workout.WorkoutEntry;
+import com.louisfiges.workout.dao.workout.WorkoutInol;
+import com.louisfiges.workout.repository.WorkoutInolRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Optional;
+import java.util.UUID;
+
+@Service
+@Transactional
+public class InolCalculator {
+
+    private static final Logger log = LoggerFactory.getLogger(InolCalculator.class);
+
+    private final BlockAwareOneRmService oneRmService;
+    private final WorkoutInolRepository inolRepository;
+
+    public InolCalculator(BlockAwareOneRmService oneRmService, WorkoutInolRepository inolRepository) {
+        this.oneRmService = oneRmService;
+        this.inolRepository = inolRepository;
+    }
+
+    public void computeAndPersist(WorkoutEntry entry, UUID userId) {
+        if (entry.getExercises() == null || entry.getExercises().isEmpty()) {
+            return;
+        }
+
+        for (ExerciseEntry exerciseEntry : entry.getExercises()) {
+            if (exerciseEntry.getExerciseDefinition() == null) {
+                log.debug("Skipping INOL for exercise without definition: {}", exerciseEntry.getLoggedExerciseName());
+                continue;
+            }
+
+            Optional<BlockAwareOneRmService.OneRmResult> oneRmOpt =
+                    oneRmService.resolveOneRm(exerciseEntry.getExerciseDefinition().getId(), userId);
+
+            if (oneRmOpt.isEmpty()) {
+                log.debug("Skipping INOL for {} — no reference 1RM available",
+                        exerciseEntry.getLoggedExerciseName());
+                continue;
+            }
+
+            BlockAwareOneRmService.OneRmResult oneRm = oneRmOpt.get();
+            double ref1rm = median(oneRm.epley(), oneRm.bryzycki(), oneRm.lombardi());
+            double exerciseInol = computeExerciseInol(exerciseEntry, ref1rm);
+
+            String exerciseName = exerciseEntry.getLoggedExerciseName() != null
+                    ? exerciseEntry.getLoggedExerciseName()
+                    : exerciseEntry.getExerciseDefinition().getExerciseName();
+
+            WorkoutInol inol = new WorkoutInol(
+                    userId.toString(),
+                    entry,
+                    exerciseEntry,
+                    exerciseName,
+                    roundTo2(exerciseInol),
+                    roundTo1(ref1rm),
+                    null,
+                    oneRm.carryForward()
+            );
+
+            inolRepository.save(inol);
+        }
+    }
+
+    double computeExerciseInol(ExerciseEntry exerciseEntry, double ref1rm) {
+        double totalInol = 0.0;
+
+        for (SetEntry set : exerciseEntry.getSets()) {
+            if (set.getWeight() == null || set.getWeight() <= 0) {
+                continue;
+            }
+
+            double intensityPct = (set.getWeight() / ref1rm) * 100.0;
+
+            if (intensityPct >= 99.5) {
+                intensityPct = 99.0;
+            }
+            if (intensityPct < 1.0) {
+                intensityPct = 1.0;
+            }
+
+            double setInol = set.getReps() / (100.0 - intensityPct);
+            totalInol += setInol;
+        }
+
+        return totalInol;
+    }
+
+    private double median(double a, double b, double c) {
+        return Math.max(Math.min(a, b), Math.min(Math.max(a, b), c));
+    }
+
+    private double roundTo2(double value) {
+        return BigDecimal.valueOf(value).setScale(2, RoundingMode.HALF_UP).doubleValue();
+    }
+
+    private double roundTo1(double value) {
+        return BigDecimal.valueOf(value).setScale(1, RoundingMode.HALF_UP).doubleValue();
+    }
+}

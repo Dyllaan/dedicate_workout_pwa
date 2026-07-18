@@ -70,6 +70,12 @@ public class WorkoutEntryService {
     }
 
     @Transactional(readOnly = true)
+    public List<WorkoutEntryDTO> getAllByExerciseDefinition(UUID userId, UUID exerciseDefinitionId) {
+        return workoutEntryRepository.findAllByUserIdAndExerciseDefinitionId(userId, exerciseDefinitionId)
+                .stream().map(workoutEntryMapper::toDTO).toList();
+    }
+
+    @Transactional(readOnly = true)
     public PagedResponse<WorkoutEntryDTO> getAllByUser(UUID userId, UUID workoutTemplateId, int page, int size) {
         var pageable = PaginationUtils.toPageable(page, size);
         if (workoutTemplateId != null) {

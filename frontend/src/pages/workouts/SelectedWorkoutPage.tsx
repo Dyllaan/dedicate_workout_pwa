@@ -3,8 +3,6 @@ import { Badge } from "@/components/ui/badge";
 import useWorkoutContext from "@/features/workout/hooks/useWorkoutContext.ts";
 import { useNavigate } from "react-router-dom";
 import Page from "@/components/layout/frames/Page.tsx";
-import Section from "@/components/layout/section/Section.tsx";
-import LoadingState from "@/components/layout/feedback/LoadingState";
 import { Button } from "@/components/ui/button";
 import ErrorState from "@/components/layout/feedback/ErrorState";
 import useTabState from "@/hooks/useTabState";
@@ -14,10 +12,15 @@ import SelectedWorkoutOverviewPanel from "@/features/workout/components/panels/S
 import WorkoutEntriesPanel from "@/features/workout/components/panels/WorkoutEntriesPanel.tsx";
 import HeatmapPanel from "@/features/workout/components/panels/HeatmapPanel.tsx";
 import ConfigurePanel from "@/features/workout/components/panels/ConfigurePanel.tsx";
+import WorkoutVolumePanel from "@/features/workout/components/panels/WorkoutVolumePanel";
 import {formatDateShort} from "@/utils/date.ts";
 import {SelectedWorkoutDropdown} from "@/features/workout/components/dropdown/SelectedWorkoutDropdown.tsx";
+import { DashCardRowSkeleton } from "@/components/layout/card/DashCardRow";
+import { StatTileSkeleton } from "@/components/ui/StatGridSkeleton";
+import Panel from "@/components/layout/frames/Panel";
+import StatGrid from "@/components/ui/StatGrid";
 
-type SelectedWorkoutTab = "overview" | "entries" | "heatmap" | "configure";
+type SelectedWorkoutTab = "overview" | "entries" | "heatmap" | "configure" | "volume";
 
 export default function SelectedWorkoutPage() {
     const { workoutTemplate, stats, isLoading } = useWorkoutContext();
@@ -27,14 +30,15 @@ export default function SelectedWorkoutPage() {
         { key: "entries", label: "Entries" },
         { key: "heatmap", label: "Heatmap" },
         { key: "configure", label: "Configure" },
+        { key: "volume", label: "Volume" },
     ] satisfies TabItem<SelectedWorkoutTab>[];
     const { activeTab, setActiveTab } = useTabState<SelectedWorkoutTab>({
-        validTabs: ["overview", "entries", "heatmap", "configure"] as const,
+        validTabs: ["overview", "entries", "heatmap", "configure", "volume"] as const,
         defaultTab: "overview",
         queryParam: "tab",
     });
 
-    if (isLoading) {
+    if (isLoading && !workoutTemplate) {
         return <SelectedWorkoutPageLoading tabs={tabs} activeTab={activeTab} />;
     }
 
@@ -92,6 +96,9 @@ export default function SelectedWorkoutPage() {
                 {activeTab === "configure" ? (
                     <ConfigurePanel workoutTemplate={workoutTemplate} />
                 ) : null}
+                {activeTab === "volume" ? (
+                    <WorkoutVolumePanel />
+                ) : null}
             </TabShell>
         </Page>
     );
@@ -108,7 +115,7 @@ function SelectedWorkoutPageLoading({
         <Page
             title="Selected workout"
             icon={Dumbbell}
-            subtitle="Preparing your workout so you can review it."
+            subtitle="Loading..."
         >
             <TabShell
                 tabs={tabs}
@@ -117,9 +124,21 @@ function SelectedWorkoutPageLoading({
                 onTabChange={() => undefined}
                 contentClassName="contents"
             >
-                <Section title="Loading workout" subtitle="Fetching the workout overview, entries, and heatmap.">
-                    <LoadingState rows={4} />
-                </Section>
+                <Panel>
+                    <DashCardRowSkeleton />
+                    <StatGrid cols={2}>
+                        <StatTileSkeleton />
+                        <StatTileSkeleton />
+                        <StatTileSkeleton />
+                        <StatTileSkeleton />
+                    </StatGrid>
+                    <DashCardRowSkeleton />
+                    <StatGrid cols={3}>
+                        <StatTileSkeleton />
+                        <StatTileSkeleton />
+                        <StatTileSkeleton />
+                    </StatGrid>
+                </Panel>
             </TabShell>
         </Page>
     );

@@ -7,6 +7,7 @@ import com.louisfiges.workout.dao.workout.SetEntry;
 import com.louisfiges.workout.dto.responses.StrengthEstimate;
 import com.louisfiges.workout.repository.BlockRepository;
 import com.louisfiges.workout.repository.WorkoutEntryRepository;
+import com.louisfiges.workout.util.MathUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -85,7 +86,7 @@ public class BlockAwareOneRmService {
             if (set.getWeight() == null) continue;
 
             StrengthEstimate estimate = strengthCalculator.estimateOneRepMax(set.getWeight(), set.getReps());
-            double median = median(estimate.epley(), estimate.bryzycki(), estimate.lombardi());
+            double median = MathUtils.medianOfThree(estimate.epley(), estimate.bryzycki(), estimate.lombardi());
 
             if (median > bestMedian) {
                 bestMedian = median;
@@ -145,9 +146,5 @@ public class BlockAwareOneRmService {
         }
 
         return null;
-    }
-
-    private double median(double a, double b, double c) {
-        return Math.max(Math.min(a, b), Math.min(Math.max(a, b), c));
     }
 }

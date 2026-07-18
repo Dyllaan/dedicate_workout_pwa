@@ -1,5 +1,7 @@
 package com.louisfiges.workout.analysis.types;
 
+import com.louisfiges.workout.analysis.StrengthCalculator;
+
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
@@ -65,6 +67,8 @@ public class ExerciseSession {
         double volume = 0;
         double best1RM = 0;
 
+        StrengthCalculator strengthCalculator = new StrengthCalculator();
+
         for (SetData set : sets) {
             totalCompleted += set.repsCompleted();
             totalTarget += set.repsTarget();
@@ -75,11 +79,8 @@ public class ExerciseSession {
                 rpeCount++;
             }
 
-            // Track best estimated 1RM across sets (Epley formula)
             if (set.repsCompleted() > 0 && set.repsCompleted() <= 12) {
-                double setE1RM = set.repsCompleted() == 1
-                        ? weightKg
-                        : weightKg * (1 + set.repsCompleted() / 30.0);
+                double setE1RM = strengthCalculator.estimateOneRepMaxMedian(weightKg, set.repsCompleted());
                 best1RM = Math.max(best1RM, setE1RM);
             }
         }

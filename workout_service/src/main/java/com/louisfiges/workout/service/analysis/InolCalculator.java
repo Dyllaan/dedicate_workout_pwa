@@ -5,13 +5,12 @@ import com.louisfiges.workout.dao.workout.SetEntry;
 import com.louisfiges.workout.dao.workout.WorkoutEntry;
 import com.louisfiges.workout.dao.workout.WorkoutInol;
 import com.louisfiges.workout.repository.WorkoutInolRepository;
+import com.louisfiges.workout.util.MathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -50,7 +49,7 @@ public class InolCalculator {
             }
 
             BlockAwareOneRmService.OneRmResult oneRm = oneRmOpt.get();
-            double ref1rm = median(oneRm.epley(), oneRm.bryzycki(), oneRm.lombardi());
+            double ref1rm = MathUtils.medianOfThree(oneRm.epley(), oneRm.bryzycki(), oneRm.lombardi());
             double exerciseInol = computeExerciseInol(exerciseEntry, ref1rm);
 
             String exerciseName = exerciseEntry.getLoggedExerciseName() != null
@@ -62,8 +61,8 @@ public class InolCalculator {
                     entry,
                     exerciseEntry,
                     exerciseName,
-                    roundTo2(exerciseInol),
-                    roundTo1(ref1rm),
+                    MathUtils.roundTo2Decimals(exerciseInol),
+                    MathUtils.roundTo1Decimal(ref1rm),
                     null,
                     oneRm.carryForward()
             );
@@ -94,17 +93,5 @@ public class InolCalculator {
         }
 
         return totalInol;
-    }
-
-    private double median(double a, double b, double c) {
-        return Math.max(Math.min(a, b), Math.min(Math.max(a, b), c));
-    }
-
-    private double roundTo2(double value) {
-        return BigDecimal.valueOf(value).setScale(2, RoundingMode.HALF_UP).doubleValue();
-    }
-
-    private double roundTo1(double value) {
-        return BigDecimal.valueOf(value).setScale(1, RoundingMode.HALF_UP).doubleValue();
     }
 }

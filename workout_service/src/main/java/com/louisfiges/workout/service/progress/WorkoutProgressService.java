@@ -1,5 +1,6 @@
 package com.louisfiges.workout.service.progress;
 
+import com.louisfiges.workout.analysis.StrengthCalculator;
 import com.louisfiges.workout.dao.workout.ExerciseEntry;
 import com.louisfiges.workout.dao.workout.SetEntry;
 import com.louisfiges.workout.dao.workout.WorkoutEntry;
@@ -23,9 +24,11 @@ import java.util.UUID;
 public class WorkoutProgressService {
 
     private final WorkoutEntryRepository workoutEntryRepository;
+    private final StrengthCalculator strengthCalculator;
 
-    public WorkoutProgressService(WorkoutEntryRepository workoutEntryRepository) {
+    public WorkoutProgressService(WorkoutEntryRepository workoutEntryRepository, StrengthCalculator strengthCalculator) {
         this.workoutEntryRepository = workoutEntryRepository;
+        this.strengthCalculator = strengthCalculator;
     }
 
     public ProgressChartQueryResponseDTO query(UUID userId, ProgressChartQueryRequestDTO request) {
@@ -122,11 +125,10 @@ public class WorkoutProgressService {
             }
             case "BEST_SET_E1RM" -> exercise.getSets().stream()
                     .filter(set -> set.getWeight() != null && set.getReps() > 0)
-                    .mapToDouble(set -> set.getWeight() * (1.0 + (set.getReps() / 30.0)))
+                    .mapToDouble(set -> strengthCalculator.estimateOneRepMaxMedian(set.getWeight(), set.getReps()))
                     .max()
                     .stream()
                     .boxed()
-                    .map(value -> round(value))
                     .findFirst()
                     .orElse(null);
             default -> exercise.getSets().stream()

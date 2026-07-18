@@ -6,6 +6,7 @@ import com.louisfiges.workout.dao.periodisation.Week;
 import com.louisfiges.workout.dao.workout.ExerciseConfig;
 import com.louisfiges.workout.dto.responses.ForecastResponse;
 import com.louisfiges.workout.dto.responses.ForecastSource;
+import com.louisfiges.workout.util.MathUtils;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -95,7 +96,7 @@ public class ForecastEngine {
         if (result != null) {
             int targetReps = deriveTargetReps(block, week);
             double targetRpe = deriveTargetRpe(block, week);
-            double estimated1Rm = roundToPlate(median(result.epley(), result.bryzycki(), result.lombardi()));
+            double estimated1Rm = roundToPlate(MathUtils.medianOfThree(result.epley(), result.bryzycki(), result.lombardi()));
             double targetWeight = roundToPlate(estimated1Rm * intensityPct / 100.0);
 
             ForecastResponse.BestSetInfo bestSet = new ForecastResponse.BestSetInfo(
@@ -124,7 +125,7 @@ public class ForecastEngine {
                 if (prevResult != null) {
                     int targetReps = deriveTargetReps(block, week);
                     double targetRpe = deriveTargetRpe(block, week);
-                    double estimated1Rm = roundToPlate(median(prevResult.epley(), prevResult.bryzycki(), prevResult.lombardi()));
+                    double estimated1Rm = roundToPlate(MathUtils.medianOfThree(prevResult.epley(), prevResult.bryzycki(), prevResult.lombardi()));
                     double targetWeight = roundToPlate(estimated1Rm * intensityPct / 100.0);
 
                     ForecastResponse.BestSetInfo bestSet = new ForecastResponse.BestSetInfo(
@@ -165,10 +166,6 @@ public class ForecastEngine {
                 ForecastSource.NO_DATA,
                 null
         );
-    }
-
-    private double median(double a, double b, double c) {
-        return Math.max(Math.min(a, b), Math.min(Math.max(a, b), c));
     }
 
     private double roundToPlate(double value) {

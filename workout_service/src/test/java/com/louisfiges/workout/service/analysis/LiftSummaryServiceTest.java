@@ -1,5 +1,6 @@
 package com.louisfiges.workout.service.analysis;
 
+import com.louisfiges.workout.analysis.StrengthCalculator;
 import com.louisfiges.workout.dao.core.BodyweightLog;
 import com.louisfiges.workout.dao.workout.ExerciseConfig;
 import com.louisfiges.workout.dao.workout.ExerciseDefinition;
@@ -50,10 +51,12 @@ class LiftSummaryServiceTest {
     @Mock
     private BodyweightLogRepository bodyweightLogRepository;
 
+    private final StrengthCalculator strengthCalculator = new StrengthCalculator();
+
     @Test
     @DisplayName("returns the overall top lift summary using the same session grouping as the dashboard")
     void returnsOverallLiftSummary() {
-        LiftSummaryService service = new LiftSummaryService(workoutEntryRepository, workoutTemplateRepository, bodyweightLogRepository);
+        LiftSummaryService service = new LiftSummaryService(workoutEntryRepository, workoutTemplateRepository, bodyweightLogRepository, strengthCalculator);
 
         WorkoutTemplate pushTemplate = template(
                 PUSH_TEMPLATE_ID,
@@ -86,13 +89,13 @@ class LiftSummaryServiceTest {
         assertThat(summary.personalBestTopSetPerformedAt()).isEqualTo(Instant.parse("2026-05-15T10:00:00Z"));
         assertThat(summary.improvementBaselineTopSetPerformedAt()).isEqualTo(Instant.parse("2026-05-01T10:00:00Z"));
         assertThat(summary.loadBodyweightRatio()).isEqualTo(1.5);
-        assertThat(summary.estimatedOneRepMaxBodyweightRatio()).isEqualTo(1.64);
+        assertThat(summary.estimatedOneRepMaxBodyweightRatio()).isEqualTo(1.65);
     }
 
     @Test
     @DisplayName("returns the previous occurrence best set alongside the all-time best set")
     void returnsPreviousOccurrenceBestSetAlongsideAllTimeBestSet() {
-        LiftSummaryService service = new LiftSummaryService(workoutEntryRepository, workoutTemplateRepository, bodyweightLogRepository);
+        LiftSummaryService service = new LiftSummaryService(workoutEntryRepository, workoutTemplateRepository, bodyweightLogRepository, strengthCalculator);
 
         WorkoutTemplate pushTemplate = template(
                 PUSH_TEMPLATE_ID,
@@ -153,7 +156,7 @@ class LiftSummaryServiceTest {
     @Test
     @DisplayName("uses the latest occurrence for recent set details even when an older session is heavier")
     void usesLatestOccurrenceForRecentSetDetailsWhenOlderSessionIsHeavier() {
-        LiftSummaryService service = new LiftSummaryService(workoutEntryRepository, workoutTemplateRepository, bodyweightLogRepository);
+        LiftSummaryService service = new LiftSummaryService(workoutEntryRepository, workoutTemplateRepository, bodyweightLogRepository, strengthCalculator);
 
         WorkoutTemplate pullTemplate = template(
                 PULL_TEMPLATE_ID,
@@ -197,29 +200,29 @@ class LiftSummaryServiceTest {
         assertThat(summary.personalBestKg()).isEqualTo(170.0);
         assertThat(summary.topSetWeightKg()).isEqualTo(170.0);
         assertThat(summary.topSetReps()).isEqualTo(3);
-        assertThat(summary.estimatedOneRepMaxKg()).isEqualTo(185.6);
+        assertThat(summary.estimatedOneRepMaxKg()).isEqualTo(187.0);
         assertThat(summary.bodyweightKg()).isEqualTo(75.0);
         assertThat(summary.bodyweightLoggedAt()).isEqualTo(LocalDate.of(2026, 5, 10));
         assertThat(summary.loadBodyweightRatio()).isEqualTo(2.27);
-        assertThat(summary.estimatedOneRepMaxBodyweightRatio()).isEqualTo(2.47);
+        assertThat(summary.estimatedOneRepMaxBodyweightRatio()).isEqualTo(2.49);
         assertThat(summary.mostRecentTopSetWeightKg()).isEqualTo(150.0);
         assertThat(summary.mostRecentTopSetReps()).isEqualTo(5);
-        assertThat(summary.mostRecentEstimatedOneRepMaxKg()).isEqualTo(173.3);
+        assertThat(summary.mostRecentEstimatedOneRepMaxKg()).isEqualTo(175.0);
         assertThat(summary.mostRecentBodyweightKg()).isEqualTo(75.0);
         assertThat(summary.mostRecentBodyweightLoggedAt()).isEqualTo(LocalDate.of(2026, 5, 24));
         assertThat(summary.mostRecentLoadBodyweightRatio()).isEqualTo(2.0);
-        assertThat(summary.mostRecentEstimatedOneRepMaxBodyweightRatio()).isEqualTo(2.31);
+        assertThat(summary.mostRecentEstimatedOneRepMaxBodyweightRatio()).isEqualTo(2.33);
         assertThat(summary.mostRecentTopSetPerformedAt()).isEqualTo(Instant.parse("2026-05-24T10:00:00Z"));
         assertThat(summary.previousTopSetWeightKg()).isEqualTo(170.0);
         assertThat(summary.previousTopSetReps()).isEqualTo(3);
-        assertThat(summary.previousEstimatedOneRepMaxKg()).isEqualTo(185.6);
+        assertThat(summary.previousEstimatedOneRepMaxKg()).isEqualTo(187.0);
         assertThat(summary.previousTopSetPerformedAt()).isEqualTo(Instant.parse("2026-05-10T10:00:00Z"));
     }
 
     @Test
     @DisplayName("returns null previous set fields when the lift only appears once")
     void returnsNullPreviousSetFieldsWhenLiftAppearsOnce() {
-        LiftSummaryService service = new LiftSummaryService(workoutEntryRepository, workoutTemplateRepository, bodyweightLogRepository);
+        LiftSummaryService service = new LiftSummaryService(workoutEntryRepository, workoutTemplateRepository, bodyweightLogRepository, strengthCalculator);
 
         WorkoutTemplate pushTemplate = template(
                 PUSH_TEMPLATE_ID,
@@ -253,7 +256,7 @@ class LiftSummaryServiceTest {
     @Test
     @DisplayName("returns the focused lift summary for the template-focused exercise only")
     void returnsTemplateFocusedLiftSummary() {
-        LiftSummaryService service = new LiftSummaryService(workoutEntryRepository, workoutTemplateRepository, bodyweightLogRepository);
+        LiftSummaryService service = new LiftSummaryService(workoutEntryRepository, workoutTemplateRepository, bodyweightLogRepository, strengthCalculator);
 
         WorkoutTemplate pushTemplate = template(
                 PUSH_TEMPLATE_ID,
@@ -281,7 +284,7 @@ class LiftSummaryServiceTest {
     @Test
     @DisplayName("falls back to the latest bodyweight log when no earlier weigh-in exists")
     void fallsBackToLatestBodyweightLog() {
-        LiftSummaryService service = new LiftSummaryService(workoutEntryRepository, workoutTemplateRepository, bodyweightLogRepository);
+        LiftSummaryService service = new LiftSummaryService(workoutEntryRepository, workoutTemplateRepository, bodyweightLogRepository, strengthCalculator);
 
         WorkoutTemplate pushTemplate = template(
                 PUSH_TEMPLATE_ID,
@@ -305,13 +308,13 @@ class LiftSummaryServiceTest {
         assertThat(summary.bodyweightKg()).isEqualTo(82.0);
         assertThat(summary.bodyweightLoggedAt()).isEqualTo(LocalDate.of(2026, 5, 20));
         assertThat(summary.loadBodyweightRatio()).isEqualTo(1.46);
-        assertThat(summary.estimatedOneRepMaxBodyweightRatio()).isEqualTo(1.6);
+        assertThat(summary.estimatedOneRepMaxBodyweightRatio()).isEqualTo(1.61);
     }
 
     @Test
     @DisplayName("falls back to the best performing lift when a template has no focused exercise")
     void fallsBackToTheBestPerformingLiftWhenTemplateHasNoFocusedExercise() {
-        LiftSummaryService service = new LiftSummaryService(workoutEntryRepository, workoutTemplateRepository, bodyweightLogRepository);
+        LiftSummaryService service = new LiftSummaryService(workoutEntryRepository, workoutTemplateRepository, bodyweightLogRepository, strengthCalculator);
 
         WorkoutTemplate pushTemplate = template(
                 PUSH_TEMPLATE_ID,
@@ -337,7 +340,7 @@ class LiftSummaryServiceTest {
     @Test
     @DisplayName("returns empty when the focused exercise has no qualifying history")
     void returnsEmptyWhenFocusedExerciseHasNoHistory() {
-        LiftSummaryService service = new LiftSummaryService(workoutEntryRepository, workoutTemplateRepository, bodyweightLogRepository);
+        LiftSummaryService service = new LiftSummaryService(workoutEntryRepository, workoutTemplateRepository, bodyweightLogRepository, strengthCalculator);
 
         WorkoutTemplate pushTemplate = template(
                 PUSH_TEMPLATE_ID,
@@ -353,7 +356,7 @@ class LiftSummaryServiceTest {
     @Test
     @DisplayName("breaks ties by template order when session counts match")
     void breaksTiesByTemplateOrderWhenSessionCountsMatch() {
-        LiftSummaryService service = new LiftSummaryService(workoutEntryRepository, workoutTemplateRepository, bodyweightLogRepository);
+        LiftSummaryService service = new LiftSummaryService(workoutEntryRepository, workoutTemplateRepository, bodyweightLogRepository, strengthCalculator);
 
         WorkoutTemplate pushTemplate = template(
                 PUSH_TEMPLATE_ID,

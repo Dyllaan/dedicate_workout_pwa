@@ -5,25 +5,21 @@ import { Skeleton } from "@/components/ui";
 import Panel from "@/components/layout/frames/Panel";
 
 const ZONES = [
-  { max: 0.4, color: "bg-slate-400", label: "Recovery" },
-  { max: 1.0, color: "bg-green-500", label: "Low" },
-  { max: 2.0, color: "bg-yellow-500", label: "Moderate" },
-  { max: 3.0, color: "bg-orange-500", label: "High" },
-  { max: Infinity, color: "bg-red-500", label: "Very High" },
+  { max: 0.4, color: "bg-slate-400", label: "Recovery", zone: "VERY_LOW" as const },
+  { max: 1.0, color: "bg-green-500", label: "Low", zone: "LOW" as const },
+  { max: 2.0, color: "bg-yellow-500", label: "Moderate", zone: "MODERATE" as const },
+  { max: 3.0, color: "bg-orange-500", label: "High", zone: "HIGH" as const },
+  { max: Infinity, color: "bg-red-500", label: "Very High", zone: "VERY_HIGH" as const },
 ];
 
-function getZoneLabel(totalInol: number): string {
-  for (const zone of ZONES) {
-    if (totalInol <= zone.max) return zone.label;
-  }
-  return "Very High";
+const ZONE_MAP = Object.fromEntries(ZONES.map(z => [z.zone, z])) as Record<string, typeof ZONES[number]>;
+
+function getZoneLabel(zone: string): string {
+  return ZONE_MAP[zone]?.label ?? "Very High";
 }
 
-function getZoneColor(totalInol: number): string {
-  for (const zone of ZONES) {
-    if (totalInol <= zone.max) return zone.color;
-  }
-  return "bg-red-500";
+function getZoneColor(zone: string): string {
+  return ZONE_MAP[zone]?.color ?? "bg-red-500";
 }
 
 export default function WeeklyInolCard() {
@@ -38,8 +34,8 @@ export default function WeeklyInolCard() {
     return null;
   }
 
-  const zoneLabel = getZoneLabel(data.totalInol);
-  const zoneColor = getZoneColor(data.totalInol);
+  const zoneLabel = getZoneLabel(data.zone);
+  const zoneColor = getZoneColor(data.zone);
   const barPercent = Math.min((data.totalInol / 4.0) * 100, 100);
 
   return (

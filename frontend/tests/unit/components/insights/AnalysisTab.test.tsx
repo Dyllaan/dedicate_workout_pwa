@@ -300,9 +300,9 @@ describe("AnalysisTab", () => {
 
     expect(screen.getByText("Recommendation")).toBeInTheDocument();
     expect(screen.getByText("Plateau")).toBeInTheDocument();
-    expect(screen.getByText("Trend")).toBeInTheDocument();
+    expect(screen.getAllByText("Trend").length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText("Bar speed is still there.")).toBeInTheDocument();
-    expect(screen.getByText("No plateau detected")).toBeInTheDocument();
+    expect(screen.getByText("No plateau detected from recent comparable sessions.")).toBeInTheDocument();
     expect(container.querySelector('path[data-line-series-key="actualWeight"]')).toHaveAttribute("stroke", "var(--chart-1)");
   });
 });

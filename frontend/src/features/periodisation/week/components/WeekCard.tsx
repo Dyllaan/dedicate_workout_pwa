@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CalendarDays, Moon, Save, Sun } from 'lucide-react';
+import { CalendarDays, Gauge, Moon, Save, Sun } from 'lucide-react';
 import { enqueueSnackbar } from 'notistack';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -79,6 +79,17 @@ export function WeekCard({
           }`} />
         </button>
       </div>
+
+      {week.intensityPct != null && !localDeload && (
+        <div
+          className="flex items-center gap-2 rounded-md bg-primary/10 px-3 py-2 text-sm"
+          title={`Based on rep range and RPE targets for week ${week.weekNumber}`}
+        >
+          <Gauge className="h-4 w-4 shrink-0 text-primary" />
+          <span className="font-medium text-primary">{week.intensityPct}% 1RM</span>
+        </div>
+      )}
+
       <div className="space-y-2.5">
         <Stepper
           mode="row"

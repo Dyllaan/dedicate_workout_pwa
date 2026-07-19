@@ -73,7 +73,7 @@ export function LogSetsPanel(props: LogSetsPanelProps) {
       );
     }
 
-    if (!forecastInsight) return null;
+    if (!forecastInsight || !forecast) return null;
 
     if (forecastInsight.source === "NO_DATA" || forecastInsight.targetWeightKg == null) {
       return (

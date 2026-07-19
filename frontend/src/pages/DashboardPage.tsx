@@ -6,7 +6,7 @@ import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import OnboardingDialog from "@/features/onboarding/components/OnboardingDialog";
 import Page from "@/components/layout/frames/Page";
 import { cn } from "@/lib/utils";
-import { Tooltip } from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import TipCarousel from "@/features/dashboard/components/TipCarousel.tsx";
 import DashboardSummaryContainer from "@/features/dashboard/components/summary/DashboardSummaryContainer";
 import { formatCurrentDate } from "@/utils/date";
@@ -39,26 +39,34 @@ export default function DashboardPage() {
       actions={
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1">
-            <Tooltip label="Refresh dashboard">
-              <button
-                onClick={() => void refreshDashboard()}
-                disabled={isRefreshing}
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:pointer-events-none disabled:opacity-60"
-                aria-label="Refresh dashboard"
-                data-testid="dashboard-refresh"
-              >
-                <RefreshCw className={cn("h-5 w-5", isRefreshing && "disabled")} />
-              </button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={() => void refreshDashboard()}
+                  disabled={isRefreshing}
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:pointer-events-none disabled:opacity-60"
+                  aria-label="Refresh dashboard"
+                  data-testid="dashboard-refresh"
+                >
+                  <RefreshCw className={cn("h-5 w-5", isRefreshing && "animate-spin")} /> 
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>Refresh dashboard</TooltipContent>
             </Tooltip>
-            <Tooltip label="Getting started">
-              <button
-                onClick={() => setShowOnboarding(true)}
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                aria-label="Help"
-                data-testid="dashboard-help"
-              >
-                <HelpCircle className="h-5 w-5" />
-              </button>
+
+            {/* Second Tooltip */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={() => setShowOnboarding(true)}
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                  aria-label="Help"
+                  data-testid="dashboard-help"
+                >
+                  <HelpCircle className="h-5 w-5" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>Getting started</TooltipContent>
             </Tooltip>
             <ThemeToggle />
           </div>

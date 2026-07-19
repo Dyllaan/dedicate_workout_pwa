@@ -7,5 +7,6 @@ public record WorkoutInolDTO(
         String exerciseName,
         double inolScore,
         double reference1RmKg,
-        boolean carryForward
+        boolean carryForward,
+        boolean backfilled
 ) {}

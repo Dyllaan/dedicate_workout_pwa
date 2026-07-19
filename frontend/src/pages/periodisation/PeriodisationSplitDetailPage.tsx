@@ -57,6 +57,18 @@ export default function PeriodisationSplitDetailPage() {
 
     const hasProgrammes = !programmesLoading && programmes.length > 0;
 
+    const workoutTemplates = useMemo(
+        () =>
+            split?.workouts
+                ? split.workouts.map((wt) => ({
+                      id: wt.id,
+                      name: wt.name,
+                      hasFocusExercise: wt.exercises?.some((e) => e.focus) ?? false,
+                  }))
+                : [],
+        [split?.workouts],
+    );
+
     const tabs = useMemo(
         () => [
             ...(hasSelectedProgramme ? [{ key: "your-programme" as SplitDetailTab, label: "Programme" }] : []),
@@ -171,7 +183,7 @@ export default function PeriodisationSplitDetailPage() {
             >
                 {activeTab === "your-programme" ? <YourProgramme split={split} activeProgramme={selectedProgramme} /> : null}
                 {activeTab === "block" ? (
-                    <BlockPanel splitId={split.id} block={selectedBlockSelection.block} programmes={programmes} />
+                    <BlockPanel splitId={split.id} block={selectedBlockSelection.block} programmes={programmes} workoutTemplates={workoutTemplates} />
                 ) : null}
                 {activeTab === "all-programmes" ? (
                     <ProgrammesPanel

@@ -39,7 +39,7 @@ describe("workoutEntryHelpers", () => {
         { reps: "1", weight: "110" },
         { reps: "0", weight: "999" },
       ]),
-    ).toBe(111.2);
+    ).toBe(110);
   });
 
   it("buildFinishEntrySummary returns no comparison state without a previous entry", () => {
@@ -103,9 +103,9 @@ describe("workoutEntryHelpers", () => {
       {
         exerciseName: "Bench Press",
         variant: "High bar",
-        currentE1rm: 111.2,
-        previousE1rm: 101.1,
-        deltaE1rm: 10.1,
+        currentE1rm: 110,
+        previousE1rm: 100,
+        deltaE1rm: 10,
       },
     ]);
   });

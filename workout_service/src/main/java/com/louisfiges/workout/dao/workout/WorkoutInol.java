@@ -14,7 +14,7 @@ public class WorkoutInol {
     private UUID id;
 
     @Column(name = "user_id", nullable = false)
-    private String userId;
+    private UUID userId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "workout_entry_id", nullable = false)
@@ -40,12 +40,15 @@ public class WorkoutInol {
     @Column(name = "carry_forward", nullable = false)
     private Boolean carryForward = false;
 
+    @Column(name = "backfilled", nullable = false)
+    private Boolean backfilled = false;
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt = Instant.now();
 
     public WorkoutInol() {}
 
-    public WorkoutInol(String userId, WorkoutEntry workoutEntry, ExerciseEntry exerciseEntry,
+    public WorkoutInol(UUID userId, WorkoutEntry workoutEntry, ExerciseEntry exerciseEntry,
                        String exerciseName, Double inolScore, Double reference1rmKg,
                        Block block, Boolean carryForward) {
         this.userId = userId;
@@ -60,7 +63,7 @@ public class WorkoutInol {
     }
 
     public UUID getId() { return id; }
-    public String getUserId() { return userId; }
+    public UUID getUserId() { return userId; }
     public WorkoutEntry getWorkoutEntry() { return workoutEntry; }
     public ExerciseEntry getExerciseEntry() { return exerciseEntry; }
     public String getExerciseName() { return exerciseName; }
@@ -68,5 +71,7 @@ public class WorkoutInol {
     public Double getReference1rmKg() { return reference1rmKg; }
     public Block getBlock() { return block; }
     public Boolean getCarryForward() { return carryForward; }
+    public Boolean getBackfilled() { return backfilled; }
+    public void setBackfilled(Boolean backfilled) { this.backfilled = backfilled; }
     public Instant getCreatedAt() { return createdAt; }
 }

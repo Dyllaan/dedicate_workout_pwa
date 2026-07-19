@@ -23,7 +23,7 @@ describe("SimpleLineChart", () => {
     );
 
     const axisLabels = Array.from(container.querySelectorAll("text")).filter((element) =>
-      element.classList.contains("text-[15px]"),
+      element.classList.contains("text-[24px]"),
     );
     expect(screen.getByRole("img")).toBeInTheDocument();
     expect(screen.queryByText("1 Apr 26")).not.toBeInTheDocument();

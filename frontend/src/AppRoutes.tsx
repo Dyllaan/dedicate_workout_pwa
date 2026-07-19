@@ -29,6 +29,7 @@ import ExerciseDefinitionsManagePage from "@/pages/insights/ExerciseDefinitionsM
 import HealthPage from "@/pages/public/HealthPage";
 import ChangePasswordPage from "@/pages/user/ChangePasswordPage.tsx";
 import YouPage from "@/pages/user/YouPage.tsx";
+import TestSessionPage from "@/features/workout/test-1rm/components/TestSessionPage";
 
 export default function AppRoutes() {
   return (
@@ -68,6 +69,7 @@ export default function AppRoutes() {
                   </WorkoutEntryProvider>
                 }
               />
+              <Route path="test-1rm" element={<TestSessionPage />} />
             </Route>
 
             <Route path="/periodisation/splits/:splitId" element={<ProgrammeLayout />}>

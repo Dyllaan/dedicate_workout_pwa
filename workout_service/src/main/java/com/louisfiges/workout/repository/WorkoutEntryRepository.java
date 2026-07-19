@@ -1,6 +1,7 @@
 package com.louisfiges.workout.repository;
 
 import com.louisfiges.workout.dao.workout.WorkoutEntry;
+import com.louisfiges.workout.dao.workout.WorkoutInol;
 
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.domain.Page;
@@ -310,6 +311,16 @@ public interface WorkoutEntryRepository extends JpaRepository<WorkoutEntry, UUID
             @Param("userId") UUID userId,
             @Param("exerciseDefinitionId") UUID exerciseDefinitionId
     );
+
+    @EntityGraph(attributePaths = {"exercises", "exercises.sets", "exercises.exerciseDefinition"})
+    @Query("""
+    SELECT we FROM WorkoutEntry we
+    WHERE we.userId = :userId
+      AND we.id NOT IN (
+        SELECT wi.workoutEntry.id FROM WorkoutInol wi WHERE wi.userId = :userId
+      )
+    """)
+    List<WorkoutEntry> findEntriesMissingInol(@Param("userId") UUID userId);
 
     // has the user logged any workout
     boolean existsByUserId(UUID userId);

@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { useMutation, useQuery, useQueryClient, keepPreviousData } from "@tanstack/react-query";
+import { enqueueSnackbar } from "notistack";
 import { unwrapApiResponse, workoutApi } from "@/api/api";
 import { buildPageParams, DEFAULT_PAGE_SIZE, fetchAllPagedItems } from "@/api/utils/PaginationHelper";
 import { queryKeys } from "@/api/queryKeys";
@@ -285,4 +286,26 @@ function normalizeCreatedWorkoutEntry(
       })),
     })),
   };
+}
+
+export function useBackfillInolMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      return unwrapApiResponse(await workoutApi.post<{ exercisesComputed: number }>("/workout-entries/backfill-inol"));
+    },
+    onSuccess: (data) => {
+      if (data.exercisesComputed > 0) {
+        enqueueSnackbar(`INOL calculated for ${data.exercisesComputed} exercises.`, { variant: "success" });
+      } else {
+        enqueueSnackbar("No INOL could be calculated — ensure you have an active block with 1RM data.", { variant: "warning" });
+      }
+      queryClient.invalidateQueries({ queryKey: queryKeys.workouts.entries(), refetchType: "all" });
+      invalidateDashboardData(queryClient);
+    },
+    onError: () => {
+      enqueueSnackbar("Failed to calculate INOL for older workouts.", { variant: "error" });
+    },
+  });
 }

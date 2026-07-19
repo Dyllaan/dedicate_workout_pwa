@@ -127,8 +127,8 @@ describe("FinishEntryPanel", () => {
     expect(screen.getByText("Focus lift")).toBeInTheDocument();
     expect(screen.getByText("Rep distribution")).toBeInTheDocument();
     expect(screen.getByText("High bar")).toBeInTheDocument();
-    expect(screen.getByText("+10.1kg")).toBeInTheDocument();
-    expect(screen.getByText("Current 111.2kg vs previous 101.1kg")).toBeInTheDocument();
+    expect(screen.getByText("+10kg")).toBeInTheDocument();
+    expect(screen.getByText("Current 110kg vs previous 100kg")).toBeInTheDocument();
     expect(screen.getByText("Target 3-6 reps")).toBeInTheDocument();
     expect(screen.getByText("2 exercises off target")).toBeInTheDocument();
   });

@@ -1,18 +1,27 @@
 package com.louisfiges.workout.controller.analysis;
 
 import com.louisfiges.workout.dao.workout.WorkoutInol;
+import com.louisfiges.workout.dao.workout.WorkoutEntry;
+import com.louisfiges.workout.dao.workout.WorkoutTemplate;
+import com.louisfiges.workout.dto.responses.InolHistoryResponse;
 import com.louisfiges.workout.dto.responses.WeeklyInolResponse;
 import com.louisfiges.workout.repository.WorkoutInolRepository;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
 import java.time.DayOfWeek;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -62,6 +71,53 @@ public class InolController {
                 zone,
                 perExercise
         ));
+    }
+
+    @GetMapping("/history")
+    @Transactional(readOnly = true)
+    public ResponseEntity<InolHistoryResponse> getInolHistory(
+            Principal principal,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+        UUID userId = UUID.fromString(principal.getName());
+
+        Instant toInstant = to != null ? to.atStartOfDay(ZoneOffset.UTC).plusDays(1).toInstant() : Instant.now();
+        Instant fromInstant = from != null
+                ? from.atStartOfDay(ZoneOffset.UTC).toInstant()
+                : toInstant.minus(12 * 7, ChronoUnit.DAYS);
+
+        List<WorkoutInol> rows = inolRepository.findByUserIdAndCreatedAtBetween(userId, fromInstant, toInstant);
+
+        Map<UUID, List<WorkoutInol>> byEntry = rows.stream()
+                .collect(Collectors.groupingBy(wi -> wi.getWorkoutEntry().getId()));
+
+        List<InolHistoryResponse.InolHistoryItem> items = byEntry.entrySet().stream()
+                .map(entry -> {
+                    List<WorkoutInol> inols = entry.getValue();
+                    WorkoutInol first = inols.get(0);
+                    WorkoutEntry workoutEntry = first.getWorkoutEntry();
+                    WorkoutTemplate template = workoutEntry.getTemplate();
+
+                    double total = inols.stream().mapToDouble(WorkoutInol::getInolScore).sum();
+
+                    List<InolHistoryResponse.PerExerciseInol> perExercise = inols.stream()
+                            .map(i -> new InolHistoryResponse.PerExerciseInol(
+                                    i.getExerciseName(),
+                                    Math.round(i.getInolScore() * 100.0) / 100.0))
+                            .collect(Collectors.toList());
+
+                    return new InolHistoryResponse.InolHistoryItem(
+                            workoutEntry.getId(),
+                            workoutEntry.getCreatedAt(),
+                            template.getId(),
+                            template.getName(),
+                            Math.round(total * 100.0) / 100.0,
+                            perExercise);
+                })
+                .sorted(Comparator.comparing(InolHistoryResponse.InolHistoryItem::createdAt))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(new InolHistoryResponse(items));
     }
 
     private String resolveZone(double totalInol) {

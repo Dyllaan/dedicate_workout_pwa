@@ -264,6 +264,24 @@ type WeekForecast = {
   insights: ForecastInsight[];
 };
 
+type InolHistoryPerExercise = {
+  exerciseName: string;
+  inolScore: number;
+};
+
+type InolHistoryItem = {
+  workoutEntryId: string;
+  createdAt: string;
+  templateId: string;
+  templateName: string;
+  totalInol: number;
+  perExercise: InolHistoryPerExercise[];
+};
+
+type InolHistoryResponse = {
+  items: InolHistoryItem[];
+};
+
 export type {
   InsightBlockContext,
   DashboardTrainingInsights,
@@ -282,4 +300,7 @@ export type {
   AutotuneOutcomeRequest,
   ForecastInsight,
   WeekForecast,
+  InolHistoryItem,
+  InolHistoryResponse,
+  InolHistoryPerExercise,
 };

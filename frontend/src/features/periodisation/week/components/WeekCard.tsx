@@ -7,16 +7,28 @@ import CollapsiblePanel from '@/components/layout/section/CollapsiblePanel';
 import type { Week } from '@/features/periodisation/types/Periodisation';
 import { Stepper } from '@/components/ui/stepper';
 
+type WorkoutTemplateInfo = {
+  id: string;
+  name: string;
+  hasFocusExercise: boolean;
+};
+
 export function WeekCard({
   week,
   onUpdateDeload,
   onUpdateTargetSets,
   isReadOnly = false,
+  isPeakingBlock = false,
+  workoutTemplates,
+  onTest1rm,
 }: {
   week: Week;
   onUpdateDeload: (weekId: string, deload: boolean) => Promise<void>;
   onUpdateTargetSets: (weekId: string, sets: number) => Promise<void>;
   isReadOnly?: boolean;
+  isPeakingBlock?: boolean;
+  workoutTemplates?: WorkoutTemplateInfo[];
+  onTest1rm?: (workoutTemplateId: string, weekId: string, currentTargetSets: number) => void;
 }) {
   const [localSets, setLocalSets] = useState(week.targetSetsPerExercise);
   const [localDeload, setLocalDeload] = useState(week.isDeload);
@@ -114,6 +126,25 @@ export function WeekCard({
           </Button>
         )}
       </div>
+
+      {isPeakingBlock && workoutTemplates && workoutTemplates.length > 0 && (
+        <div className="mt-3 space-y-2">
+          {workoutTemplates.map((wt) => (
+            <div key={wt.id} className="flex items-center justify-between rounded-lg border border-border bg-card/50 px-3 py-2">
+              <span className="text-sm font-medium">{wt.name}</span>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => onTest1rm?.(wt.id, week.id, week.targetSetsPerExercise)}
+                disabled={!wt.hasFocusExercise}
+                title={!wt.hasFocusExercise ? "No focus exercise set on this workout" : undefined}
+              >
+                Test 1RM
+              </Button>
+            </div>
+          ))}
+        </div>
+      )}
 
     </CollapsiblePanel>
   );

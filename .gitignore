@@ -25,3 +25,5 @@ ops/seed/.env
 /dump
 /workout_service/.idea
 /workout_service/.idea
+.superpowers/
+/barbell-vision

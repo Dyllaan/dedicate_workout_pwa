@@ -9,7 +9,6 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import {
-    ArrowLeftIcon,
     MoreHorizontalIcon,
     Pencil, Trash2,
 } from "lucide-react"
@@ -33,9 +32,6 @@ export function EntriesDropdown({ entryId, workoutId, deleteEntry }: SelectedWor
     return (
         <ButtonGroup>
             <ButtonGroup className="hidden sm:flex">
-        <Button icon={undefined} size="icon" aria-label="Go Back" title="Go back">
-    <ArrowLeftIcon />
-    </Button>
     </ButtonGroup>
     <ButtonGroup>
     <DropdownMenu>

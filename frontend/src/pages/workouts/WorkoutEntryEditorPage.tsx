@@ -213,6 +213,7 @@ function CreateWorkoutEntryContent({
     remainingSuggestions,
     removeExercise,
     moveExercise,
+    handleSubmit,
     submitting,
   } = form;
 
@@ -732,6 +733,7 @@ function useWorkoutEntryEditState(workoutEntry: WorkoutEntry) {
     hasChanges,
     isValid,
     reset,
+    copyFromPrevious,
   };
 }
 
@@ -803,6 +805,7 @@ function EditWorkoutEntryContent({
     hasChanges,
     isValid,
     reset,
+    copyFromPrevious,
   } = useWorkoutEntryEditState(workoutEntry);
 
   const { context: programmeContext } = useCurrentWeek();

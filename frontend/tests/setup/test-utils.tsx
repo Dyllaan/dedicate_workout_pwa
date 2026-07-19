@@ -6,6 +6,7 @@ import { MemoryRouter } from "react-router-dom";
 import { vi } from "vitest";
 import { AuthContext, type AuthContextType } from "@/features/auth/hooks/useAuth";
 import { ThemeProvider } from "@/components/theme/theme-provider";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import type { LoginResult } from "@/features/auth/types/User";
 import { buildUser } from "../shared/builders";
 
@@ -75,7 +76,9 @@ export function renderWithProviders(
           <MemoryRouter initialEntries={[route]}>
             <AuthContext.Provider value={auth}>
               <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
-                <SnackbarProvider>{children}</SnackbarProvider>
+                <TooltipProvider>
+                  <SnackbarProvider>{children}</SnackbarProvider>
+                </TooltipProvider>
               </ThemeProvider>
             </AuthContext.Provider>
           </MemoryRouter>

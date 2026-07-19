@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { enqueueSnackbar } from "notistack";
-import { Calendar, Dumbbell, TrendingUp, ChartArea, SlidersHorizontal, Activity } from "lucide-react";
+import { Calendar, Dumbbell, TrendingUp, ChartArea, SlidersHorizontal, Activity, Loader2, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
-import useWorkoutEntries from "@/features/workout/entries/hooks/useWorkoutEntries";
+import useWorkoutEntries, { useBackfillInolMutation } from "@/features/workout/entries/hooks/useWorkoutEntries";
 import EmptyState from "@/components/layout/feedback/EmptyState.tsx";
 import StatTile from "@/components/ui/stat-tile.tsx";
 import StatGrid from "@/components/ui/StatGrid.tsx";
@@ -16,6 +16,8 @@ import useWorkoutContext from "@/features/workout/hooks/useWorkoutContext";
 import ExerciseSetsTable from "@/features/workout/components/ExerciseSetsTable.tsx";
 import PaginatedContainer from "@/components/layout/frames/PaginatedContainer";
 import {EntriesDropdown} from "@/features/workout/entries/components/dropdown/EntriesDropdown.tsx";
+import { useState } from "react";
+import InolDrawer from "../drawer/InolDrawer";
 
 type WorkoutEntriesPanelProps = {
   workoutTemplateId: string;
@@ -38,6 +40,16 @@ function getExerciseInol(entry: WorkoutEntry, exerciseName: string): number | nu
   return found ? found.inolScore : null;
 }
 
+function isExerciseInolBackfilled(entry: WorkoutEntry, exerciseName: string): boolean {
+  if (!entry.inol) return false;
+  const found = entry.inol.perExercise.find((e) => e.exerciseName === exerciseName);
+  return found?.backfilled ?? false;
+}
+
+function hasBackfilledInol(entry: WorkoutEntry): boolean {
+  return entry.inol?.perExercise.some((e) => e.backfilled) ?? false;
+}
+
 export default function WorkoutEntriesPanel({ workoutTemplateId }: WorkoutEntriesPanelProps) {
   const { page, size, setPage } = useUrlPagination({ pageParam: "entriesPage", sizeParam: "entriesSize" });
   const { workoutEntries: entries, pageInfo, deleteWorkoutEntry, getAvgRpeForEntry } = useWorkoutEntries(
@@ -58,8 +70,21 @@ export default function WorkoutEntriesPanel({ workoutTemplateId }: WorkoutEntrie
     }
   };
 
+  const [inolDrawerOpen, setInolDrawerOpen] = useState(false);
+  const [currentInol, setCurrentInol] = useState<number>(0);
+  const [currentInolBackfilled, setCurrentInolBackfilled] = useState<boolean>(false);
+
+  const handleInolClick = (inol: number, backfilled: boolean) => {
+    setCurrentInol(inol);
+    setCurrentInolBackfilled(backfilled);
+    setInolDrawerOpen(true);
+  }
+
+  const { mutate: backfillInol, isPending: isBackfilling } = useBackfillInolMutation();
+
   return (
       <PaginatedContainer currentPage={page} total={pageInfo?.totalPages} onPageChange={setPage}>
+        <InolDrawer open={inolDrawerOpen} onOpenChange={setInolDrawerOpen} inol={currentInol} backfilled={currentInolBackfilled} />
         {sortedEntries.length === 0 ? (
             <EmptyState
                 icon={Calendar}
@@ -75,6 +100,19 @@ export default function WorkoutEntriesPanel({ workoutTemplateId }: WorkoutEntrie
             />
         ) : (
             <div className="space-y-4">
+              <Button
+                  variant="outline"
+                  onClick={() => backfillInol()}
+                  disabled={isBackfilling}
+                  className="w-full"
+              >
+                {isBackfilling ? (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                )}
+                Calculate INOL for older entries
+              </Button>
               {sortedEntries.map((entry) => {
                 const stats = getWorkoutStats(entry);
 
@@ -96,8 +134,11 @@ export default function WorkoutEntriesPanel({ workoutTemplateId }: WorkoutEntrie
                         <StatTile icon={SlidersHorizontal} label="Avg RPE" value={getAvgRpeForEntry(entry).toFixed(1)} />
                         <StatTile
                             icon={Activity}
-                            label="INOL"
+                            label={hasBackfilledInol(entry) ? "INOL (est.)" : "INOL"}
+                            supportingText={hasBackfilledInol(entry) ? "Estimated from historical data" : "Click me for more info"}
                             value={getTotalInol(entry)?.toFixed(2) ?? "-"}
+                            onClick={() => handleInolClick(getTotalInol(entry) ?? 0, hasBackfilledInol(entry))}
+                            variant="default"
                         />
                       </StatGrid>
 
@@ -143,7 +184,9 @@ export default function WorkoutEntriesPanel({ workoutTemplateId }: WorkoutEntrie
                                               {getExerciseInol(entry, exerciseEntry.loggedExerciseName ?? exerciseEntry.exerciseName)?.toFixed(2)}
                                             </span>
                                           </div>
-                                          <div className="text-xs text-muted-foreground">INOL</div>
+                                          <div className="text-xs text-muted-foreground">
+                                            INOL{isExerciseInolBackfilled(entry, exerciseEntry.loggedExerciseName ?? exerciseEntry.exerciseName) ? " (est.)" : ""}
+                                          </div>
                                         </div>
                                     )}
                                   </div>

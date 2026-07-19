@@ -11,9 +11,10 @@ public record WorkoutEntryRequest(
         UUID workoutTemplateId,
         List<ExerciseEntryRequest> exercises,
         String notes,
-        ReadinessCheckInRequestDTO readiness
+        ReadinessCheckInRequestDTO readiness,
+        Boolean is1rmTest
 ) implements DTO {
     public WorkoutEntryRequest(UUID workoutTemplateId, List<ExerciseEntryRequest> exercises, String notes) {
-        this(workoutTemplateId, exercises, notes, null);
+        this(workoutTemplateId, exercises, notes, null, null);
     }
 }

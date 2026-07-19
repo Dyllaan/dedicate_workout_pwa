@@ -4,11 +4,6 @@ import type { UseLogSetsInput } from "@/features/workout/entries/hooks/useLogSet
 import type { WorkoutEntryExerciseDraft, SetFormData } from "@/features/workout/entries/types/workoutEntryFormTypes";
 import { createExerciseIdentityDraft } from "@/features/workout/entries/types/ExerciseIdentity";
 
-const { mockUseTopSetAutotune, mockUseAutotuneOutcomeMutation } = vi.hoisted(() => ({
-  mockUseTopSetAutotune: vi.fn(),
-  mockUseAutotuneOutcomeMutation: vi.fn(),
-}));
-
 vi.mock("@/features/preferences/unit/hooks/useUnitPreference", () => ({
   useUnitPreference: () => ({
     unit: "kg",
@@ -16,11 +11,6 @@ vi.mock("@/features/preferences/unit/hooks/useUnitPreference", () => ({
     toStorage: (v: number) => v,
     format: (v: number) => `${v}kg`,
   }),
-}));
-
-vi.mock("@/features/insights/hooks/useTrainingInsights", () => ({
-  useTopSetAutotune: (...args: unknown[]) => mockUseTopSetAutotune(...args),
-  useAutotuneOutcomeMutation: () => mockUseAutotuneOutcomeMutation(),
 }));
 
 function makeExerciseItem(overrides: Partial<WorkoutEntryExerciseDraft> = {}): WorkoutEntryExerciseDraft {
@@ -57,17 +47,6 @@ function makeInput(overrides: Partial<UseLogSetsInput> = {}): UseLogSetsInput {
 }
 
 describe("useLogSets", () => {
-  beforeEach(() => {
-    mockUseTopSetAutotune.mockReturnValue({
-      data: null,
-      isLoading: false,
-      isFetching: false,
-    });
-    mockUseAutotuneOutcomeMutation.mockReturnValue({
-      mutateAsync: vi.fn(),
-      isPending: false,
-    });
-  });
 
   it("initialises with correct default state", () => {
     const { result } = renderHook(() => useLogSets(makeInput()));
@@ -79,56 +58,6 @@ describe("useLogSets", () => {
     expect(result.current.showBulkReps).toBe(false);
     expect(result.current.showResults).toBe(false);
     expect(result.current.resultSet).toBeNull();
-  });
-
-  it("requests autotune data for the active exercise and exposes the response", () => {
-    mockUseTopSetAutotune.mockReturnValue({
-      data: {
-        exerciseName: "Squat",
-        variant: "Low bar",
-        baseRecommendedWeightKg: 100,
-        adjustedRecommendedWeightKg: 102.5,
-        readinessScore: 18,
-        readinessTier: "HIGH",
-        adjustmentPercent: 2.5,
-        rationale: "Readiness is strong.",
-        trainingState: "IMPROVING",
-        recommendedAction: "INCREASE_LOAD",
-        topSetOnly: true,
-      },
-      isLoading: false,
-      isFetching: false,
-    });
-
-    const { result } = renderHook(() =>
-      useLogSets(
-        makeInput({
-          exerciseItem: makeExerciseItem({
-            identity: createExerciseIdentityDraft({
-              exerciseDefinitionId: "exercise-definition-99",
-              exerciseName: "Squat",
-              variant: "Low bar",
-            }),
-            sets: [
-              { reps: "5", weight: "100", rpe: "8" },
-              { reps: "4", weight: "100", rpe: "8", setRole: "TOP_SET" },
-              { reps: "3", weight: "95", rpe: "7" },
-            ],
-          }),
-          exerciseDefinitionId: "exercise-definition-99",
-        }),
-      ),
-    );
-
-    expect(mockUseTopSetAutotune).toHaveBeenCalledWith(
-      "template-1",
-      "exercise-definition-99",
-      "Squat",
-      "Low bar",
-    );
-    expect(result.current.autotuneRecommendation?.adjustedRecommendedWeightKg).toBe(102.5);
-    expect(result.current.autotuneTopSetIndex).toBe(1);
-    expect(result.current.isAutotuneLoading).toBe(false);
   });
 
   it("setRpeOpenFor toggles RPE panel for a set index", () => {
@@ -300,91 +229,7 @@ describe("useLogSets", () => {
   it("exposes inert smart coach fields after the insights backend removal", () => {
     const { result } = renderHook(() => useLogSets(makeInput()));
     expect(result.current.isDismissing).toBe(false);
-    expect(result.current.autotuneRecommendation).toBeNull();
-    expect(result.current.autotuneTopSetIndex).toBe(0);
-    expect(result.current.isAutotuneLoading).toBe(false);
-    expect(result.current.isAutotuneSubmitting).toBe(false);
     expect(result.current.smartCoachSummary).toBeNull();
   });
 
-  it("surfaces autotune submission state from the mutation hook", () => {
-    mockUseAutotuneOutcomeMutation.mockReturnValue({
-      mutateAsync: vi.fn(),
-      isPending: true,
-    });
-
-    const { result } = renderHook(() => useLogSets(makeInput()));
-
-    expect(result.current.isAutotuneSubmitting).toBe(true);
-  });
-
-  it("applies the recommended top set and records the outcome payload", async () => {
-    const mutateAsync = vi.fn().mockResolvedValue(undefined);
-    const handleSetChange = vi.fn();
-
-    mockUseTopSetAutotune.mockReturnValue({
-      data: {
-        exerciseName: "Squat",
-        variant: "Low bar",
-        baseRecommendedWeightKg: 100,
-        adjustedRecommendedWeightKg: 102.5,
-        readinessScore: 18,
-        readinessTier: "HIGH",
-        adjustmentPercent: 2.5,
-        rationale: "Readiness is strong.",
-        trainingState: "IMPROVING",
-        recommendedAction: "INCREASE_LOAD",
-        topSetOnly: true,
-      },
-      isLoading: false,
-      isFetching: false,
-    });
-    mockUseAutotuneOutcomeMutation.mockReturnValue({
-      mutateAsync,
-      isPending: false,
-    });
-
-    const { result } = renderHook(() =>
-      useLogSets(
-        makeInput({
-          handleSetChange,
-          exerciseItem: makeExerciseItem({
-            identity: createExerciseIdentityDraft({
-              exerciseDefinitionId: "exercise-definition-1",
-              exerciseName: "Squat",
-              variant: "Low bar",
-            }),
-            sets: [
-              { reps: "5", weight: "100", rpe: "8" },
-              { reps: "4", weight: "100", rpe: "8", setRole: "TOP_SET" },
-              { reps: "3", weight: "95", rpe: "7" },
-            ],
-          }),
-        }),
-      ),
-    );
-
-    await waitFor(() => {
-      expect(result.current.autotuneModifyWeight).toBe("102.5");
-    });
-
-    await act(async () => {
-      await result.current.handleApplyAutotune();
-    });
-
-    expect(handleSetChange).toHaveBeenCalledWith(0, 1, "weight", "102.5");
-    expect(mutateAsync).toHaveBeenCalledWith(
-      expect.objectContaining({
-        workoutTemplateId: "template-1",
-        exerciseName: "Squat",
-        variant: "Low bar",
-        action: "APPLY",
-        topSetIndex: 1,
-        baseRecommendedWeightKg: 100,
-        adjustedRecommendedWeightKg: 102.5,
-        appliedWeightKg: 102.5,
-        readinessScore: 18,
-      }),
-    );
-  });
 });

@@ -2,9 +2,11 @@ package com.louisfiges.workout.analysis;
 
 import com.louisfiges.workout.dto.responses.StrengthEstimate;
 import com.louisfiges.workout.util.MathUtils;
+import org.springframework.stereotype.Component;
 
 import java.text.DecimalFormat;
 
+@Component
 public class StrengthCalculator {
 
     DecimalFormat df = new DecimalFormat("#.00");

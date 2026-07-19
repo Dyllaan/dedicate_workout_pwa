@@ -1534,53 +1534,6 @@ async function installMockApi(page: Page, stateRef: { current: MockState }) {
       );
     }
 
-    if (path === "/workout/insights/autotune/top-set" && method === "GET") {
-      if (!hasValidAccessToken) {
-        return json(route, 401, { cause: "expired" });
-      }
-
-      const workoutTemplateId = url.searchParams.get("workoutTemplateId") ?? "";
-      const exerciseDefinitionId = url.searchParams.get("exerciseDefinitionId") ?? "";
-      const exerciseName = (url.searchParams.get("exerciseName") ?? "").trim().toLowerCase();
-      const variant = (url.searchParams.get("variant") ?? "").trim().toLowerCase();
-      const template = state.templateInsights[workoutTemplateId];
-      const insight = template?.exerciseInsights.find((entry) => {
-        const entryExerciseDefinitionId = (entry as { exerciseDefinitionId?: string | null }).exerciseDefinitionId ?? "";
-        if (exerciseDefinitionId && entryExerciseDefinitionId === exerciseDefinitionId) {
-          return true;
-        }
-
-        return entry.exerciseName.trim().toLowerCase() === exerciseName
-          && (entry.variant ?? "").trim().toLowerCase() === variant;
-      }) ?? null;
-      const base = insight?.recommendedWeightKg ?? null;
-      const readinessScore = state.readinessCheckIns[0]?.readinessScore ?? 12;
-      const readinessTier = readinessScore >= 16 ? "HIGH" : readinessScore <= 10 ? "LOW" : "MEDIUM";
-      const multiplier = readinessTier === "HIGH" ? 1.02 : readinessTier === "LOW" ? 0.97 : 1;
-      const adjusted = base == null ? null : Math.round(base * multiplier * 10) / 10;
-
-      return json(route, 200, {
-        exerciseName: insight?.exerciseName ?? url.searchParams.get("exerciseName"),
-        variant: insight?.variant ?? url.searchParams.get("variant"),
-        baseRecommendedWeightKg: base,
-        adjustedRecommendedWeightKg: adjusted,
-        readinessScore,
-        readinessTier,
-        adjustmentPercent: Math.round((multiplier - 1) * 1000) / 10,
-        rationale: "Mock autotune guidance",
-        trainingState: insight?.trainingState ?? "UNDEREXPOSED",
-        recommendedAction: insight?.recommendedAction ?? "HOLD_LOAD",
-        topSetOnly: true,
-      });
-    }
-
-    if (path === "/workout/insights/autotune/outcomes" && method === "POST") {
-      if (!hasValidAccessToken) {
-        return json(route, 401, { cause: "expired" });
-      }
-      return route.fulfill({ status: 204, body: "" });
-    }
-
     if (path === "/workout/progress/series/catalog" && method === "GET") {
       if (!hasValidAccessToken) {
         return json(route, 401, { cause: "expired" });

@@ -6,6 +6,7 @@ import {
 } from "@/features/insights/hooks/useTrainingInsights";
 import InsightsVolumePanel from "@/features/insights/components/InsightsVolumePanel.tsx";
 import { InsightsOverviewPanel } from "@/features/insights/components/InsightsOverviewPanel.tsx";
+import InolChartPanel from "@/features/insights/components/InolChartPanel";
 import { type InsightsViewTab } from "@/features/insights/utils/insightsUtils";
 import Section from "@/components/layout/section/Section";
 import Page from "@/components/layout/frames/Page";
@@ -21,10 +22,11 @@ const SMART_COACH_TABS: TabItem<InsightsViewTab>[] = [
   { key: "overview", label: "Overview" },
   { key: "volume", label: "Volume" },
   { key: "lift", label: "Lift detail" },
+  { key: "inol", label: "INOL" },
 ];
 
 function isSmartCoachTab(value: string | null): value is InsightsViewTab {
-  return value === "overview" || value === "volume" || value === "lift";
+  return value === "overview" || value === "volume" || value === "lift" || value === "inol";
 }
 
 export default function InsightsPage() {
@@ -68,6 +70,7 @@ export default function InsightsPage() {
         {activeTab === "overview" ? overviewContent : null}
         {activeTab === "volume" ? <InsightsVolumePanel /> : null}
         {activeTab === "lift" ? <ProgressPanel /> : null}
+        {activeTab === "inol" ? <InolChartPanel /> : null}
       </TabShell>
     </Page>
   );

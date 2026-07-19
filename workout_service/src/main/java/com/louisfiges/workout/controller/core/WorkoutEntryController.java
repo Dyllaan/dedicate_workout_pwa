@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -96,5 +97,12 @@ public class WorkoutEntryController {
             @AuthenticationPrincipal Jwt jwt) {
         UUID userId = UUID.fromString(jwt.getSubject());
         workoutEntryService.delete(id, userId);
+    }
+
+    @PostMapping("/backfill-inol")
+    public Map<String, Integer> backfillInol(@AuthenticationPrincipal Jwt jwt) {
+        UUID userId = UUID.fromString(jwt.getSubject());
+        int exercisesComputed = workoutEntryService.backfillInol(userId);
+        return Map.of("exercisesComputed", exercisesComputed);
     }
 }

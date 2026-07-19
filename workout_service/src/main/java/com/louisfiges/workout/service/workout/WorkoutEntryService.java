@@ -127,7 +127,7 @@ public class WorkoutEntryService {
         WorkoutTemplate template = workoutTemplateRepository.findByIdAndUserId(request.workoutTemplateId(), userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Workout template not found"));
         WorkoutEntry saved = workoutEntryRepository.save(
-                new WorkoutEntry(template, userId, buildExerciseEntries(request.exercises(), userId), request.notes())
+                new WorkoutEntry(template, userId, buildExerciseEntries(request.exercises(), userId), request.notes(), request.is1rmTest())
         );
         if (request.readiness() != null) {
             readinessService.createCheckIn(userId, saved.getId(), request.readiness());
@@ -150,6 +150,15 @@ public class WorkoutEntryService {
         analysisCacheEvictor.evictAnalysisCachesAfterCommit();
         inolCalculator.computeAndPersist(savedEntry, userId);
         return response;
+    }
+
+    public int backfillInol(UUID userId) {
+        List<WorkoutEntry> entriesWithoutInol = workoutEntryRepository.findEntriesMissingInol(userId);
+        int exercisesComputed = 0;
+        for (WorkoutEntry entry : entriesWithoutInol) {
+            exercisesComputed += inolCalculator.computeAndPersistBackfill(entry, userId);
+        }
+        return exercisesComputed;
     }
 
     @Transactional

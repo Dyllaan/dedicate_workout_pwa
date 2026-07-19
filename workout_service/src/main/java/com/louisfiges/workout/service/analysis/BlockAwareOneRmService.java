@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
@@ -68,6 +69,33 @@ public class BlockAwareOneRmService {
         }
 
         return Optional.empty();
+    }
+
+    public Optional<OneRmResult> resolveOneRmWindowed(UUID exerciseDefId, UUID userId, Instant entryDate) {
+        Instant windowStart = entryDate.minus(28, ChronoUnit.DAYS);
+        Instant windowEnd = entryDate.plus(28, ChronoUnit.DAYS);
+        OneRmResult result = estimateOneRm(exerciseDefId, userId, windowStart, windowEnd, true);
+        return Optional.ofNullable(result);
+    }
+
+    public Optional<OneRmResult> estimateOneRmFromSets(List<SetEntry> sets) {
+        SetEntry bestSet = null;
+        double bestWeight = 0;
+
+        for (SetEntry set : sets) {
+            if (set.getWeight() != null && set.getWeight() > 0 && set.getWeight() > bestWeight) {
+                bestWeight = set.getWeight();
+                bestSet = set;
+            }
+        }
+
+        if (bestSet == null) return Optional.empty();
+
+        StrengthEstimate estimate = strengthCalculator.estimateOneRepMax(bestSet.getWeight(), bestSet.getReps());
+        return Optional.of(new OneRmResult(
+                estimate.epley(), estimate.bryzycki(), estimate.lombardi(),
+                bestSet, Instant.now(), true
+        ));
     }
 
     public OneRmResult estimateOneRm(UUID exerciseDefId, UUID userId, Instant blockStart, Instant blockEnd, boolean carryForward) {

@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { LucideIcon } from "lucide-react";
+import { type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils.ts";
 
 type StatTileProps = {
@@ -8,10 +8,12 @@ type StatTileProps = {
     supportingText?: ReactNode;
     icon?: LucideIcon | React.ComponentType<{ className?: string }>;
     size?: "sm" | "default";
+    variant?: "default" | "double" | "full"; // Added variant prop
     className?: string;
     labelClassName?: string;
     valueClassName?: string;
     tint?: string;
+    onClick?: () => void;
 };
 
 export default function StatTile({
@@ -23,16 +25,22 @@ export default function StatTile({
                                      labelClassName,
                                      valueClassName,
                                      tint,
+                                     onClick,
                                      size = "default",
+                                     variant = "default", // Defaulting to normal size
                                  }: StatTileProps) {
     const disabled = value === undefined || value === null;
     const compact = size === "sm";
 
     return (
         <div
+            onClick={onClick}
             className={cn(
                 "group relative flex flex-col justify-between rounded-2xl border border-muted/40 bg-card transition-all duration-200 hover:border-primary/20 hover:shadow-sm",
                 compact ? "p-3" : "p-4 sm:p-5",
+                // Conditional column spanning
+                variant === "double" && "col-span-2",
+                variant === "full" && "col-span-full",
                 className
             )}
         >

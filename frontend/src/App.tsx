@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { lazy, Suspense } from "react";
 import StorageNotice from "@/components/layout/app/StorageNotice";
 import AppVersionRecovery from "@/features/startup/components/AppVersionRecovery";
+import { Tooltip } from "radix-ui";
 
 const ReactQueryDevtools = lazy(() =>
   import("@tanstack/react-query-devtools").then((module) => ({
@@ -41,8 +42,10 @@ export default function App() {
         <AppVersionRecovery>
           <AuthProvider>
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-              <AppRoutes />
-              <StorageNotice />
+              <Tooltip.Provider delayDuration={0} skipDelayDuration={0}>
+                <AppRoutes />
+                <StorageNotice />
+              </Tooltip.Provider>
             </ThemeProvider>
           </AuthProvider>
         </AppVersionRecovery>

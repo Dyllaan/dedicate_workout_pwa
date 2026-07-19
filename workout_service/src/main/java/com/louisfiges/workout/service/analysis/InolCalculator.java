@@ -9,6 +9,7 @@ import com.louisfiges.workout.util.MathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
@@ -28,10 +29,12 @@ public class InolCalculator {
         this.inolRepository = inolRepository;
     }
 
-    public void computeAndPersist(WorkoutEntry entry, UUID userId) {
+    public int computeAndPersist(WorkoutEntry entry, UUID userId) {
         if (entry.getExercises() == null || entry.getExercises().isEmpty()) {
-            return;
+            return 0;
         }
+
+        int processed = 0;
 
         for (ExerciseEntry exerciseEntry : entry.getExercises()) {
             if (exerciseEntry.getExerciseDefinition() == null) {
@@ -57,7 +60,7 @@ public class InolCalculator {
                     : exerciseEntry.getExerciseDefinition().getExerciseName();
 
             WorkoutInol inol = new WorkoutInol(
-                    userId.toString(),
+                    userId,
                     entry,
                     exerciseEntry,
                     exerciseName,
@@ -68,7 +71,10 @@ public class InolCalculator {
             );
 
             inolRepository.save(inol);
+            processed++;
         }
+
+        return processed;
     }
 
     double computeExerciseInol(ExerciseEntry exerciseEntry, double ref1rm) {
@@ -93,5 +99,66 @@ public class InolCalculator {
         }
 
         return totalInol;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public int computeAndPersistBackfill(WorkoutEntry entry, UUID userId) {
+        inolRepository.deleteByWorkoutEntryId(entry.getId());
+
+        if (entry.getExercises() == null || entry.getExercises().isEmpty()) {
+            return 0;
+        }
+
+        int processed = 0;
+
+        for (ExerciseEntry exerciseEntry : entry.getExercises()) {
+            if (exerciseEntry.getExerciseDefinition() == null) {
+                log.debug("Skipping backfill INOL for exercise without definition: {}",
+                        exerciseEntry.getLoggedExerciseName());
+                continue;
+            }
+
+            Optional<BlockAwareOneRmService.OneRmResult> oneRmOpt =
+                    oneRmService.resolveOneRmWindowed(
+                            exerciseEntry.getExerciseDefinition().getId(),
+                            userId,
+                            entry.getCreatedAt()
+                    );
+
+            if (oneRmOpt.isEmpty()) {
+                oneRmOpt = oneRmService.estimateOneRmFromSets(exerciseEntry.getSets());
+            }
+
+            if (oneRmOpt.isEmpty()) {
+                log.debug("Skipping backfill INOL for {} — no 1RM estimable",
+                        exerciseEntry.getLoggedExerciseName());
+                continue;
+            }
+
+            BlockAwareOneRmService.OneRmResult oneRm = oneRmOpt.get();
+            double ref1rm = MathUtils.medianOfThree(oneRm.epley(), oneRm.bryzycki(), oneRm.lombardi());
+            double exerciseInol = computeExerciseInol(exerciseEntry, ref1rm);
+
+            String exerciseName = exerciseEntry.getLoggedExerciseName() != null
+                    ? exerciseEntry.getLoggedExerciseName()
+                    : exerciseEntry.getExerciseDefinition().getExerciseName();
+
+            WorkoutInol inol = new WorkoutInol(
+                    userId,
+                    entry,
+                    exerciseEntry,
+                    exerciseName,
+                    MathUtils.roundTo2Decimals(exerciseInol),
+                    MathUtils.roundTo1Decimal(ref1rm),
+                    null,
+                    true
+            );
+            inol.setBackfilled(true);
+
+            inolRepository.save(inol);
+            processed++;
+        }
+
+        return processed;
     }
 }

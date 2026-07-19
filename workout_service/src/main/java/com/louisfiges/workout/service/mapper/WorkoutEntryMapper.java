@@ -50,7 +50,8 @@ public class WorkoutEntryMapper {
                         wi.getExerciseName(),
                         wi.getInolScore(),
                         wi.getReference1rmKg(),
-                        wi.getCarryForward()
+                        wi.getCarryForward(),
+                        wi.getBackfilled()
                 ));
             }
             inolDTO = new WorkoutEntryInolDTO(total, items);

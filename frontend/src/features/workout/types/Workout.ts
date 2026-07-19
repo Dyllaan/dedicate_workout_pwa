@@ -98,6 +98,7 @@ type WorkoutInol = {
   inolScore: number;
   reference1RmKg: number;
   carryForward: boolean;
+  backfilled: boolean;
 };
 
 type WorkoutEntryInol = {
@@ -182,6 +183,7 @@ type CreateWorkoutEntryRequest = {
   }[];
   notes?: string;
   readiness?: ReadinessCheckInRequest | null;
+  is1rmTest?: boolean;
 };
 
 type UpdateWorkoutEntryRequest = {

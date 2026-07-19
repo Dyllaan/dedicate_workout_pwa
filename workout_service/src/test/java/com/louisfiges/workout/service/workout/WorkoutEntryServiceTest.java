@@ -139,7 +139,8 @@ class WorkoutEntryServiceTest {
                         )
                 ),
                 "Good session",
-                readinessRequest
+                readinessRequest,
+                null
         );
 
         var response = service.create(request, userId);

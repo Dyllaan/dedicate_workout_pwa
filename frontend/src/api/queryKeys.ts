@@ -67,15 +67,6 @@ export const queryKeys = {
       page == null || size == null ? ["training-insights", "signals"] as const : ["training-insights", "signals", page, size] as const,
     dismissals: (page?: number, size?: number) =>
       page == null || size == null ? ["training-insights", "dismissals"] as const : ["training-insights", "dismissals", page, size] as const,
-    autotune: (templateId: string, exerciseName: string, variant?: string, exerciseDefinitionId?: string) =>
-      [
-        "training-insights",
-        "autotune",
-        templateId,
-        exerciseDefinitionId ?? "",
-        exerciseName,
-        variant ?? "",
-      ] as const,
   },
   analysis: {
     all: () => ["analysis"] as const,
@@ -83,6 +74,10 @@ export const queryKeys = {
       templateId == null
         ? ["analysis", "recommendation", limit ?? "", startDate ?? "", endDate ?? ""] as const
         : ["analysis", "recommendation", templateId, limit ?? "", startDate ?? "", endDate ?? ""] as const,
+    forecast: (weekId: string) => ["analysis", "forecast", weekId] as const,
+    weeklyInol: () => ["analysis", "inol", "weekly"] as const,
+    inolHistory: (from?: string, to?: string) =>
+      ["analysis", "inol", "history", from ?? "", to ?? ""] as const,
   },
   readiness: {
     history: (days: number, page?: number, size?: number) =>

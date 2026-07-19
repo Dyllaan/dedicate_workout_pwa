@@ -38,8 +38,6 @@ describe("LogSetsView", () => {
     setRpeOpenFor: vi.fn(),
     showResults: false,
     resultSet: null,
-    autotuneRecommendation: null,
-    isAutotuneLoading: false,
     toDisplayWeightStr: (value: string) => value,
     handleWeightInputChange: vi.fn(),
     restore: vi.fn(),

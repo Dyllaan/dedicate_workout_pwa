@@ -14,6 +14,7 @@ import com.louisfiges.workout.exception.exceptions.ResourceNotFoundException;
 import com.louisfiges.workout.repository.WorkoutEntryRepository;
 import com.louisfiges.workout.repository.WorkoutTemplateRepository;
 import com.louisfiges.workout.service.analysis.AnalysisCacheEvictor;
+import com.louisfiges.workout.service.analysis.InolCalculator;
 import com.louisfiges.workout.service.mapper.WorkoutEntryMapper;
 import com.louisfiges.workout.validation.RestTimeValidator;
 import com.louisfiges.workout.util.PaginationUtils;
@@ -38,6 +39,7 @@ public class WorkoutEntryService {
     private final ReadinessService readinessService;
     private final AnalysisCacheEvictor analysisCacheEvictor;
     private final WorkoutEntryMapper workoutEntryMapper;
+    private final InolCalculator inolCalculator;
 
     public WorkoutEntryService(
             WorkoutEntryRepository workoutEntryRepository,
@@ -45,13 +47,15 @@ public class WorkoutEntryService {
             ExerciseDefinitionService exerciseDefinitionService,
             ReadinessService readinessService,
             AnalysisCacheEvictor analysisCacheEvictor,
-            WorkoutEntryMapper workoutEntryMapper) {
+            WorkoutEntryMapper workoutEntryMapper,
+            InolCalculator inolCalculator) {
         this.workoutEntryRepository = workoutEntryRepository;
         this.workoutTemplateRepository = workoutTemplateRepository;
         this.exerciseDefinitionService = exerciseDefinitionService;
         this.readinessService = readinessService;
         this.analysisCacheEvictor = analysisCacheEvictor;
         this.workoutEntryMapper = workoutEntryMapper;
+        this.inolCalculator = inolCalculator;
     }
 
     @Transactional(readOnly = true)
@@ -66,6 +70,12 @@ public class WorkoutEntryService {
                     .stream().map(workoutEntryMapper::toDTO).toList();
         }
         return workoutEntryRepository.findHistoryByUserId(userId)
+                .stream().map(workoutEntryMapper::toDTO).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<WorkoutEntryDTO> getAllByExerciseDefinition(UUID userId, UUID exerciseDefinitionId) {
+        return workoutEntryRepository.findAllByUserIdAndExerciseDefinitionId(userId, exerciseDefinitionId)
                 .stream().map(workoutEntryMapper::toDTO).toList();
     }
 
@@ -117,12 +127,13 @@ public class WorkoutEntryService {
         WorkoutTemplate template = workoutTemplateRepository.findByIdAndUserId(request.workoutTemplateId(), userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Workout template not found"));
         WorkoutEntry saved = workoutEntryRepository.save(
-                new WorkoutEntry(template, userId, buildExerciseEntries(request.exercises(), userId), request.notes())
+                new WorkoutEntry(template, userId, buildExerciseEntries(request.exercises(), userId), request.notes(), request.is1rmTest())
         );
         if (request.readiness() != null) {
             readinessService.createCheckIn(userId, saved.getId(), request.readiness());
         }
         analysisCacheEvictor.evictAnalysisCachesAfterCommit();
+        inolCalculator.computeAndPersist(saved, userId);
         return workoutEntryMapper.toDTO(saved);
     }
 
@@ -137,7 +148,17 @@ public class WorkoutEntryService {
         WorkoutEntry savedEntry = workoutEntryRepository.save(entry);
         WorkoutEntryDTO response = workoutEntryMapper.toDTO(savedEntry);
         analysisCacheEvictor.evictAnalysisCachesAfterCommit();
+        inolCalculator.computeAndPersist(savedEntry, userId);
         return response;
+    }
+
+    public int backfillInol(UUID userId) {
+        List<WorkoutEntry> entriesWithoutInol = workoutEntryRepository.findEntriesMissingInol(userId);
+        int exercisesComputed = 0;
+        for (WorkoutEntry entry : entriesWithoutInol) {
+            exercisesComputed += inolCalculator.computeAndPersistBackfill(entry, userId);
+        }
+        return exercisesComputed;
     }
 
     @Transactional

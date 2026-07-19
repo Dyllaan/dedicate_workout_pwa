@@ -1,5 +1,6 @@
 package com.louisfiges.workout.service.analysis;
 
+import com.louisfiges.workout.analysis.StrengthCalculator;
 import com.louisfiges.workout.dao.core.BodyweightLog;
 import com.louisfiges.workout.dao.workout.ExerciseConfig;
 import com.louisfiges.workout.dao.workout.ExerciseDefinition;
@@ -38,15 +39,18 @@ public class LiftSummaryService {
     private final WorkoutEntryRepository workoutEntryRepository;
     private final WorkoutTemplateRepository workoutTemplateRepository;
     private final BodyweightLogRepository bodyweightLogRepository;
+    private final StrengthCalculator strengthCalculator;
 
     public LiftSummaryService(
             WorkoutEntryRepository workoutEntryRepository,
             WorkoutTemplateRepository workoutTemplateRepository,
-            BodyweightLogRepository bodyweightLogRepository
+            BodyweightLogRepository bodyweightLogRepository,
+            StrengthCalculator strengthCalculator
     ) {
         this.workoutEntryRepository = workoutEntryRepository;
         this.workoutTemplateRepository = workoutTemplateRepository;
         this.bodyweightLogRepository = bodyweightLogRepository;
+        this.strengthCalculator = strengthCalculator;
     }
 
     public Optional<DashboardTopLiftDTO> getOverallLiftSummary(UUID userId) {
@@ -203,7 +207,7 @@ public class LiftSummaryService {
                         entry.getCreatedAt(),
                         set.getWeight(),
                         set.getReps(),
-                        estimateOneRepMax(set.getWeight(), set.getReps())
+                        strengthCalculator.estimateOneRepMaxMedian(set.getWeight(), set.getReps())
                 ))
                 .toList();
 
@@ -264,13 +268,6 @@ public class LiftSummaryService {
                 roundRatio(point.weightKg() / bodyweightKg),
                 roundRatio(point.estimatedOneRepMaxKg() / bodyweightKg)
         );
-    }
-
-    private static double estimateOneRepMax(double weightKg, int reps) {
-        double epley = round(weightKg * (1 + reps / 30.0));
-        double brzycki = round(weightKg * (36.0 / (37 - reps)));
-        double lombardi = round(weightKg * Math.pow(reps, 0.10));
-        return round((epley + brzycki + lombardi) / 3.0);
     }
 
     private static double round(double value) {

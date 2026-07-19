@@ -4,82 +4,36 @@ import { useQuery } from "@tanstack/react-query";
 import { unwrapApiResponse, workoutApi } from "@/api/api";
 import { queryKeys } from "@/api/queryKeys";
 import { useAuth } from "@/features/auth/hooks/useAuth";
-import { useAllWorkoutEntries } from "@/features/workout/entries/hooks/useWorkoutEntries";
 import type { AnalysisExerciseOption, TemplateAnalysisRecommendationResponse } from "@/features/analysis/types/Analysis";
-import type { WorkoutEntry, WorkoutTemplate } from "@/features/workout/types/Workout";
+import type { WorkoutTemplate } from "@/features/workout/types/Workout";
 import { useAllWorkoutTemplates } from "@/features/workout/templates/hooks/useWorkoutTemplates";
 
-type TemplateUsageSummary = {
-  sessionCount: number;
-  lastUsedAt: string | null;
-};
-
-function buildTemplateUsageSummary(workoutEntries: WorkoutEntry[]): Map<string, TemplateUsageSummary> {
-  const usageByTemplateId = new Map<string, TemplateUsageSummary>();
-
-  for (const entry of workoutEntries) {
-    const templateId = entry.template?.id;
-    if (!templateId) {
-      continue;
-    }
-
-    const current = usageByTemplateId.get(templateId) ?? {
-      sessionCount: 0,
-      lastUsedAt: null,
-    };
-
-    usageByTemplateId.set(templateId, {
-      sessionCount: current.sessionCount + 1,
-      lastUsedAt:
-        current.lastUsedAt == null || entry.createdAt > current.lastUsedAt
-          ? entry.createdAt
-          : current.lastUsedAt,
-    });
+function compareOptions(left: AnalysisExerciseOption, right: AnalysisExerciseOption): number {
+  const nameComparison = left.exerciseName.localeCompare(right.exerciseName);
+  if (nameComparison !== 0) {
+    return nameComparison;
   }
 
-  return usageByTemplateId;
-}
-
-function compareOptions(
-  left: AnalysisExerciseOption,
-  right: AnalysisExerciseOption,
-  usageByTemplateId: Map<string, TemplateUsageSummary>,
-) {
-  const leftUsage = usageByTemplateId.get(left.templateId) ?? { sessionCount: 0, lastUsedAt: null };
-  const rightUsage = usageByTemplateId.get(right.templateId) ?? { sessionCount: 0, lastUsedAt: null };
-
-  if (leftUsage.sessionCount !== rightUsage.sessionCount) {
-    return leftUsage.sessionCount - rightUsage.sessionCount;
-  }
-
-  const leftLastUsedAt = leftUsage.lastUsedAt ? Date.parse(leftUsage.lastUsedAt) : 0;
-  const rightLastUsedAt = rightUsage.lastUsedAt ? Date.parse(rightUsage.lastUsedAt) : 0;
-  if (leftLastUsedAt !== rightLastUsedAt) {
-    return leftLastUsedAt - rightLastUsedAt;
-  }
-
-  const leftCreatedAt = Date.parse(left.templateCreatedAt);
-  const rightCreatedAt = Date.parse(right.templateCreatedAt);
-  if (leftCreatedAt !== rightCreatedAt) {
-    return leftCreatedAt - rightCreatedAt;
+  const variantComparison = (left.variant ?? "").localeCompare(right.variant ?? "");
+  if (variantComparison !== 0) {
+    return variantComparison;
   }
 
   return left.templateName.localeCompare(right.templateName);
 }
 
-function buildAnalysisExerciseOptions(templates: WorkoutTemplate[], workoutEntries: WorkoutEntry[]): AnalysisExerciseOption[] {
-  const usageByTemplateId = buildTemplateUsageSummary(workoutEntries);
+function buildAnalysisExerciseOptions(templates: WorkoutTemplate[]): AnalysisExerciseOption[] {
   const resolved = new Map<string, AnalysisExerciseOption>();
 
-  templates.forEach((template) => {
-    template.exercises.forEach((exercise) => {
+  for (const template of templates) {
+    for (const exercise of template.exercises) {
       if (!exercise.focus) {
-        return;
+        continue;
       }
 
       const exerciseDefinitionId = exercise.exerciseDefinition.id?.trim();
       if (!exerciseDefinitionId) {
-        return;
+        continue;
       }
 
       const option: AnalysisExerciseOption = {
@@ -93,42 +47,29 @@ function buildAnalysisExerciseOptions(templates: WorkoutTemplate[], workoutEntri
       };
 
       const existing = resolved.get(exerciseDefinitionId);
-      if (!existing || compareOptions(option, existing, usageByTemplateId) > 0) {
+      if (!existing || compareOptions(option, existing) < 0) {
         resolved.set(exerciseDefinitionId, option);
       }
-    });
-  });
-
-  return [...resolved.values()].sort((left, right) => {
-    const nameComparison = left.exerciseName.localeCompare(right.exerciseName);
-    if (nameComparison !== 0) {
-      return nameComparison;
     }
+  }
 
-    const variantComparison = (left.variant ?? "").localeCompare(right.variant ?? "");
-    if (variantComparison !== 0) {
-      return variantComparison;
-    }
-
-    return left.templateName.localeCompare(right.templateName);
-  });
+  return [...resolved.values()].sort(compareOptions);
 }
 
 export function useAnalysisExerciseOptions() {
   const templatesQuery = useAllWorkoutTemplates();
-  const workoutEntriesQuery = useAllWorkoutEntries(undefined, true);
 
   const options = useMemo(
-    () => buildAnalysisExerciseOptions(templatesQuery.data ?? [], workoutEntriesQuery.data ?? []),
-    [templatesQuery.data, workoutEntriesQuery.data],
+    () => buildAnalysisExerciseOptions(templatesQuery.data ?? []),
+    [templatesQuery.data],
   );
 
   return {
     options,
-    isLoading: templatesQuery.isLoading || workoutEntriesQuery.isLoading,
-    error: templatesQuery.error ?? workoutEntriesQuery.error ?? null,
+    isLoading: templatesQuery.isLoading,
+    error: templatesQuery.error ?? null,
     refetch: async () => {
-      await Promise.all([templatesQuery.refetch(), workoutEntriesQuery.refetch()]);
+      await templatesQuery.refetch();
     },
   };
 }

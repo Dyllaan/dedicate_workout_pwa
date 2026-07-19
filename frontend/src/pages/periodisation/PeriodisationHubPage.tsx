@@ -1,7 +1,7 @@
 import { Layers } from "lucide-react";
 import Page from "@/components/layout/frames/Page";
 import { Plus } from "lucide-react";
-import { DashCardRow } from "@/components/layout/card/DashCardRow";
+import { DashCardRow, DashCardRowSkeleton } from "@/components/layout/card/DashCardRow";
 import { ICONS } from "@/config/iconConfig";
 import useSplits from "@/features/periodisation/splits/hooks/useSplits";
 import { sortByCreatedAtDesc } from "@/utils/sort";
@@ -15,9 +15,29 @@ import type {Split} from "@/features/workout/types/Workout";
 
 export default function PeriodisationHubPage() {
   const { page, size, setPage } = useUrlPagination({ pageParam: "splitsPage", sizeParam: "splitsSize" });
-  const { splits, activeSplit, getActiveProgramme, pageInfo } = useSplits({ page, size });
+  const { splits, activeSplit, getActiveProgramme, pageInfo, isLoading } = useSplits({ page, size });
   const [open, setOpen] = useState(false);
   const [openSplit, setOpenSplit] = useState<Split | null>(activeSplit);
+
+  if (isLoading && splits.length === 0) {
+    return (
+      <Page
+        title="Periodisation"
+        subtitle="Loading your splits..."
+        icon={Layers}
+      >
+        <PaginatedContainer onPageChange={setPage} currentPage={page} total={undefined}>
+          <DashCardRowSkeleton />
+          <DashCardRowSkeleton />
+          <DashCardRowSkeleton />
+          <DashCardRowSkeleton />
+          <DashCardRowSkeleton />
+          <DashCardRowSkeleton />
+        </PaginatedContainer>
+      </Page>
+    );
+  }
+
   return (
     <Page
       title="Periodisation"

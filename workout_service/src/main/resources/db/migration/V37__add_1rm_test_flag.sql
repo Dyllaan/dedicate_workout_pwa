@@ -1,0 +1,1 @@
+ALTER TABLE workout_entries ADD COLUMN is_1rm_test BOOLEAN DEFAULT FALSE;

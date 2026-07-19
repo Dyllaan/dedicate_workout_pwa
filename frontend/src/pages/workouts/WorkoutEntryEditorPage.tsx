@@ -208,11 +208,12 @@ function CreateWorkoutEntryContent({
     stepValue,
     addSet,
     removeSet,
+    copyFromPrevious,
     addCustomExercise,
-    handleSubmit,
     remainingSuggestions,
     removeExercise,
     moveExercise,
+    handleSubmit,
     submitting,
   } = form;
 
@@ -449,6 +450,7 @@ function CreateWorkoutEntryContent({
       stepValue={stepValue}
       addSet={addSet}
       removeSet={removeSet}
+      copyFromPrevious={copyFromPrevious}
       onBack={() => setActiveTab("view")}
       onDelete={handleRemoveExerciseById}
       onNext={handleNext}
@@ -618,6 +620,19 @@ function useWorkoutEntryEditState(workoutEntry: WorkoutEntry) {
     [updateExercise],
   );
 
+  const copyFromPrevious = useCallback(
+    (exerciseIdx: number, setIdx: number) => {
+      if (setIdx === 0) return;
+      updateExercise(exerciseIdx, (data) => ({
+        ...data,
+        sets: data.sets.map((set, idx) =>
+          idx === setIdx ? { ...data.sets[setIdx - 1] } : set
+        ),
+      }));
+    },
+    [updateExercise],
+  );
+
   const removeExercise = useCallback((exerciseIdx: number) => {
     setExerciseData((previous) => previous.filter((_, idx) => idx !== exerciseIdx));
   }, []);
@@ -718,6 +733,7 @@ function useWorkoutEntryEditState(workoutEntry: WorkoutEntry) {
     hasChanges,
     isValid,
     reset,
+    copyFromPrevious,
   };
 }
 
@@ -789,6 +805,7 @@ function EditWorkoutEntryContent({
     hasChanges,
     isValid,
     reset,
+    copyFromPrevious,
   } = useWorkoutEntryEditState(workoutEntry);
 
   const { context: programmeContext } = useCurrentWeek();
@@ -1020,6 +1037,7 @@ function EditWorkoutEntryContent({
       stepValue={stepValue}
       addSet={addSet}
       removeSet={removeSet}
+      copyFromPrevious={copyFromPrevious}
       onBack={() => setActiveTab("view")}
       onDelete={handleRemoveExerciseById}
       onNext={handleNext}

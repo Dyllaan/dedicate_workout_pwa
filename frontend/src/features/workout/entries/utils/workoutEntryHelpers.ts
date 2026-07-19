@@ -62,10 +62,11 @@ export function calculateBestSetE1rm(sets: Array<Pick<SetFormData, "reps" | "wei
     }
 
     const { epley, brzycki, lombardi } = estimate1RM(weight, reps);
-    const average = Math.round(((epley + brzycki + lombardi) / 3) * 10) / 10;
+    const median = Math.max(Math.min(epley, brzycki), Math.min(Math.max(epley, brzycki), lombardi));
+    const bestE1rmForSet = Math.round(median * 100) / 100;
 
-    if (!hasValidSet || average > bestE1rm) {
-      bestE1rm = average;
+    if (!hasValidSet || bestE1rmForSet > bestE1rm) {
+      bestE1rm = bestE1rmForSet;
       hasValidSet = true;
     }
   }

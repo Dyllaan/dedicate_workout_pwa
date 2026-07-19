@@ -10,8 +10,10 @@ import com.louisfiges.workout.dto.request.WorkoutEntryRequest;
 import com.louisfiges.workout.dto.request.insights.ReadinessCheckInRequestDTO;
 import com.louisfiges.workout.dto.responses.insights.ReadinessCheckInDTO;
 import com.louisfiges.workout.repository.WorkoutEntryRepository;
+import com.louisfiges.workout.repository.WorkoutInolRepository;
 import com.louisfiges.workout.repository.WorkoutTemplateRepository;
 import com.louisfiges.workout.service.analysis.AnalysisCacheEvictor;
+import com.louisfiges.workout.service.analysis.InolCalculator;
 import com.louisfiges.workout.service.mapper.ExerciseConfigMapper;
 import com.louisfiges.workout.service.mapper.ExerciseDefinitionMapper;
 import com.louisfiges.workout.service.mapper.ExerciseEntryMapper;
@@ -27,6 +29,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.Instant;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -56,22 +59,32 @@ class WorkoutEntryServiceTest {
     @Mock
     private AnalysisCacheEvictor analysisCacheEvictor;
 
-    private final WorkoutEntryMapper workoutEntryMapper = new WorkoutEntryMapper(
-            new ExerciseEntryMapper(new SetEntryMapper()),
-            new WorkoutTemplateMapper(new ExerciseConfigMapper(new ExerciseDefinitionMapper()))
-    );
+    @Mock
+    private WorkoutInolRepository inolRepository;
+
+    @Mock
+    private InolCalculator inolCalculator;
+
+    private WorkoutEntryMapper workoutEntryMapper;
 
     private WorkoutEntryService service;
 
     @BeforeEach
     void setUp() {
+        workoutEntryMapper = new WorkoutEntryMapper(
+                new ExerciseEntryMapper(new SetEntryMapper()),
+                new WorkoutTemplateMapper(new ExerciseConfigMapper(new ExerciseDefinitionMapper())),
+                inolRepository
+        );
+        when(inolRepository.findByWorkoutEntryId(any())).thenReturn(Collections.emptyList());
         service = new WorkoutEntryService(
                 workoutEntryRepository,
                 workoutTemplateRepository,
                 exerciseDefinitionService,
                 readinessService,
                 analysisCacheEvictor,
-                workoutEntryMapper
+                workoutEntryMapper,
+                inolCalculator
         );
     }
 
@@ -126,7 +139,8 @@ class WorkoutEntryServiceTest {
                         )
                 ),
                 "Good session",
-                readinessRequest
+                readinessRequest,
+                null
         );
 
         var response = service.create(request, userId);

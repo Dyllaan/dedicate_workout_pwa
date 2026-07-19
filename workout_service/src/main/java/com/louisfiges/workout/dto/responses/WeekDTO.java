@@ -10,5 +10,6 @@ public record WeekDTO(
         boolean isDeload,
         int targetSetsPerExercise,
         Double rpeOverrideMin,
-        Double rpeOverrideMax
+        Double rpeOverrideMax,
+        Double intensityPct
 ) implements DTO {}

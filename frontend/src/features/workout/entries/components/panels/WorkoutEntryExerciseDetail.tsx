@@ -30,6 +30,7 @@ type WorkoutEntryExerciseDetailProps = {
   ) => void;
   addSet: (exerciseIdx: number) => void;
   removeSet: (exerciseIdx: number, setIdx: number) => void;
+  copyFromPrevious: (exerciseIdx: number, setIdx: number) => void;
   onBack: () => void;
   onDelete: (exerciseId: string, preferredIndex?: number) => void;
   onNext: () => void;
@@ -48,9 +49,10 @@ export function WorkoutEntryExerciseDetail({
   exerciseIdx,
   handleSetChange,
   stepValue,
-  addSet,
-  removeSet,
-  onBack,
+    addSet,
+    removeSet,
+    copyFromPrevious,
+    onBack,
   onDelete,
   onNext,
   block,
@@ -99,6 +101,7 @@ export function WorkoutEntryExerciseDetail({
         stepValue={stepValue}
         addSet={addSet}
         removeSet={removeSet}
+        copyFromPrevious={copyFromPrevious}
         onNext={onNext}
         block={block}
         trainingInsight={trainingInsight}

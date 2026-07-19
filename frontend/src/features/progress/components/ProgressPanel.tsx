@@ -1,5 +1,5 @@
-import { useEffect, useMemo } from "react";
-import { ArrowDownRight, ArrowUpRight, BarChart3, Dumbbell, LineChart, Minus, Sparkles, Target, TrendingUp } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { ArrowDownRight, ArrowUpRight, BarChart3, ChevronDown, Dumbbell, LineChart, Minus, Sparkles, TrendingUp } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 
 import SimpleBarChart from "@/components/charts/SimpleBarChart.tsx";
@@ -7,7 +7,8 @@ import EmptyState from "@/components/layout/feedback/EmptyState.tsx";
 import ErrorState from "@/components/layout/feedback/ErrorState.tsx";
 import LoadingState from "@/components/layout/feedback/LoadingState.tsx";
 import Page from "@/components/layout/frames/Page.tsx";
-import Section from "@/components/layout/section/Section.tsx";
+import CollapsibleSection from "@/components/layout/section/CollapsibleSection";
+import SummaryHero from "@/components/ui/SummaryHero";
 import { SelectionChip } from "@/components/ui";
 import { Button } from "@/components/ui/button.tsx";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select.tsx";
@@ -18,6 +19,7 @@ import useChart from "@/features/progress/hooks/useChart.ts";
 import { useExerciseHistory } from "@/features/workout/exercise-definitions/hooks/useExerciseHistory.ts";
 import { useAnalysisExerciseOptions, useTemplateAnalysisRecommendation } from "@/features/analysis/hooks/useAnalysis.ts";
 import { useUnitPreference } from "@/features/preferences/unit/hooks/useUnitPreference.ts";
+import ExerciseSetsTable from "@/features/workout/components/ExerciseSetsTable";
 import { cn } from "@/lib/utils.ts";
 import { formatShortDateTime, formatStatusToken } from "../../insights/utils/insightsUtils.ts";
 
@@ -79,17 +81,26 @@ export default function ProgressPanel() {
     useWeightFormatting,
     seriesRows,
   } = useChart(progressQuery.chartData, chartUnit);
+  const historySessions = historyQuery.sessions;
+
+  const heroTiles = useMemo(() => [
+    { label: "Best", value: historyQuery.bestKg > 0 ? format(historyQuery.bestKg) : "—" },
+    { label: "Latest", value: historySessions.length > 0 && historySessions[0].topWeightKg > 0 ? format(historySessions[0].topWeightKg) : "—" },
+    { label: "Sessions", value: historyQuery.sessionCount },
+  ], [historyQuery.bestKg, historyQuery.sessionCount, historySessions, format]);
+
   const historyChartData = useMemo(
     () =>
-      historyQuery.sessions
+      historySessions
         .slice()
         .reverse()
         .map((session) => ({
           ...session,
           formattedDate: formatShortDateTime(session.performedAt),
         })),
-    [historyQuery.sessions],
+    [historySessions],
   );
+  
 
   useEffect(() => {
     if (optionsQuery.options.length === 0) {
@@ -146,6 +157,7 @@ export default function ProgressPanel() {
       </SelectContent>
     </Select>
   );
+  
 
   if (optionsQuery.isLoading && optionsQuery.options.length === 0) {
     return (
@@ -168,7 +180,7 @@ export default function ProgressPanel() {
         icon={BarChart3}
         actions={exercisePicker}
       >
-        <Section icon={Sparkles} title="Exercise picker" subtitle="We could not load your lift list.">
+        <CollapsibleSection icon={Sparkles} title="Exercise picker" defaultExpanded>
           <ErrorState
             title="We could not load your lift list."
             description="The lift detail view is built from focused exercises in your workout templates. Try again to refresh the list."
@@ -178,7 +190,7 @@ export default function ProgressPanel() {
               </Button>
             )}
           />
-        </Section>
+        </CollapsibleSection>
       </Page>
     );
   }
@@ -200,7 +212,6 @@ export default function ProgressPanel() {
   }
 
   const recommendation = recommendationQuery.data ?? null;
-  const historySessions = historyQuery.sessions;
 
   return (
     <Page
@@ -210,13 +221,13 @@ export default function ProgressPanel() {
       actions={exercisePicker}
       contentClassName="space-y-5"
     >
-      <Section
+      <SummaryHero tiles={heroTiles} className="px-1" />
+
+      <CollapsibleSection
         icon={Sparkles}
         title={activeOption.exerciseName}
-        subtitle={[
-          activeOption.variant ? activeOption.variant : null,
-          activeOption.templateName,
-        ].filter(Boolean).join(" · ")}
+        summary={recommendation ? `${format(recommendation.suggestion.suggestedWeightKg)} · ${formatStatusToken(recommendation.suggestion.type)}` : undefined}
+        defaultExpanded
       >
         {recommendationQuery.isLoading ? (
           <LoadingState rows={3} />
@@ -232,41 +243,18 @@ export default function ProgressPanel() {
           />
         ) : recommendation ? (
           <div className="space-y-4">
-            <StatGrid cols={4}>
-              <StatTile
-                label="Suggested weight"
-                icon={TrendingUp}
-                value={formatWeight(recommendation.suggestion.suggestedWeightKg, format)}
-              />
-              <StatTile
-                label="Suggestion"
-                icon={Target}
-                value={formatStatusToken(recommendation.suggestion.type) ?? "-"}
-              />
-              <StatTile
-                label="Trend"
-                icon={LineChart}
-                value={formatStatusToken(recommendation.trend.direction) ?? "-"}
-              />
-              <StatTile
-                label="Comparable sessions"
-                icon={BarChart3}
-                value={recommendation.trend.comparableObservationCount}
-              />
-            </StatGrid>
-
+            <div className="grid gap-4 sm:grid-cols-2">
+              <StatTile label="Suggested" icon={TrendingUp} value={formatWeight(recommendation.suggestion.suggestedWeightKg, format)} size="sm" />
+              <StatTile label="Trend" icon={LineChart} value={formatStatusToken(recommendation.trend.direction) ?? "-"} size="sm" />
+            </div>
             <div className="grid gap-3 rounded-2xl border border-border bg-muted/20 p-4 md:grid-cols-2">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Reasoning</p>
-                <p className="mt-2 text-sm leading-relaxed text-foreground">
-                  {recommendation.suggestion.reasoning}
-                </p>
+                <p className="mt-2 text-sm leading-relaxed text-foreground">{recommendation.suggestion.reasoning}</p>
               </div>
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Plateau</p>
-                <p className="mt-2 text-sm leading-relaxed text-foreground">
-                  {recommendation.plateau.reason}
-                </p>
+                <p className="mt-2 text-sm leading-relaxed text-foreground">{recommendation.plateau.reason}</p>
               </div>
             </div>
           </div>
@@ -277,12 +265,13 @@ export default function ProgressPanel() {
             icon={Sparkles}
           />
         )}
-      </Section>
+      </CollapsibleSection>
 
-      <Section
+      <CollapsibleSection
         icon={LineChart}
         title="Estimates"
-        subtitle="Recent estimate points and comparison controls for the selected lift."
+        summary={seriesRows.length > 0 && currentValueLabel ? `${currentValueLabel}${deltaValue != null ? ` · ${deltaValue > 0 ? "↑" : deltaValue < 0 ? "↓" : "→"} ${formatDelta(deltaValue, useWeightFormatting ? "" : chartUnit)}` : ""}` : undefined}
+        defaultExpanded
       >
         {progressQuery.isChartLoading ? (
           <LoadingState rows={2} />
@@ -384,12 +373,13 @@ export default function ProgressPanel() {
             icon={LineChart}
           />
         )}
-      </Section>
+      </CollapsibleSection>
 
-      <Section
+      <CollapsibleSection
         icon={Dumbbell}
         title="History"
-        subtitle="Recent logged sessions and the supporting set history."
+        summary={`${historyQuery.sessionCount} sessions · best ${historyQuery.bestKg > 0 ? format(historyQuery.bestKg) : "—"}`}
+        defaultExpanded={false}
       >
         {historyQuery.isLoading ? (
           <LoadingState rows={3} />
@@ -427,18 +417,7 @@ export default function ProgressPanel() {
 
             <div className="space-y-3">
               {historySessions.map((session) => (
-                <div key={session.entryId} className="rounded-2xl border border-border bg-card p-4">
-                  <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div>
-                      <p className="text-sm font-semibold text-foreground">{formatShortDateTime(session.performedAt)}</p>
-                      <p className="text-xs text-muted-foreground">{session.templateName}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-semibold text-foreground">{format(session.topWeightKg)}</p>
-                      <p className="text-xs text-muted-foreground">volume {format(session.volumeKg)}</p>
-                    </div>
-                  </div>
-                </div>
+                <HistoryCard key={session.entryId} session={session} format={format} />
               ))}
             </div>
           </div>
@@ -449,7 +428,35 @@ export default function ProgressPanel() {
             icon={Dumbbell}
           />
         )}
-      </Section>
+      </CollapsibleSection>
     </Page>
+  );
+}
+
+function HistoryCard({ session, format: fmt }: { session: ReturnType<typeof useExerciseHistory>['sessions'][number]; format: (v: number) => string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="rounded-2xl border border-border bg-card">
+      <button
+        type="button"
+        className="flex w-full items-center justify-between gap-2 px-4 py-3 text-left hover:bg-muted/5 transition-colors rounded-2xl"
+        onClick={() => setOpen((prev) => !prev)}
+      >
+        <div className="min-w-0">
+          <p className="text-sm font-semibold text-foreground truncate">{formatShortDateTime(session.performedAt)}</p>
+          {open ? <p className="text-xs text-muted-foreground">{session.templateName}</p> : null}
+        </div>
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <span className="text-sm font-semibold tabular-nums">{fmt(session.topWeightKg)}</span>
+          <ChevronDown className={cn("h-4 w-4 text-muted-foreground transition-transform", open && "rotate-180")} />
+        </div>
+      </button>
+      {open ? (
+        <div className="px-4 pb-4 space-y-2">
+          <p className="text-xs text-muted-foreground">Volume {fmt(session.volumeKg)}</p>
+          <ExerciseSetsTable sets={session.sets} format={fmt} />
+        </div>
+      ) : null}
+    </div>
   );
 }

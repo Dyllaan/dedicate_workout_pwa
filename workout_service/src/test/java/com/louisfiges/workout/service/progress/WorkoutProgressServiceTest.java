@@ -1,5 +1,6 @@
 package com.louisfiges.workout.service.progress;
 
+import com.louisfiges.workout.analysis.StrengthCalculator;
 import com.louisfiges.workout.analysis.SetRole;
 import com.louisfiges.workout.dao.workout.ExerciseDefinition;
 import com.louisfiges.workout.dao.workout.ExerciseEntry;
@@ -37,7 +38,7 @@ class WorkoutProgressServiceTest {
 
     @BeforeEach
     void setUp() {
-        service = new WorkoutProgressService(workoutEntryRepository);
+        service = new WorkoutProgressService(workoutEntryRepository, new StrengthCalculator());
     }
 
     @Test

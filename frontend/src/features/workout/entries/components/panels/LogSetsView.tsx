@@ -1,11 +1,10 @@
 import RPESlider from "@/features/workout/entries/components/RPESlider";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Plus,
   ChevronRight,
-  Smile,
+  Copy,
 } from "lucide-react";
 import { useId } from "react";
 import type {
@@ -19,8 +18,6 @@ import type { DashboardSummaryTopLift } from "@/features/workout/types/Workout";
 import { Stepper } from "@/components/ui/stepper";
 import type React from "react";
 import { formatRestTime } from "@/features/workout/entries/utils/restTime";
-import Section from "@/components/layout/section/Section";
-import { ICONS } from "@/config/iconConfig";
 import MiniLiftSummaryCard from "@/features/workout/entries/components/MiniLiftSummaryCard";
 
 const SET_ROLE_OPTIONS = [
@@ -47,6 +44,7 @@ type LogSetsViewProps = {
   ) => void;
   addSet: (exerciseIdx: number) => void;
   removeSet: (exerciseIdx: number, setIdx: number) => void;
+  copyFromPrevious: (exerciseIdx: number, setIdx: number) => void;
   onNext: () => void;
   block: Block | null;
   isFocusedLift?: boolean;
@@ -59,15 +57,6 @@ type LogSetsViewProps = {
   setRpeOpenFor: React.Dispatch<React.SetStateAction<Record<number, boolean>>>;
   showResults: boolean;
   resultSet: SetFormData | null;
-  autotuneRecommendation: {
-    baseRecommendedWeightKg?: number | null;
-    adjustedRecommendedWeightKg?: number | null;
-    readinessScore: number;
-    readinessTier: "LOW" | "MEDIUM" | "HIGH";
-    adjustmentPercent: number;
-    rationale: string;
-  } | null;
-  isAutotuneLoading: boolean;
   toDisplayWeightStr: (kg: string) => string;
   handleWeightInputChange: (
     exerciseIdx: number,
@@ -87,6 +76,7 @@ export function LogSetsView(props: LogSetsViewProps) {
     stepValue,
     addSet,
     removeSet,
+    copyFromPrevious,
     onNext,
     block,
     isFocusedLift = false,
@@ -99,8 +89,6 @@ export function LogSetsView(props: LogSetsViewProps) {
     setRpeOpenFor,
     showResults,
     resultSet,
-    autotuneRecommendation,
-    isAutotuneLoading,
     toDisplayWeightStr,
     handleWeightInputChange,
     restore,
@@ -109,8 +97,6 @@ export function LogSetsView(props: LogSetsViewProps) {
   } = props;
 
   const uid = useId();
-  const hasAutotune = autotuneRecommendation?.adjustedRecommendedWeightKg != null;
-  const displayAutotuneWeight = autotuneRecommendation?.adjustedRecommendedWeightKg ?? null;
 
   return (
     <>
@@ -123,50 +109,6 @@ export function LogSetsView(props: LogSetsViewProps) {
         </div>
       ) : null}
 
-      {hasAutotune && displayAutotuneWeight ? (
-        <Section
-          title="Top-set Autotune"
-          divided={false}
-          className="border-b-0"
-          subtitle={`We recommend ${toDisplay(displayAutotuneWeight)}` + `kg for your top set`} 
-          icon={ICONS.insight}
-          actions={(
-          <div className="flex flex-col gap-1 text-center">
-            <span className={cn(
-                  "rounded-full border px-2 py-0.5 text-[11px] font-semibold",
-                  autotuneRecommendation?.readinessTier === "HIGH"
-                    ? "border-primary/25 bg-primary/10 text-primary"
-                    : autotuneRecommendation?.readinessTier === "MEDIUM"
-                      ? "border-border bg-muted/70 text-foreground"
-                      : "border-destructive/20 bg-destructive/10 text-destructive",
-                )}>
-                  {autotuneRecommendation?.readinessTier}
-                </span>
-                <span className={cn(
-                  "rounded-full border px-2 py-0.5 text-[11px] font-semibold flex items-center justify-center gap-1",
-                  autotuneRecommendation?.readinessTier === "HIGH"
-                    ? "border-primary/25 bg-primary/10 text-primary"
-                    : autotuneRecommendation?.readinessTier === "MEDIUM"
-                      ? "border-border bg-muted/70 text-foreground"
-                      : "border-destructive/20 bg-destructive/10 text-destructive",
-                )}>
-                  <Smile className="h-3 w-3" />
-                  {`${autotuneRecommendation.readinessScore}/20`}
-                </span>
-          </div>
-              )}
-        >
-          <p className="mt-1 text-xs text-muted-foreground">
-            {autotuneRecommendation.rationale}
-          </p>
-        </Section>
-      ) : isAutotuneLoading ? (
-        <div className="rounded-2xl border border-border bg-card p-4">
-          <p className="text-xs text-muted-foreground">
-            Checking readiness-based top-set guidance...
-          </p>
-        </div>
-      ) : null}
       <div className="flex flex-col gap-3">
         {block && (
           <div className="flex items-center gap-2 mb-3 flex-wrap">
@@ -203,6 +145,17 @@ export function LogSetsView(props: LogSetsViewProps) {
                       Last: {set.lastReps != null ? `${set.lastReps}` : "-"} x{" "}
                       {set.lastWeight != null ? format(set.lastWeight) : "BW"}
                     </span>
+                  )}
+                  {setIdx > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => copyFromPrevious(exerciseIdx, setIdx)}
+                      className="rounded-md p-1 transition-colors hover:bg-muted"
+                      aria-label="Copy from previous set"
+                      title="Copy from previous set"
+                    >
+                      <Copy className="h-3.5 w-3.5 text-muted-foreground" />
+                    </button>
                   )}
                   <ExerciseOptionMenu
                     showRestore={hasLastSession}

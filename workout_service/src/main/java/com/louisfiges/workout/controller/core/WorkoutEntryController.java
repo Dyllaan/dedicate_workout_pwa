@@ -12,6 +12,8 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -54,6 +56,14 @@ public class WorkoutEntryController {
         return workoutEntryService.getRecentEntries(userId, page, size);
     }
 
+    @GetMapping("/by-exercise")
+    public List<WorkoutEntryDTO> getByExercise(
+            @RequestParam UUID exerciseDefinitionId,
+            @AuthenticationPrincipal Jwt jwt) {
+        UUID userId = UUID.fromString(jwt.getSubject());
+        return workoutEntryService.getAllByExerciseDefinition(userId, exerciseDefinitionId);
+    }
+
     @GetMapping("/{id}")
     public WorkoutEntryDTO getById(
             @PathVariable UUID id,
@@ -87,5 +97,12 @@ public class WorkoutEntryController {
             @AuthenticationPrincipal Jwt jwt) {
         UUID userId = UUID.fromString(jwt.getSubject());
         workoutEntryService.delete(id, userId);
+    }
+
+    @PostMapping("/backfill-inol")
+    public Map<String, Integer> backfillInol(@AuthenticationPrincipal Jwt jwt) {
+        UUID userId = UUID.fromString(jwt.getSubject());
+        int exercisesComputed = workoutEntryService.backfillInol(userId);
+        return Map.of("exercisesComputed", exercisesComputed);
     }
 }

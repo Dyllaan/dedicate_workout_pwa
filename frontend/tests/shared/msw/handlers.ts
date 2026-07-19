@@ -819,44 +819,6 @@ export function createMockHandlers(overrides: Partial<MockApiState> = {}) {
         },
       );
     }),
-    http.get(`${api}/workout/insights/autotune/top-set`, ({ request }) => {
-      const url = new URL(request.url, api);
-      const workoutTemplateId = url.searchParams.get("workoutTemplateId") ?? "";
-      const exerciseDefinitionId = url.searchParams.get("exerciseDefinitionId") ?? "";
-      const exerciseName = (url.searchParams.get("exerciseName") ?? "").trim().toLowerCase();
-      const variant = (url.searchParams.get("variant") ?? "").trim().toLowerCase();
-      const template = state.templateInsights[workoutTemplateId];
-      const insight = template?.exerciseInsights.find((entry) => {
-        const entryExerciseDefinitionId = (entry as { exerciseDefinitionId?: string | null }).exerciseDefinitionId ?? "";
-        if (exerciseDefinitionId && entryExerciseDefinitionId === exerciseDefinitionId) {
-          return true;
-        }
-
-        return entry.exerciseName.trim().toLowerCase() === exerciseName
-          && (entry.variant ?? "").trim().toLowerCase() === variant;
-      }) ?? null;
-
-      const base = insight?.recommendedWeightKg ?? null;
-      const readinessScore = state.readinessCheckIns[0]?.readinessScore ?? 12;
-      const readinessTier = readinessScore >= 16 ? "HIGH" : readinessScore <= 10 ? "LOW" : "MEDIUM";
-      const multiplier = readinessTier === "HIGH" ? 1.02 : readinessTier === "LOW" ? 0.97 : 1;
-      const adjusted = base == null ? null : Math.round(base * multiplier * 10) / 10;
-
-      return HttpResponse.json({
-        exerciseName: insight?.exerciseName ?? url.searchParams.get("exerciseName"),
-        variant: insight?.variant ?? url.searchParams.get("variant"),
-        baseRecommendedWeightKg: base,
-        adjustedRecommendedWeightKg: adjusted,
-        readinessScore,
-        readinessTier,
-        adjustmentPercent: Math.round((multiplier - 1) * 1000) / 10,
-        rationale: "Mock autotune guidance",
-        trainingState: insight?.trainingState ?? "UNDEREXPOSED",
-        recommendedAction: insight?.recommendedAction ?? "HOLD_LOAD",
-        topSetOnly: true,
-      });
-    }),
-    http.post(`${api}/workout/insights/autotune/outcomes`, () => new HttpResponse(null, { status: 204 })),
     http.get(`${api}/workout/progress/series/catalog`, () => HttpResponse.json(state.progressCatalog)),
     http.get(`${api}/workout/progress/cockpit`, () => HttpResponse.json(state.analysisCockpit)),
     http.get(`${api}/workout/progress/powerlifting/summary`, () => HttpResponse.json(state.powerliftingSummary)),

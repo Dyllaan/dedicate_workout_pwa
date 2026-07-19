@@ -298,7 +298,7 @@ export default function SimpleLineChart<T extends object>({
               x={CHART_MARGIN.left - 10}
               y={getY(tick) + 5}
               textAnchor="end"
-              className="fill-foreground text-[15px] font-semibold"
+              className="fill-foreground text-[24px] font-semibold"
               opacity={index === 0 ? "0.94" : "0.72"}
             >
               {valueFormatter(tick)}
@@ -333,7 +333,7 @@ export default function SimpleLineChart<T extends object>({
                 x={x}
                 y={height - 10}
                 textAnchor={textAnchor}
-                className="fill-muted-foreground text-[9px]"
+                className="fill-muted-foreground text-[16px] font-semibold"
                 opacity="0.78"
               >
                 {toLabel(normalizedData[index]?.[xLabelKey ?? xKey])}
@@ -470,7 +470,20 @@ export default function SimpleLineChart<T extends object>({
       {data.length > 0 && (
         <div
           className="absolute inset-0 grid"
-          style={{ gridTemplateColumns: `repeat(${Math.max(data.length, 1)}, minmax(0, 1fr))` }}
+          style={{ gridTemplateColumns: `repeat(${Math.max(data.length, 1)}, minmax(0, 1fr))`, touchAction: "none" }}
+          onTouchMove={(event) => {
+            const touch = event.touches[0];
+            if (!touch) return;
+            const target = document.elementFromPoint(touch.clientX, touch.clientY) as HTMLElement | null;
+            const button = target?.closest("button");
+            if (!button) return;
+            const children = Array.from(button.parentElement?.children ?? []);
+            const index = children.indexOf(button);
+            if (index >= 0 && index < data.length) {
+              setHoveredIndex(index);
+            }
+          }}
+          onTouchEnd={() => setHoveredIndex(null)}
         >
           {normalizedData.map((datum, index) => (
             <button
@@ -480,6 +493,10 @@ export default function SimpleLineChart<T extends object>({
               aria-label={toLabel(datum[xLabelKey ?? xKey])}
               onMouseEnter={() => setHoveredIndex(index)}
               onFocus={() => setHoveredIndex(index)}
+              onTouchStart={(event) => {
+                event.preventDefault();
+                setHoveredIndex(index);
+              }}
             />
           ))}
         </div>

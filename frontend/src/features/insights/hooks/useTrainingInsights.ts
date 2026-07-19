@@ -5,7 +5,6 @@ import { queryKeys } from "@/api/queryKeys";
 import { invalidateDashboardData } from "../../dashboard/hooks/useDashboardRefresh";
 import { useDashboardSummary } from "../../dashboard/hooks/useDashboardSummary";
 import type {
-  AutotuneOutcomeRequest,
   BlockSummary,
   InsightsOverviewModel,
   NextWorkoutSignal,
@@ -13,7 +12,6 @@ import type {
   ReadinessCheckIn,
   ReadinessCheckInRequest,
   ReadinessHistoryResponse,
-  TopSetAutotuneRecommendation,
 } from "@/features/insights/types/Insights";
 import type { DashboardSummaryTopLift } from "@/features/workout/types/Workout";
 import type { ReadinessHistoryResponse as ReadinessHistoryApiResponse } from "@/features/insights/types/Insights";
@@ -191,47 +189,6 @@ export function useCreateReadinessCheckIn() {
     },
     onSuccess: async () => {
       await invalidateDashboardData(queryClient);
-    },
-  });
-}
-
-export function useTopSetAutotune(
-  workoutTemplateId?: string,
-  exerciseDefinitionId?: string | null,
-  exerciseName?: string,
-  variant?: string | null,
-) {
-  return useQuery({
-    queryKey: queryKeys.insights.autotune(
-      workoutTemplateId ?? "",
-      exerciseName ?? "",
-      variant ?? undefined,
-      exerciseDefinitionId ?? undefined,
-    ),
-    queryFn: async () => {
-      if (!workoutTemplateId || !exerciseName) {
-        throw new Error("workoutTemplateId and exerciseName are required");
-      }
-      const { data } = await workoutApi.get<TopSetAutotuneRecommendation>("/insights/autotune/top-set", {
-        params: {
-          workoutTemplateId,
-          exerciseDefinitionId: exerciseDefinitionId ?? undefined,
-          exerciseName,
-          variant: variant ?? undefined,
-        },
-      });
-      return data;
-    },
-    enabled: !!workoutTemplateId && !!exerciseName,
-    staleTime: 30_000,
-    refetchOnWindowFocus: false,
-  });
-}
-
-export function useAutotuneOutcomeMutation() {
-  return useMutation({
-    mutationFn: async (request: AutotuneOutcomeRequest) => {
-      await unwrapApiResponse(await workoutApi.post("/insights/autotune/outcomes", request));
     },
   });
 }

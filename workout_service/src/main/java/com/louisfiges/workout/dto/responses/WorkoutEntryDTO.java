@@ -11,5 +11,6 @@ public record WorkoutEntryDTO(
         WorkoutTemplateDTO template,
         List<ExerciseEntryDTO> exercises,
         String notes,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        WorkoutEntryInolDTO inol
 ) implements DTO {}

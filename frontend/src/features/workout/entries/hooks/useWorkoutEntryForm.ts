@@ -257,6 +257,19 @@ export function useWorkoutEntryForm(
     [updateExercise],
   );
 
+  const copyFromPrevious = useCallback(
+    (exerciseIdx: number, setIdx: number) => {
+      if (setIdx === 0) return;
+      updateExercise(exerciseIdx, (data) => ({
+        ...data,
+        sets: data.sets.map((set, idx) =>
+          idx === setIdx ? { ...data.sets[setIdx - 1] } : set
+        ),
+      }));
+    },
+    [updateExercise],
+  );
+
   const removeExercise = useCallback((exerciseIdx: number) => {
     setExerciseData((previous) => previous.filter((_, idx) => idx !== exerciseIdx));
   }, []);
@@ -402,6 +415,7 @@ export function useWorkoutEntryForm(
     stepValue,
     addSet,
     removeSet,
+    copyFromPrevious,
     addCustomExercise,
     handleSubmit,
     calculateVolume,

@@ -4,6 +4,7 @@ import type { LucideIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 import DatePicker from "@/components/layout/input/DatePicker";
 import ActiveIcon from "@/components/ui/ActiveIcon.tsx";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type DashCardRowBase = {
   icon?: LucideIcon | React.ComponentType<{ className?: string }>;
@@ -170,6 +171,25 @@ export function DashCardRow({
         </div>
       )}
       {isStatic && children && <div className="w-full px-2">{children}</div>}
+    </div>
+  );
+}
+
+export function DashCardRowSkeleton() {
+  return (
+    <div className="flex mx-auto items-center justify-between gap-3 py-3">
+      <div className="flex items-center gap-3 min-w-0">
+        <div className="ml-2 p-2 rounded-lg bg-muted/50">
+          <Skeleton className="h-5 w-5 rounded" />
+        </div>
+        <div className="min-w-0 space-y-1.5">
+          <Skeleton className="h-4 w-32" />
+          <Skeleton className="h-3 w-40" />
+        </div>
+      </div>
+      <span className="flex items-center gap-2 shrink-0 pr-2">
+        <Skeleton className="h-5 w-5 rounded" />
+      </span>
     </div>
   );
 }

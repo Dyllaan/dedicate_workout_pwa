@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { BarChart3 } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 
@@ -7,6 +6,7 @@ import {
 } from "@/features/insights/hooks/useTrainingInsights";
 import InsightsVolumePanel from "@/features/insights/components/InsightsVolumePanel.tsx";
 import { InsightsOverviewPanel } from "@/features/insights/components/InsightsOverviewPanel.tsx";
+import InolChartPanel from "@/features/insights/components/InolChartPanel";
 import { type InsightsViewTab } from "@/features/insights/utils/insightsUtils";
 import Section from "@/components/layout/section/Section";
 import Page from "@/components/layout/frames/Page";
@@ -15,31 +15,18 @@ import { Skeleton } from "@/components/ui/skeleton.tsx";
 import StatGrid from "@/components/ui/StatGrid.tsx";
 import ProgressPanel from "@/features/progress/components/ProgressPanel";
 import TabShell from "@/components/tabs/TabShell.tsx";
+import useDelayedLoading from "@/hooks/useDelayedLoading";
+import { StatTileSkeleton } from "@/components/ui/StatGridSkeleton";
 
 const SMART_COACH_TABS: TabItem<InsightsViewTab>[] = [
   { key: "overview", label: "Overview" },
   { key: "volume", label: "Volume" },
   { key: "lift", label: "Lift detail" },
+  { key: "inol", label: "INOL" },
 ];
 
 function isSmartCoachTab(value: string | null): value is InsightsViewTab {
-  return value === "overview" || value === "volume" || value === "lift";
-}
-
-function useDelayedLoading(isLoading: boolean, delayMs = 180) {
-  const [showLoading, setShowLoading] = useState(false);
-
-  useEffect(() => {
-    if (!isLoading) {
-      setShowLoading(false);
-      return;
-    }
-
-    const timer = window.setTimeout(() => setShowLoading(true), delayMs);
-    return () => window.clearTimeout(timer);
-  }, [delayMs, isLoading]);
-
-  return showLoading;
+  return value === "overview" || value === "volume" || value === "lift" || value === "inol";
 }
 
 export default function InsightsPage() {
@@ -83,17 +70,9 @@ export default function InsightsPage() {
         {activeTab === "overview" ? overviewContent : null}
         {activeTab === "volume" ? <InsightsVolumePanel /> : null}
         {activeTab === "lift" ? <ProgressPanel /> : null}
+        {activeTab === "inol" ? <InolChartPanel /> : null}
       </TabShell>
     </Page>
-  );
-}
-
-function LoadingStatTile({ label }: { label: string }) {
-  return (
-    <div className="rounded-2xl border border-border bg-card p-4">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">{label}</p>
-      <Skeleton className="mt-3 h-5 w-20" />
-    </div>
   );
 }
 
@@ -130,10 +109,10 @@ function InsightsOverviewLoading() {
         subtitle="The current training picture in four tiles."
       >
         <StatGrid cols={4}>
-          <LoadingStatTile label="Workout templates" />
-          <LoadingStatTile label="Splits" />
-          <LoadingStatTile label="Active split" />
-          <LoadingStatTile label="Readiness avg" />
+          <StatTileSkeleton />
+          <StatTileSkeleton />
+          <StatTileSkeleton />
+          <StatTileSkeleton />
         </StatGrid>
       </Section>
 

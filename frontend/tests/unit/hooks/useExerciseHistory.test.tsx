@@ -25,21 +25,11 @@ function createWrapper() {
   );
 }
 
-const pageResponse = (items: unknown[]) => ({
-  items,
-  page: 0,
-  size: 10,
-  totalItems: items.length,
-  totalPages: 1,
-  hasNext: false,
-  hasPrevious: false,
-});
-
 describe("useExerciseHistory", () => {
   beforeEach(() => {
     vi.mocked(workoutApi.get).mockResolvedValue({
       status: 200,
-      data: pageResponse([]),
+      data: [],
     } as never);
   });
 
@@ -101,7 +91,7 @@ describe("useExerciseHistory", () => {
 
     vi.mocked(workoutApi.get).mockResolvedValue({
       status: 200,
-      data: pageResponse([entry1, entry2, entry3]),
+      data: [entry1, entry2, entry3],
     } as never);
 
     const { result } = renderHook(() => useExerciseHistory("definition-bench"), {
@@ -138,7 +128,7 @@ describe("useExerciseHistory", () => {
 
     vi.mocked(workoutApi.get).mockResolvedValue({
       status: 200,
-      data: pageResponse([entry]),
+      data: [entry],
     } as never);
 
     const { result } = renderHook(() => useExerciseHistory("definition-deadlift"), {
@@ -167,7 +157,7 @@ describe("useExerciseHistory", () => {
 
     vi.mocked(workoutApi.get).mockResolvedValue({
       status: 200,
-      data: pageResponse([entry]),
+      data: [entry],
     } as never);
 
     const { result } = renderHook(() => useExerciseHistory("definition-deadlift"), {
@@ -176,5 +166,40 @@ describe("useExerciseHistory", () => {
 
     await waitFor(() => expect(result.current.sessions).toHaveLength(0));
     expect(result.current.bestKg).toBe(0);
+  });
+
+  it("calls the by-exercise endpoint with the exercise definition id", async () => {
+    const entry = buildWorkoutEntry({
+      createdAt: "2026-04-15T12:00:00.000Z",
+      exercises: [
+        {
+          id: "ex-1",
+          exerciseDefinitionId: "definition-bench",
+          exerciseName: "Bench Press",
+          loggedExerciseName: "Bench Press",
+          loggedVariant: null,
+          goalSets: 3,
+          sets: [{ id: "s1", reps: 5, weight: 100, rpe: 7 }],
+        },
+      ],
+    });
+
+    vi.mocked(workoutApi.get).mockResolvedValue({
+      status: 200,
+      data: [entry],
+    } as never);
+
+    const { result } = renderHook(() => useExerciseHistory("definition-bench"), {
+      wrapper: createWrapper(),
+    });
+
+    await waitFor(() => expect(result.current.sessions).toHaveLength(1));
+
+    expect(workoutApi.get).toHaveBeenCalledWith(
+      "/workout-entries/by-exercise",
+      expect.objectContaining({
+        params: { exerciseDefinitionId: "definition-bench" },
+      }),
+    );
   });
 });

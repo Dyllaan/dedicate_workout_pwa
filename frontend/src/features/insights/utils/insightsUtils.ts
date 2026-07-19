@@ -1,6 +1,6 @@
 import type { TrainingState } from "@/features/insights/types/Insights";
 
-export type InsightsViewTab = "overview" | "volume" | "lift";
+export type InsightsViewTab = "overview" | "volume" | "lift" | "inol";
 
 export function formatExerciseLabel(
   exerciseName?: string | null,

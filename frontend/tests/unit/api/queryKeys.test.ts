@@ -149,10 +149,6 @@ describe("queryKeys", () => {
       expect(queryKeys.insights.dismissals(0, 10)).toEqual(["training-insights", "dismissals", 0, 10]);
     });
 
-    it("insights.autotune with all params", () => {
-      expect(queryKeys.insights.autotune("tpl-1", "Bench Press", "Barbell", "def-1"))
-        .toEqual(["training-insights", "autotune", "tpl-1", "def-1", "Bench Press", "Barbell"]);
-    });
   });
 
   describe("analysis", () => {

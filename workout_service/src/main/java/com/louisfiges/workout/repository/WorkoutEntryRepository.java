@@ -1,6 +1,7 @@
 package com.louisfiges.workout.repository;
 
 import com.louisfiges.workout.dao.workout.WorkoutEntry;
+import com.louisfiges.workout.dao.workout.WorkoutInol;
 
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.domain.Page;
@@ -297,6 +298,30 @@ public interface WorkoutEntryRepository extends JpaRepository<WorkoutEntry, UUID
             @Param("limit") int limit
     );
 
+    @EntityGraph(attributePaths = {"template", "exercises", "exercises.sets", "exercises.exerciseDefinition"})
+    @Query("""
+    SELECT DISTINCT we
+    FROM WorkoutEntry we
+    JOIN we.exercises ee
+    WHERE we.userId = :userId
+      AND ee.exerciseDefinition.id = :exerciseDefinitionId
+    ORDER BY we.createdAt DESC
+    """)
+    List<WorkoutEntry> findAllByUserIdAndExerciseDefinitionId(
+            @Param("userId") UUID userId,
+            @Param("exerciseDefinitionId") UUID exerciseDefinitionId
+    );
+
+    @EntityGraph(attributePaths = {"exercises", "exercises.sets", "exercises.exerciseDefinition"})
+    @Query("""
+    SELECT we FROM WorkoutEntry we
+    WHERE we.userId = :userId
+      AND we.id NOT IN (
+        SELECT wi.workoutEntry.id FROM WorkoutInol wi WHERE wi.userId = :userId
+      )
+    """)
+    List<WorkoutEntry> findEntriesMissingInol(@Param("userId") UUID userId);
+
     // has the user logged any workout
     boolean existsByUserId(UUID userId);
 
@@ -306,4 +331,18 @@ public interface WorkoutEntryRepository extends JpaRepository<WorkoutEntry, UUID
 
     // find most recent by user id
         Optional<WorkoutEntry> findTopByUserIdOrderByCreatedAtDesc(UUID userId);
+
+    @Query("SELECT se, we.createdAt FROM WorkoutEntry we " +
+           "JOIN we.exercises ee " +
+           "JOIN ee.sets se " +
+           "WHERE ee.exerciseDefinition.id = :exerciseDefId " +
+           "AND we.userId = :userId " +
+           "AND we.createdAt BETWEEN :blockStart AND :blockEnd " +
+           "ORDER BY (se.weight * (1 + se.reps / 30.0)) DESC")
+    List<Object[]> findBestSetsForExerciseInBlock(
+            @Param("exerciseDefId") UUID exerciseDefId,
+            @Param("userId") UUID userId,
+            @Param("blockStart") Instant blockStart,
+            @Param("blockEnd") Instant blockEnd,
+            Pageable pageable);
 }

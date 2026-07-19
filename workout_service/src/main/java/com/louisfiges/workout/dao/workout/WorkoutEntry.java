@@ -35,6 +35,9 @@ public class WorkoutEntry {
     @Column(length = 500)
     private String notes;
 
+    @Column(name = "is_1rm_test")
+    private Boolean is1rmTest;
+
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
@@ -49,10 +52,15 @@ public class WorkoutEntry {
     public WorkoutEntry() { }
 
     public WorkoutEntry(WorkoutTemplate template, UUID userId, List<ExerciseEntry> exercises, String notes) {
+        this(template, userId, exercises, notes, null);
+    }
+
+    public WorkoutEntry(WorkoutTemplate template, UUID userId, List<ExerciseEntry> exercises, String notes, Boolean is1rmTest) {
         this.template = template;
         this.userId = userId;
         this.exercises = exercises;
         this.notes = notes;
+        this.is1rmTest = is1rmTest;
     }
 
     public UUID getId() { return id; }
@@ -69,6 +77,9 @@ public class WorkoutEntry {
 
     public String getNotes() { return notes; }
     public void setNotes(String notes) { this.notes = notes; }
+
+    public Boolean getIs1rmTest() { return is1rmTest; }
+    public void setIs1rmTest(Boolean is1rmTest) { this.is1rmTest = is1rmTest; }
 
     public Instant getCreatedAt() { return createdAt; }
 }

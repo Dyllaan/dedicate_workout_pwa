@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CalendarDays, Moon, Save, Sun } from 'lucide-react';
+import { CalendarDays, Gauge, Moon, Save, Sun } from 'lucide-react';
 import { enqueueSnackbar } from 'notistack';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -7,16 +7,28 @@ import CollapsiblePanel from '@/components/layout/section/CollapsiblePanel';
 import type { Week } from '@/features/periodisation/types/Periodisation';
 import { Stepper } from '@/components/ui/stepper';
 
+type WorkoutTemplateInfo = {
+  id: string;
+  name: string;
+  hasFocusExercise: boolean;
+};
+
 export function WeekCard({
   week,
   onUpdateDeload,
   onUpdateTargetSets,
   isReadOnly = false,
+  isPeakingBlock = false,
+  workoutTemplates,
+  onTest1rm,
 }: {
   week: Week;
   onUpdateDeload: (weekId: string, deload: boolean) => Promise<void>;
   onUpdateTargetSets: (weekId: string, sets: number) => Promise<void>;
   isReadOnly?: boolean;
+  isPeakingBlock?: boolean;
+  workoutTemplates?: WorkoutTemplateInfo[];
+  onTest1rm?: (workoutTemplateId: string, weekId: string, currentTargetSets: number) => void;
 }) {
   const [localSets, setLocalSets] = useState(week.targetSetsPerExercise);
   const [localDeload, setLocalDeload] = useState(week.isDeload);
@@ -79,6 +91,17 @@ export function WeekCard({
           }`} />
         </button>
       </div>
+
+      {week.intensityPct != null && !localDeload && (
+        <div
+          className="flex items-center gap-2 rounded-md bg-primary/10 px-3 py-2 text-sm"
+          title={`Based on rep range and RPE targets for week ${week.weekNumber}`}
+        >
+          <Gauge className="h-4 w-4 shrink-0 text-primary" />
+          <span className="font-medium text-primary">{week.intensityPct}% 1RM</span>
+        </div>
+      )}
+
       <div className="space-y-2.5">
         <Stepper
           mode="row"
@@ -103,6 +126,25 @@ export function WeekCard({
           </Button>
         )}
       </div>
+
+      {isPeakingBlock && workoutTemplates && workoutTemplates.length > 0 && (
+        <div className="mt-3 space-y-2">
+          {workoutTemplates.map((wt) => (
+            <div key={wt.id} className="flex items-center justify-between rounded-lg border border-border bg-card/50 px-3 py-2">
+              <span className="text-sm font-medium">{wt.name}</span>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => onTest1rm?.(wt.id, week.id, week.targetSetsPerExercise)}
+                disabled={!wt.hasFocusExercise}
+                title={!wt.hasFocusExercise ? "No focus exercise set on this workout" : undefined}
+              >
+                Test 1RM
+              </Button>
+            </div>
+          ))}
+        </div>
+      )}
 
     </CollapsiblePanel>
   );

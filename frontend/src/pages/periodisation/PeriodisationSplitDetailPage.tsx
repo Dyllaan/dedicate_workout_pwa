@@ -15,6 +15,10 @@ import { resolveBlockTabSelection } from "@/features/periodisation/utils/periodi
 import { useUrlPagination } from "@/hooks/useUrlPagination";
 import TabShell from "@/components/tabs/TabShell";
 import { useProgrammeContext } from "@/features/periodisation/programme/hooks/useProgrammeContext";
+import { DashCardRowSkeleton } from "@/components/layout/card/DashCardRow";
+import { StatTileSkeleton } from "@/components/ui/StatGridSkeleton";
+import Panel from "@/components/layout/frames/Panel";
+import StatGrid from "@/components/ui/StatGrid";
 
 export default function PeriodisationSplitDetailPage() {
     const { splitId = "" } = useParams<{ splitId: string }>();
@@ -23,7 +27,7 @@ export default function PeriodisationSplitDetailPage() {
         pageParam: "programmesPage",
         sizeParam: "programmesSize",
     });
-    const { split, getActiveProgramme, programmes, isLoading: programmesLoading } = useProgrammeContext();
+    const { split, getActiveProgramme, programmes, isLoading: programmesLoading, isLoading } = useProgrammeContext();
     const { data: programmesPageData } = useProgrammePage(splitId, { page: programmesPage, size: programmesSize });
     const selectedProgrammeId = searchParams.get("programmeId");
     const selectedBlockId = searchParams.get("blockId");
@@ -52,6 +56,18 @@ export default function PeriodisationSplitDetailPage() {
     );
 
     const hasProgrammes = !programmesLoading && programmes.length > 0;
+
+    const workoutTemplates = useMemo(
+        () =>
+            split?.workouts
+                ? split.workouts.map((wt) => ({
+                      id: wt.id,
+                      name: wt.name,
+                      hasFocusExercise: wt.exercises?.some((e) => e.focus) ?? false,
+                  }))
+                : [],
+        [split?.workouts],
+    );
 
     const tabs = useMemo(
         () => [
@@ -104,6 +120,35 @@ export default function PeriodisationSplitDetailPage() {
         setSearchParams,
     ]);
 
+    if (isLoading && !split) {
+        return (
+            <Page
+                title="Loading..."
+                subtitle="Loading split details..."
+                icon={ICONS.split}
+            >
+                <TabShell
+                    tabs={[{ key: "programme-setup" as SplitDetailTab, label: "Setup" }]}
+                    activeTab={"programme-setup" as SplitDetailTab}
+                    ariaLabel="Split detail tabs"
+                    onTabChange={() => undefined}
+                    contentClassName="contents"
+                >
+                    <Panel>
+                        <StatGrid cols={3}>
+                            <StatTileSkeleton />
+                            <StatTileSkeleton />
+                            <StatTileSkeleton />
+                        </StatGrid>
+                        <DashCardRowSkeleton />
+                        <DashCardRowSkeleton />
+                        <DashCardRowSkeleton />
+                    </Panel>
+                </TabShell>
+            </Page>
+        );
+    }
+
     if (!split) {
         return (
             <Page title="Split not found" subtitle="The selected split could not be found." icon={ICONS.split}>
@@ -138,7 +183,7 @@ export default function PeriodisationSplitDetailPage() {
             >
                 {activeTab === "your-programme" ? <YourProgramme split={split} activeProgramme={selectedProgramme} /> : null}
                 {activeTab === "block" ? (
-                    <BlockPanel splitId={split.id} block={selectedBlockSelection.block} programmes={programmes} />
+                    <BlockPanel splitId={split.id} block={selectedBlockSelection.block} programmes={programmes} workoutTemplates={workoutTemplates} />
                 ) : null}
                 {activeTab === "all-programmes" ? (
                     <ProgrammesPanel

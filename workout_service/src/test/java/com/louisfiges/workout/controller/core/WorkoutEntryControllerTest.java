@@ -63,7 +63,8 @@ class WorkoutEntryControllerTest {
                                 null,
                                 Collections.emptyList(),
                                 null,
-                                LocalDateTime.now()
+                                LocalDateTime.now(),
+                                null
                         )),
                         0,
                         10,
@@ -80,5 +81,41 @@ class WorkoutEntryControllerTest {
                 .andExpect(status().isOk());
 
         verify(workoutEntryService).getAllByUser(userId, templateId, 0, 10);
+    }
+
+    @Test
+    @DisplayName("GET /by-exercise returns entries filtered by exercise definition id")
+    void getByExercise() throws Exception {
+        UUID userId = UUID.randomUUID();
+        UUID exerciseDefinitionId = UUID.randomUUID();
+
+        when(workoutEntryService.getAllByExerciseDefinition(eq(userId), eq(exerciseDefinitionId)))
+                .thenReturn(List.of(
+                        new WorkoutEntryDTO(
+                                UUID.randomUUID(),
+                                null,
+                                Collections.emptyList(),
+                                null,
+                                LocalDateTime.now(),
+                                null
+                        )
+                ));
+
+        mockMvc.perform(get("/workout-entries/by-exercise")
+                        .queryParam("exerciseDefinitionId", exerciseDefinitionId.toString())
+                        .with(jwt().jwt((token) -> token.subject(userId.toString())))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        verify(workoutEntryService).getAllByExerciseDefinition(userId, exerciseDefinitionId);
+    }
+
+    @Test
+    @DisplayName("GET /by-exercise returns 401 when unauthenticated")
+    void getByExerciseUnauthenticated() throws Exception {
+        mockMvc.perform(get("/workout-entries/by-exercise")
+                        .queryParam("exerciseDefinitionId", UUID.randomUUID().toString())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
     }
 }

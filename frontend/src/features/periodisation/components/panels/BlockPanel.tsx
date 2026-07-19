@@ -4,6 +4,7 @@ import { STRATEGY_LABELS } from "@/features/periodisation/utils/periodisationCon
 import Section from "@/components/layout/section/Section";
 import { WeekCard } from "@/features/periodisation/week/components/WeekCard";
 import usePeriodisationActions from "@/features/periodisation/hooks/usePeriodisationActions";
+import { useInitiateTestProtocol } from "@/features/workout/test-1rm/hooks/useInitiateTestProtocol";
 import { DashCardRow } from "@/components/layout/card/DashCardRow";
 import EmptyState from "@/components/layout/feedback/EmptyState";
 import { ICONS } from "@/config/iconConfig";
@@ -15,15 +16,18 @@ type BlockPanelProps = {
   splitId: string;
   block: Block | null;
   programmes: Programme[];
+  workoutTemplates?: Array<{ id: string; name: string; hasFocusExercise: boolean }>;
 };
 
-export default function BlockPanel({ splitId, block, programmes }: BlockPanelProps) {
+export default function BlockPanel({ splitId, block, programmes, workoutTemplates }: BlockPanelProps) {
   const {
     handleSetBlockStartDate,
     loadingAction,
     handleUpdateDeload,
     handleUpdateTargetSets,
   } = usePeriodisationActions(splitId);
+
+  const { initiate } = useInitiateTestProtocol();
 
   if (!block) {
     return (
@@ -41,6 +45,22 @@ export default function BlockPanel({ splitId, block, programmes }: BlockPanelPro
   const isArchivedProgramme = programmes.some((programme) =>
     programme.archived && programme.blocks.some((candidateBlock) => candidateBlock.id === block.id),
   );
+
+  const computeNextWeekInfo = (weekIdx: number) => {
+    const nextWeek = sortedWeeks[weekIdx + 1];
+    return nextWeek
+      ? { nextWeekId: nextWeek.id, nextWeekTargetSets: nextWeek.targetSetsPerExercise }
+      : undefined;
+  };
+
+  const handleTest1rm = async (
+    workoutTemplateId: string,
+    weekId: string,
+    currentTargetSets: number,
+    nextWeekInfo?: { nextWeekId: string; nextWeekTargetSets: number },
+  ) => {
+    await initiate(weekId, workoutTemplateId, currentTargetSets, nextWeekInfo);
+  };
 
   return (
     <Panel>
@@ -72,14 +92,19 @@ export default function BlockPanel({ splitId, block, programmes }: BlockPanelPro
           />
         ) : (
           <div className="space-y-3">
-            {sortedWeeks.map((week) => (
+            {sortedWeeks.map((week, idx) => (
               <WeekCard
                 key={week.id}
-              week={week}
-              onUpdateDeload={handleUpdateDeload}
-              onUpdateTargetSets={handleUpdateTargetSets}
-              isReadOnly={isArchivedProgramme}
-            />
+                week={week}
+                onUpdateDeload={handleUpdateDeload}
+                onUpdateTargetSets={handleUpdateTargetSets}
+                isReadOnly={isArchivedProgramme}
+                isPeakingBlock={block.blockType === "PEAKING"}
+                workoutTemplates={workoutTemplates}
+                onTest1rm={(workoutTemplateId, weekId, sets) =>
+                  handleTest1rm(workoutTemplateId, weekId, sets, computeNextWeekInfo(idx))
+                }
+              />
             ))}
           </div>
         )}

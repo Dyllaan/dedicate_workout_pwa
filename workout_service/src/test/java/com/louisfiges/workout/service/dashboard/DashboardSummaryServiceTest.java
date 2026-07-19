@@ -1,5 +1,6 @@
 package com.louisfiges.workout.service.dashboard;
 
+import com.louisfiges.workout.analysis.StrengthCalculator;
 import com.louisfiges.workout.dao.core.BodyweightLog;
 import com.louisfiges.workout.dao.periodisation.Block;
 import com.louisfiges.workout.dao.periodisation.Programme;
@@ -83,11 +84,7 @@ class DashboardSummaryServiceTest {
         when(bodyweightLogRepository.findFirstByUserIdAndLoggedAtLessThanEqualOrderByLoggedAtDesc(eq(userId), eq(LocalDate.of(2026, 5, 15))))
                 .thenReturn(Optional.of(new BodyweightLog(userId, BigDecimal.valueOf(80), LocalDate.of(2026, 5, 15), null)));
 
-        LiftSummaryService liftSummaryService = new LiftSummaryService(
-                workoutEntryRepository,
-                workoutTemplateRepository,
-                bodyweightLogRepository
-        );
+        LiftSummaryService liftSummaryService = new LiftSummaryService(workoutEntryRepository, workoutTemplateRepository, bodyweightLogRepository, new StrengthCalculator());
         DashboardSummaryService service = new DashboardSummaryService(
                 workoutEntryRepository,
                 workoutTemplateRepository,
@@ -161,11 +158,7 @@ class DashboardSummaryServiceTest {
         when(workoutEntryRepository.findDetailedHistoryByUserIdAndCreatedAtBetween(eq(userId), any(), any()))
                 .thenReturn(List.of(secondDefinitionEntry, firstDefinitionEntry2, firstDefinitionEntry1));
 
-        LiftSummaryService liftSummaryService = new LiftSummaryService(
-                workoutEntryRepository,
-                workoutTemplateRepository,
-                bodyweightLogRepository
-        );
+        LiftSummaryService liftSummaryService = new LiftSummaryService(workoutEntryRepository, workoutTemplateRepository, bodyweightLogRepository, new StrengthCalculator());
         DashboardSummaryService service = new DashboardSummaryService(
                 workoutEntryRepository,
                 workoutTemplateRepository,
@@ -209,11 +202,7 @@ class DashboardSummaryServiceTest {
         when(workoutTemplateRepository.findByUserId(eq(userId))).thenReturn(List.of(standaloneWorkout));
         when(workoutEntryRepository.findDetailedHistoryByUserId(eq(userId), any(Pageable.class))).thenReturn(List.of());
 
-        LiftSummaryService liftSummaryService = new LiftSummaryService(
-                workoutEntryRepository,
-                workoutTemplateRepository,
-                bodyweightLogRepository
-        );
+        LiftSummaryService liftSummaryService = new LiftSummaryService(workoutEntryRepository, workoutTemplateRepository, bodyweightLogRepository, new StrengthCalculator());
         DashboardSummaryService service = new DashboardSummaryService(
                 workoutEntryRepository,
                 workoutTemplateRepository,

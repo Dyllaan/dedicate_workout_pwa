@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { BrainCircuit, Gauge, LineChart, Sparkles, Target, TrendingUp } from "lucide-react";
+import { BrainCircuit, LineChart, Sparkles, TrendingUp } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 
 import SimpleLineChart from "@/components/charts/SimpleLineChart.tsx";
@@ -13,8 +13,9 @@ import { Button } from "@/components/ui/button.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { SelectionChip } from "@/components/ui";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select.tsx";
-import StatGrid from "@/components/ui/StatGrid.tsx";
 import StatTile from "@/components/ui/stat-tile.tsx";
+import CollapsibleSection from "@/components/layout/section/CollapsibleSection";
+import SummaryHero from "@/components/ui/SummaryHero";
 import { ICONS } from "@/config/iconConfig.ts";
 import { useUnitPreference } from "@/features/preferences/unit/hooks/useUnitPreference.ts";
 import { useAnalysisExerciseOptions, useTemplateAnalysisRecommendation } from "@/features/analysis/hooks/useAnalysis.ts";
@@ -211,6 +212,25 @@ export default function AnalysisTab() {
   };
 
   const recommendationQuery = useTemplateAnalysisRecommendation(activeTemplateId, analysisRange);
+
+  const heroTiles = useMemo(() => [
+    {
+      label: "Suggested",
+      value: recommendationQuery.data?.suggestion.suggestedWeightKg != null
+        ? format(recommendationQuery.data.suggestion.suggestedWeightKg)
+        : "—",
+    },
+    {
+      label: "Trend",
+      value: recommendationQuery.data?.trend.direction
+        ? formatStatusToken(recommendationQuery.data.trend.direction)
+        : "—",
+    },
+    {
+      label: "Sessions",
+      value: recommendationQuery.data?.trend.comparableObservationCount ?? "—",
+    },
+  ], [recommendationQuery.data, format]);
 
   const handleExerciseChange = (exerciseDefinitionId: string) => {
     const nextParams = new URLSearchParams(searchParams);
@@ -417,68 +437,68 @@ export default function AnalysisTab() {
         </Select>
       </DashCardRow>
 
-      <Section icon={Sparkles} title="Recommendation" subtitle="The next move from your local workout analysis.">
+      <SummaryHero tiles={heroTiles} />
+
+      <CollapsibleSection
+        icon={Sparkles}
+        title="Recommendation"
+        summary={recommendationQuery.data ? `${format(recommendationQuery.data.suggestion.suggestedWeightKg)} · ${formatStatusToken(recommendationQuery.data.suggestion.type)}` : undefined}
+        defaultExpanded
+      >
         {recommendationQuery.isLoading ? (
           <LoadingState rows={2} />
         ) : recommendationError ? (
           recommendationError
         ) : recommendationQuery.data ? (
           <div className="space-y-4">
-            <StatGrid cols={4}>
-              <StatTile label="Suggested weight" icon={TrendingUp} value={format(recommendationQuery.data.suggestion.suggestedWeightKg)} />
-              <StatTile label="Suggestion" icon={Target} value={formatStatusToken(recommendationQuery.data.suggestion.type)} />
-              <StatTile label="Trend direction" icon={LineChart} value={formatStatusToken(recommendationQuery.data.trend.direction)} />
-              <StatTile label="Comparable sessions" icon={Gauge} value={recommendationQuery.data.trend.comparableObservationCount} />
-            </StatGrid>
-            <div className="rounded-2xl border border-border bg-muted/20 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Reasoning</p>
-              <p className="mt-2 text-sm text-foreground">{recommendationQuery.data.suggestion.reasoning}</p>
-            </div>
+            <p className="text-sm text-foreground">{recommendationQuery.data.suggestion.reasoning}</p>
           </div>
         ) : (
           <EmptyState title="No recommendation yet." description="Choose an exercise to load the recommendation." icon={Sparkles} />
         )}
-      </Section>
+      </CollapsibleSection>
 
-      <Section icon={BrainCircuit} title="Plateau" subtitle="Why this lift is or is not stalling right now.">
+      <CollapsibleSection
+        icon={BrainCircuit}
+        title="Plateau"
+        summary={recommendationQuery.data ? (recommendationQuery.data.plateau.detected ? "Detected" : "No plateau") : undefined}
+        defaultExpanded
+      >
         {recommendationQuery.isLoading ? (
           <LoadingState rows={2} />
         ) : recommendationError ? (
           recommendationError
         ) : recommendationQuery.data ? (
-          <div className="space-y-4">
-            <StatGrid cols={3}>
-              <StatTile label="Status" icon={BrainCircuit} value={recommendationQuery.data.plateau.detected ? "Detected" : "No plateau detected"} />
-              <StatTile label="Slope" icon={TrendingUp} value={formatNumber(recommendationQuery.data.trend.slope, 2)} />
-              <StatTile label="R-squared" icon={Sparkles} value={formatNumber(recommendationQuery.data.trend.rSquared, 2)} />
-            </StatGrid>
-            <div className="rounded-2xl border border-border bg-muted/20 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Assessment</p>
-              <p className="mt-2 text-sm text-foreground">{recommendationQuery.data.plateau.reason}</p>
+          <div className="space-y-3">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <StatTile label="Slope" icon={TrendingUp} value={formatNumber(recommendationQuery.data.trend.slope, 2)} size="sm" />
+              <StatTile label="R-squared" icon={Sparkles} value={formatNumber(recommendationQuery.data.trend.rSquared, 2)} size="sm" />
             </div>
+            <p className="text-sm text-foreground">{recommendationQuery.data.plateau.reason}</p>
           </div>
         ) : (
           <EmptyState title="No plateau read yet." description="Choose an exercise to load the plateau summary." icon={BrainCircuit} />
         )}
-      </Section>
+      </CollapsibleSection>
 
-      <Section icon={LineChart} title="Trend" subtitle="Recent comparable-session load history and regression signal." className="mb-4">
+      <CollapsibleSection
+        icon={LineChart}
+        title="Trend"
+        summary={trendData.length > 0 ? `${trendData.length} sessions` : undefined}
+        defaultExpanded={false}
+      >
         {recommendationQuery.isLoading ? (
           <LoadingState rows={2} />
         ) : recommendationError ? (
           recommendationError
         ) : trendData.length > 0 ? (
           <div className="space-y-4">
-            <StatGrid cols={2}>
-              <StatTile label="Intercept" icon={LineChart} value={formatNumber(recommendationQuery.data?.trend.intercept, 2)} />
-              <StatTile label="Comparable sessions" icon={Gauge} value={recommendationQuery.data?.trend.comparableObservationCount ?? "--"} />
-            </StatGrid>
             <SimpleLineChart
               data={trendData}
               xKey="label"
               xLabelKey="label"
               activeSeriesKey="actualWeight"
-              height={280}
+              height={240}
               valueFormatter={(value) => format(value)}
               series={[
                 {
@@ -493,7 +513,7 @@ export default function AnalysisTab() {
         ) : (
           <EmptyState title="No trend yet." description="Choose an exercise to load recent comparable sessions." icon={LineChart} />
         )}
-      </Section>
+      </CollapsibleSection>
     </Panel>
   );
 }
